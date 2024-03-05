@@ -1,0 +1,61 @@
+%Template for Buface Master Thesis with ULB autorisation form.
+%Made by Oscar Van Slijpe, 2023
+%Using the BrufaceTitlepageStyle from Stijn Bettens and Adam Cooman, 2014
+
+\documentclass[a4paper,12pt]{report}
+\usepackage{preamble}
+
+\makeatletter
+\renewcommand{\@chapapp}{Step}
+\makeatother
+
+\author{Lucas Placentino\\S}
+%\title{ELEC-H311 Project Report:\\Simulation of a Joint Communications-Radar System}
+\title{ELEC-H304 Rapport de Projet:\\Réalisation d’un logiciel de ray-tracing Wi-Fi IEEE 802.11ay}
+
+% Promotor, co-promotor, advisors, 
+%\AcademicYear{2023-2024}
+
+
+\begin{document}
+\frontmatter
+
+% Title page
+\maketitlepage
+
+%\include{0a autorisation}
+
+%\include{0b abstract}
+
+%\include{0c acronyms}
+
+
+\setcounter{tocdepth}{2} % 2 for subsections
+\tableofcontents
+
+\newpage
+%reset the page counter and use numerical index
+\mainmatter
+
+
+
+\include{0intro}
+
+
+\include{conclusion}
+
+
+
+%reset the page counter and use alphabet index
+\backmatter
+
+
+\addcontentsline{toc}{chapter}{Bibliographie}
+\nocite{*} % add all bib items to bibliography even if not cited
+\printbibliography
+
+\include{appendix}
+
+
+
+\end{document}
