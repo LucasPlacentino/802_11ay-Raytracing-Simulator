@@ -3,10 +3,27 @@
 \addcontentsline{toc}{chapter}{Annexes}
 \renewcommand{\thesection}{\Alph{section}}
 
-\section{Code}
-\label{appendix:1}
+%\usemintedstyle{pastie}
+
+\section{main.cpp}
+\label{appendix:main.cpp}
 
 TOUT LE CODE WESH
+
+%\inputminted{cpp}{code.cpp}
+
+\begin{minted}[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos
+]{python}
+
+for i in range(5):
+    print(i) # oui
+
+\end{minted}
 
 \newpage
 \section{Annexe 2}
