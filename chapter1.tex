@@ -1,7 +1,17 @@
 \chapter{Modélisation}
 \label{chaper-1}
 
-Hypothèses physiques
+Hypothèses physiques...\\
+
+On utilise les \textbf{hypothèses de champ lointain}, ce qui nous permet de modéliser la propagation des ondes électromagnétiques à l'aide de techniques de \textbf{\textit{ray-tracing}}. Les ondes sont supposées localement planes et leurs interactions avec l'environnement peuvent être calculées grâce aux modèles vus au cours (réflexion, transmission, diffraction). Nous utiliserons une géométrie de l'environnement simplifiée afin d'accélérer les calculs.\\
+On ne prend pas en compte la diffraction. On ignore les réflexions sur le plafond ou le sol. L'épaisseur des murs ne sera utilisée que pour le calcul des coefficients de transmission et réflexion. La détermination des chemins de propagation se fait de façon purement géométrique par la méthode des images. Chaque onde peut subir plusieurs interactions successivement le long de son trajet. On ne prend en compte que : \textbf{1.} l'onde directe, \textbf{2.} les ondes ayant subi une ou deux réflexions sur les murs. Chaque onde peut avoir subi des transmissions à travers des obstacles.\\
+La puissance reçue sera calculée de au centre de zones locales de 0,5m x 0,5m (puissance moyenne (8.80) du cours sera considérée pour chaque zone).\\
+
+Wi-Fi norme \textbf{IEEE 802.11ay}, opérant à \textbf{60GHz}. Nous considérons le problème dans un cadre \textbf{purement bidimensionnel}, la BS (\textit{base station}) et le récepteur se trouvent à la même hauteur. Antennes réceptrices et émettrices sont faites de \textbf{dipôles verticaux $\lambda/2$, sans pertes, avec une puissance d'émission de 20dBm}.\\
+Voir tableau pour les caractéristiques de chaque matériau des obstacles (brique, béton, cloison, vitre, et paroi métallique).\\
+
+La sensibilité du récepteur (un seuil de puissance reçue) dépend du débit binaire recherché. La zone où $P_{signal venant de la BS} > sensibilité récepteur$, est la \textbf{zone de couverture}. Nous supposerons que la sensibilité varie linéairement avec le débit binaire maximal atteignable. Quand en échelle log, les deux valeurs extrêmes sont: sensi=-90dBm -> débit=50Mb/s, sensi=-40dBm -> débit=40Gb/s (en dessous de -90dBm le communincation est impossible, et à partir de -40dBm le débit maximal est plafonné). Si plusieurs émetteurs, nous supposerons que le récepteur se connecte à l'émetteur offrant le plus de puissance (\textbf{donc pas de sommation des puissances de plusieurs émetteurs!}).\\
+
 
 \section{test section}
 \subsection{test subsection}
