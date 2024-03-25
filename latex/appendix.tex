@@ -3,29 +3,53 @@
 \addcontentsline{toc}{chapter}{Annexes}
 \renewcommand{\thesection}{\Alph{section}}
 
+Ces annexes comprennent des parties du code du projet.
 %\usemintedstyle{pastie}
 
 \section{main.cpp}
 \label{appendix:main.cpp}
 
-TOUT LE CODE WESH
+%TOUT LE CODE WESH
 
-%\inputminted{cpp}{../src/code.cpp}
-
-\begin{minted}[
+\inputminted[
 frame=lines,
 framesep=2mm,
 baselinestretch=1.2,
 fontsize=\footnotesize,
 linenos
-]{python}
+]{cpp}{../main.cpp}
 
-for i in range(5):
-    print(i) # oui
+% \begin{minted}[
+% frame=lines,
+% framesep=2mm,
+% baselinestretch=1.2,
+% fontsize=\footnotesize,
+% linenos
+% ]{python}
 
-\end{minted}
+% for i in range(5):
+%     print(i) # oui
+
+% \end{minted}
 
 \newpage
-\section{Annexe 2}
-\label{appendix:2}
-Ceci est une annexe.
+\section{mainwindow.cpp}
+\label{appendix:mainwindow.cpp}
+
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos
+]{cpp}{../mainwindow.cpp}
+
+
+
+
+
+\newpage
+\section{Autres codes}
+\label{appendix:autres-codes}
+D'autres parties du code sont disponible sur le Github du projet:\\
+\underline{\url{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}}.
