@@ -6,25 +6,204 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1000</width>
+    <height>517</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>500</height>
+   </size>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <property name="maximumSize">
+   <size>
+    <width>2000</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>802.11ay Raytracing Simulator</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../Pictures/coding-icon.png</normaloff>../../Pictures/coding-icon.png</iconset>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="locale">
+   <locale language="English" country="Belgium"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="runSimulationButton">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>40</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Run simulation</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="testHorizontalSlider">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="testHorizontalSliderLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Slider test</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="testHorizontalSliderLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Base Station Power [dBm]</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="testHorizontalSlider_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>160</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>110</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Value</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>160</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Value</string>
+    </property>
+   </widget>
+   <zorder>testHorizontalSlider</zorder>
+   <zorder>testHorizontalSliderLabel</zorder>
+   <zorder>runSimulationButton</zorder>
+   <zorder>testHorizontalSliderLabel_2</zorder>
+   <zorder>testHorizontalSlider_2</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>20</height>
+     <width>1000</width>
+     <height>18</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionReset"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuInfo">
+    <property name="title">
+     <string>Info</string>
+    </property>
+    <addaction name="actionMade_by_Lucas_Placentino"/>
+    <addaction name="actionSee_Github"/>
+   </widget>
+   <addaction name="menuTest"/>
+   <addaction name="menuInfo"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionMade_by_Lucas_Placentino">
+   <property name="text">
+    <string>Made by Lucas Placentino</string>
+   </property>
+  </action>
+  <action name="actionSee_Github">
+   <property name="text">
+    <string>See Github</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
