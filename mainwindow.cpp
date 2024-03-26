@@ -5,7 +5,10 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    printf("MainWindow - Class init\n");
     ui->setupUi(this);
+
+    printf("MainWindow - Class init end\n");
 }
 
 MainWindow::~MainWindow()
