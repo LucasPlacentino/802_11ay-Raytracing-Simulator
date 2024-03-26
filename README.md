@@ -7,3 +7,4 @@
 
 ## Auteurs
 - Lucas Placentino
+- Salman Houdaibi
