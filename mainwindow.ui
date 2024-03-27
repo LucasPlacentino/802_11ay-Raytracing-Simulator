@@ -41,113 +41,141 @@
    <locale language="English" country="Belgium"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="runSimulationButton">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>40</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Run simulation</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="testHorizontalSlider">
+   <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
-      <width>160</width>
-      <height>16</height>
+      <y>10</y>
+      <width>221</width>
+      <height>241</height>
      </rect>
     </property>
-    <property name="acceptDrops">
+    <property name="title">
+     <string>Simulation Settings</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <property name="flat">
      <bool>false</bool>
     </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>20</y>
+       <width>221</width>
+       <height>162</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>10</number>
+      </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="runSuccessOrFailText">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="margin">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="runSimulationButton">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Run simulation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="testHorizontalSliderLabel">
+          <property name="text">
+           <string>Slider test</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QSlider" name="testHorizontalSlider">
+            <property name="acceptDrops">
+             <bool>false</bool>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="testHorizontalSliderLabel_2">
+          <property name="text">
+           <string>Base Station Power [dBm]</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QSlider" name="sliderBaseStationPower">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="sliderBaseStationPowerValueText">
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </widget>
-   <widget class="QLabel" name="testHorizontalSliderLabel">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>161</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Slider test</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="testHorizontalSliderLabel_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>161</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Base Station Power [dBm]</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="testHorizontalSlider_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>160</y>
-      <width>160</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>110</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Value</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>160</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Value</string>
-    </property>
-   </widget>
-   <zorder>testHorizontalSlider</zorder>
-   <zorder>testHorizontalSliderLabel</zorder>
-   <zorder>runSimulationButton</zorder>
-   <zorder>testHorizontalSliderLabel_2</zorder>
-   <zorder>testHorizontalSlider_2</zorder>
-   <zorder>label</zorder>
-   <zorder>label_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -172,6 +200,9 @@
      <string>Info</string>
     </property>
     <addaction name="actionMade_by_Lucas_Placentino"/>
+    <addaction name="actionand_Salman_Houdaibi"/>
+    <addaction name="actionAbout"/>
+    <addaction name="separator"/>
     <addaction name="actionSee_Github"/>
    </widget>
    <addaction name="menuTest"/>
@@ -188,7 +219,7 @@
   </action>
   <action name="actionReset">
    <property name="text">
-    <string>Reset</string>
+    <string>Reset app</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -202,6 +233,16 @@
   <action name="actionSee_Github">
    <property name="text">
     <string>See Github</string>
+   </property>
+  </action>
+  <action name="actionand_Salman_Houdaibi">
+   <property name="text">
+    <string>and Salman Houdaibi</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

@@ -17,7 +17,22 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_runSimulationButton_clicked();
+
+
+    void on_sliderBaseStationPower_valueChanged(int value);
+
+    void on_actionExit_triggered();
+
+    void on_actionReset_triggered();
+
+    void on_actionSee_Github_triggered();
+
+    void on_actionAbout_triggered();
+
 private:
     Ui::MainWindow *ui;
+    bool runSimulation();
 };
 #endif // MAINWINDOW_H
