@@ -31,8 +31,13 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_actionSave_image_triggered();
+
+    void on_spinBoxBaseStationPower_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();
+    void changeBaseStationPower(int value);
 };
 #endif // MAINWINDOW_H

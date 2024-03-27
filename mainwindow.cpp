@@ -12,10 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    printf("MainWindow - Class init\n");
     ui->setupUi(this);
-
-    printf("MainWindow - Class init end\n");
 }
 
 MainWindow::~MainWindow()
@@ -44,24 +41,36 @@ bool MainWindow::runSimulation()
     }
 }
 
-
+void MainWindow::changeBaseStationPower(int value)
+{
+    ui->spinBoxBaseStationPower->setValue(value);
+    ui->sliderBaseStationPower->setValue(value);
+}
 
 void MainWindow::on_sliderBaseStationPower_valueChanged(int value)
 {
-    ui->sliderBaseStationPowerValueText->setText(QString::number(value));
+    changeBaseStationPower(value);
+}
+
+void MainWindow::on_spinBoxBaseStationPower_valueChanged(int value)
+{
+    changeBaseStationPower(value);
 }
 
 
 void MainWindow::on_actionExit_triggered()
 {
-    // TODO: close app
+    printf("Closing app...\n");
     qApp->quit();
 }
 
 
 void MainWindow::on_actionReset_triggered()
 {
+    printf("Resetting all values and restarting app...\n");
+
     // TODO: reset all user input values to default/reset app
+
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
@@ -87,12 +96,17 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionSave_image_triggered()
 {
     /*
-    if (simulation.ran)
+    if (simulation.ran) // checks if a simulation has run
     {
-        // TODO: save image from the simulation frame window
-    } else {
+        // TODO: save image from the simulation frame windowµ
+
+        printf("Saving simulation image...\n");
+    } else { // no simulation has already run
         // do nothing?
     }
     */
 }
+
+
+
 
