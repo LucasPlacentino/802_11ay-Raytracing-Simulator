@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_runSimulationButton_clicked()
 {
     // TODO: run whole simulation
-    printf("Starting simulation");
+    qInfo("Starting simulation");
     bool res = runSimulation();
     // TODO: show a small simualtion ran successfully text
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
@@ -35,8 +35,12 @@ bool MainWindow::runSimulation()
     try {
         // TODO
         //simulation = new Simulation.create();
+
+        qInfo("Simulation ended successfully");
         return true;
     } catch (...) {
+        qInfo("Simulation ended unsuccessfully");
+        //qError(error);
         return false;
     }
 }
@@ -67,7 +71,7 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionReset_triggered()
 {
-    printf("Resetting all values and restarting app...\n");
+    qInfo("Resetting all values and restarting app...");
 
     // TODO: reset all user input values to default/reset app
 
@@ -100,7 +104,7 @@ void MainWindow::on_actionSave_image_triggered()
     {
         // TODO: save image from the simulation frame windowµ
 
-        printf("Saving simulation image...\n");
+        qInfo("Saving simulation image...\n");
     } else { // no simulation has already run
         // do nothing?
     }
