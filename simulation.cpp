@@ -3,6 +3,7 @@
 Simulation::Simulation() {
     // constructor
 
+    this->number_of_obstacles = std::size(this->obstacles);
 }
 
 // destructor
