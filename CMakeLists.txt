@@ -23,6 +23,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(802_11ay-Raytracing-Simulator
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        simulation.h simulation.cpp
+        ray.h ray.cpp
+        obstacle.h obstacle.cpp
+
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET 802_11ay-Raytracing-Simulator APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

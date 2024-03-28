@@ -4,9 +4,11 @@
 #include <QProcess>
 #include <stdio.h>
 #include <QMessageBox>
+#include <QPainter> // use QPainter to render the floorplan and rays ?
 
+#include "simulation.h"
 
-//Simulation simulation = NULL;
+Simulation simulation; // use `extern Simulation simulation;` in other files?
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,7 +36,7 @@ bool MainWindow::runSimulation()
 {
     try {
         // TODO
-        //simulation = new Simulation.create();
+        ////simulation = Simulation(); //do not override the object, change/reset global one
 
         qInfo("Simulation ended successfully");
         return true;
@@ -74,6 +76,7 @@ void MainWindow::on_actionReset_triggered()
     qInfo("Resetting all values and restarting app...");
 
     // TODO: reset all user input values to default/reset app
+    simulation.resetAll();
 
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
