@@ -1,6 +1,7 @@
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
+#include <QGraphicsRectItem>
 #include <QPoint> // TODO: this one?
 
 
@@ -12,7 +13,7 @@ enum ObstacleType {
     ConcreteWall
 };
 
-class Obstacle
+class Obstacle//: QGraphicsPolygonItem // QGraphicsRectItem? QGraphicsItem? QGraphicsPolygonItem? QGraphicsPathItem?
 {
 public:
     Obstacle(

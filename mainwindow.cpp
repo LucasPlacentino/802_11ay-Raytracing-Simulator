@@ -4,7 +4,12 @@
 #include <QProcess>
 #include <stdio.h>
 #include <QMessageBox>
-#include <QPainter> // use QPainter to render the floorplan and rays ?
+
+// https://doc.qt.io/qt-6/graphicsview.html (replaces QCanvas) :
+#include <QGraphicsScene> // The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.
+#include <QGraphicsView> // displays the content of the QGraphicsScene
+
+////#include <QPainter> // use QPainter to render the floorplan and rays ?
 
 #include "simulation.h"
 

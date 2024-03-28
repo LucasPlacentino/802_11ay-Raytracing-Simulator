@@ -47,7 +47,7 @@
       <x>10</x>
       <y>10</y>
       <width>271</width>
-      <height>461</height>
+      <height>451</height>
      </rect>
     </property>
     <property name="title">
@@ -245,6 +245,19 @@
       </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView">
+    <property name="geometry">
+     <rect>
+      <x>295</x>
+      <y>0</y>
+      <width>691</width>
+      <height>461</height>
+     </rect>
+    </property>
+    <property name="renderHints">
+     <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
