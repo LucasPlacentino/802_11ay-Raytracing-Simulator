@@ -41,6 +41,8 @@ private slots:
 
     void on_addTransmitterButton_clicked();
 
+    void on_deleteBaseStationPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();

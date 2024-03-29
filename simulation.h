@@ -11,7 +11,8 @@ public:
 
     void resetAll();
     void createBaseStation(Transmitter transmitter);
-    Transmitter getBaseStation(int index);
+    Transmitter* getBaseStation(int index);
+    void deleteBaseStation(int index);
 private:
     std::vector<Obstacle> obstacles; // TODO: NOT USE A LIST ?!
     unsigned int number_of_obstacles;

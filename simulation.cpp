@@ -13,14 +13,24 @@ void Simulation::resetAll() {
 
 }
 
-Transmitter Simulation::getBaseStation(int index) {
+Transmitter* Simulation::getBaseStation(int index) {
     if (index < 0 || index >= baseStations.size()) {
         qWarning("baseStations index out of range");
         throw std::out_of_range("baseStations index out of range");
     }
-    return this->baseStations.at(index);
+    return &this->baseStations.at(index);
 }
 
 void Simulation::createBaseStation(Transmitter transmitter) {
     this->baseStations.push_back(transmitter);
+}
+
+void Simulation::deleteBaseStation(int index) {
+    if (index >= 0 || index < baseStations.size())
+    {
+        this->baseStations.erase(baseStations.begin()+index);
+    } else {
+        qWarning("deleteBaseStation error: index out of range");
+        throw std::out_of_range("deleteBaseStation error: index out of range");
+    }
 }

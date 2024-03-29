@@ -61,8 +61,8 @@ bool MainWindow::runSimulation()
 void MainWindow::changeBaseStationPower(int value)
 {
     // TODO: change value for this specific base station
-    Transmitter base_station = simulation.getBaseStation(currentEditingBaseStation_index);
-    base_station.setPower_dBm(value);
+    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    base_station->setPower_dBm(value);
     showBaseStationPower(value);
 }
 
@@ -170,7 +170,7 @@ void MainWindow::on_transmitterSelector_activated(int index)
 
     // set current editing transmitter to this one
     currentEditingBaseStation_index = index;
-    showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
+    showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index)->getPower_dBm());
     //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
 }
 
@@ -195,6 +195,23 @@ void MainWindow::on_addTransmitterButton_clicked()
 
     } else {
         qInfo("There is already the maximum number of base stations");
+    }
+}
+
+
+void MainWindow::on_deleteBaseStationPushButton_clicked()
+{
+    //currentEditingBaseStation_index
+    if (ui->transmitterSelector->count()>1 && currentEditingBaseStation_index != 1)
+    {
+        ui->transmitterSelector->removeItem(currentEditingBaseStation_index);
+        simulation.deleteBaseStation(currentEditingBaseStation_index);
+
+        int previous_item_index = currentEditingBaseStation_index-1;
+        on_transmitterSelector_activated(previous_item_index);
+        ui->transmitterSelector->setCurrentIndex(previous_item_index);
+    } else {
+        qDebug("Cannot delete Base Station 1");
     }
 }
 
