@@ -4,6 +4,8 @@
 #include <QProcess>
 #include <stdio.h>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QDir>
 
 // https://doc.qt.io/qt-6/graphicsview.html (replaces QCanvas) :
 #include <QGraphicsScene> // The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.
@@ -15,11 +17,15 @@
 
 Simulation simulation; // use `extern Simulation simulation;` in other files?
 
+int currentEditingBaseStation_index = 0;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    initFirstBaseStation();
     ui->setupUi(this);
+    showFirstBaseStation();
 }
 
 MainWindow::~MainWindow()
@@ -54,8 +60,10 @@ bool MainWindow::runSimulation()
 
 void MainWindow::changeBaseStationPower(int value)
 {
-    ui->spinBoxBaseStationPower->setValue(value);
-    ui->sliderBaseStationPower->setValue(value);
+    // TODO: change value for this specific base station
+    Transmitter base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    base_station.setPower_dBm(value);
+    showBaseStationPower(value);
 }
 
 void MainWindow::on_sliderBaseStationPower_valueChanged(int value)
@@ -110,15 +118,83 @@ void MainWindow::on_actionSave_image_triggered()
     /*
     if (simulation.ran) // checks if a simulation has run
     {
-        // TODO: save image from the simulation frame windowµ
+        // TODO: save image from the simulation frame window
 
-        qInfo("Saving simulation image...\n");
     } else { // no simulation has already run
         // do nothing?
     }
     */
+
+    //get the simulation Scene ?
+
+    // size = scene->sceneRect().size().toSize(); // get the Scene size
+    QImage img(size(), QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+    QPainter painter(&img);
+    painter.setRenderHint(QPainter::Antialiasing);
+    //renderscene() //&painter //? scene->render(&painter);
+
+    QString img_filename= QFileDialog::getSaveFileName(
+        this,
+        tr("Save Image"),
+        QDir::currentPath(),
+        "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)"
+    );
+    bool success = img.save(img_filename);
+    success? qInfo("Image saved") : qInfo("Cancelled");
+
 }
 
 
+void MainWindow::initFirstBaseStation() {
+    //TODO: create a new transmitter object
+    simulation.createBaseStation(
+        Transmitter(0, "Base Station 1", 20)
+        );
+}
 
+void MainWindow::showFirstBaseStation() {
+    QString new_item = QString("Base Station 1");
+    ui->transmitterSelector->addItem(new_item);
+    ui->transmitterSelector->setCurrentIndex(0);
+    on_transmitterSelector_activated(0);
+}
+
+void MainWindow::showBaseStationPower(int value_dBm) {
+    ui->spinBoxBaseStationPower->setValue(value_dBm);
+    ui->sliderBaseStationPower->setValue(value_dBm);
+}
+
+void MainWindow::on_transmitterSelector_activated(int index)
+{
+    qDebug() << "Selected base station: " << index+1;
+
+    // set current editing transmitter to this one
+    currentEditingBaseStation_index = index;
+    showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
+    //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
+}
+
+
+void MainWindow::on_addTransmitterButton_clicked()
+{
+    if (ui->transmitterSelector->count() < ui->transmitterSelector->maxCount()) //check if has not reached the max number of transmitters
+    {
+        qDebug("Added base station");
+
+        //TODO: create a new transmitter object
+        QString new_item = QString("Base Station %1").arg(ui->transmitterSelector->count()+1);
+        ui->transmitterSelector->addItem(new_item);
+
+        int new_item_index = ui->transmitterSelector->findText(new_item);
+
+        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20));
+
+        on_transmitterSelector_activated(new_item_index);
+        ui->transmitterSelector->setCurrentIndex(new_item_index);
+
+
+    } else {
+        qInfo("There is already the maximum number of base stations");
+    }
+}
 

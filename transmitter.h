@@ -4,10 +4,20 @@
 #include <QGraphicsEllipseItem>
 
 
-class Transmitter: QGraphicsEllipseItem // QGraphicsEllipseItem?
+class Transmitter//: QGraphicsEllipseItem // QGraphicsEllipseItem?
 {
 public:
-    Transmitter();
+    Transmitter(
+        int selector_index,
+        QString name,
+        int power_dBm
+        );
+    int getPower_dBm();
+    void setPower_dBm(int power_dBm);
+private:
+    int selector_index;
+    QString name;
+    int power_dBm;
 };
 
 #endif // TRANSMITTER_H

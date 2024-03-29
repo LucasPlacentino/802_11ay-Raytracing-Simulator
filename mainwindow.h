@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "transmitter.h"
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -35,9 +37,16 @@ private slots:
 
     void on_spinBoxBaseStationPower_valueChanged(int value);
 
+    void on_transmitterSelector_activated(int index);
+
+    void on_addTransmitterButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();
     void changeBaseStationPower(int value);
+    void initFirstBaseStation();
+    void showFirstBaseStation();
+    void showBaseStationPower(int value_dBm);
 };
 #endif // MAINWINDOW_H

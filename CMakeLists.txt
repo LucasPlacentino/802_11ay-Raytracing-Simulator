@@ -27,7 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ray.h ray.cpp
         obstacle.h obstacle.cpp
         transmitter.h transmitter.cpp
-        receiver.h receiver.cpp
+
 
 
 
