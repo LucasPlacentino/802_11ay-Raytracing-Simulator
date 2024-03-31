@@ -70,19 +70,19 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
-       <number>10</number>
+       <number>4</number>
       </property>
       <property name="leftMargin">
-       <number>10</number>
+       <number>4</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>4</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QLabel" name="runSuccessOrFailText">
@@ -141,7 +141,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>6</number>
+         <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -150,6 +150,12 @@
           </property>
           <item>
            <widget class="QLabel" name="testHorizontalSliderLabel">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="text">
              <string>Slider test</string>
             </property>
@@ -161,6 +167,12 @@
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QSlider" name="testHorizontalSlider">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="acceptDrops">
              <bool>false</bool>
             </property>
@@ -171,6 +183,12 @@
           </item>
           <item>
            <widget class="QSpinBox" name="testSpinBox">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="suffix">
              <string/>
             </property>
@@ -224,6 +242,21 @@
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
@@ -237,7 +270,7 @@
           <property name="maximumSize">
            <size>
             <width>20</width>
-            <height>16777215</height>
+            <height>20</height>
            </size>
           </property>
           <property name="text">
@@ -247,6 +280,12 @@
         </item>
         <item>
          <widget class="QComboBox" name="transmitterSelector">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="currentText">
            <string/>
           </property>
@@ -261,51 +300,87 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="baseStationSliderLabel">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>12</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Base Station Power [dBm]</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QSlider" name="sliderBaseStationPower">
-          <property name="maximum">
-           <number>30</number>
-          </property>
-          <property name="value">
-           <number>20</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="tickPosition">
-           <enum>QSlider::TicksBelow</enum>
-          </property>
-          <property name="tickInterval">
-           <number>2</number>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="baseStationSliderLabel">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Base Station Transmitting Power</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="unitDBmLabel">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>[dBm]</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxBaseStationPower">
-          <property name="suffix">
-           <string/>
-          </property>
-          <property name="maximum">
-           <number>30</number>
-          </property>
-          <property name="value">
-           <number>20</number>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QSlider" name="sliderBaseStationPower">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximum">
+             <number>30</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TicksAbove</enum>
+            </property>
+            <property name="tickInterval">
+             <number>2</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxBaseStationPower">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="suffix">
+             <string/>
+            </property>
+            <property name="maximum">
+             <number>30</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -317,6 +392,12 @@
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QLabel" name="baseStationXlabel">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>12</height>
+               </size>
+              </property>
               <property name="text">
                <string>X Coordinate</string>
               </property>
@@ -324,6 +405,12 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="baseStationXspinBox">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>20</height>
+               </size>
+              </property>
               <property name="decimals">
                <number>1</number>
               </property>
@@ -344,6 +431,12 @@
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <widget class="QLabel" name="baseStationYlabel">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>12</height>
+               </size>
+              </property>
               <property name="text">
                <string>Y Coordinate</string>
               </property>
@@ -351,6 +444,12 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="baseStationYspinBox">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>20</height>
+               </size>
+              </property>
               <property name="decimals">
                <number>1</number>
               </property>
@@ -391,6 +490,12 @@
         </item>
         <item>
          <widget class="QPushButton" name="deleteBaseStationPushButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="text">
            <string>Delete BS</string>
           </property>

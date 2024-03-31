@@ -26,9 +26,12 @@ void Simulation::createBaseStation(Transmitter transmitter) {
 }
 
 void Simulation::deleteBaseStation(int index) {
-    if (index >= 0 || index < baseStations.size())
+    if (index > 0 || index < baseStations.size())
     {
         this->baseStations.erase(baseStations.begin()+index);
+    } else if (index == 0)
+    {
+        qDebug("Cannot delete Base Station 1");
     } else {
         qWarning("deleteBaseStation error: index out of range");
         throw std::out_of_range("deleteBaseStation error: index out of range");

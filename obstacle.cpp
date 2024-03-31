@@ -1,15 +1,16 @@
 #include "obstacle.h"
 
-Obstacle::Obstacle(ObstacleType type, QPoint start_coordinates, QPoint end_coordinates, float relative_permittivity, float conductivity) {
-    this->type = type;
+Obstacle::Obstacle(QPoint start_coordinates, QPoint end_coordinates, ObstacleType material, qreal relative_permittivity, qreal conductivity, int thickness) {
+    this->material = material;
     this->start_coordinates = start_coordinates;
     this->end_coordinates = end_coordinates;
-    this->relative_permittivity = relative_permittivity;
-    this->conductivity = conductivity;
+    this->properties.relative_permittivity = relative_permittivity;
+    this->properties.conductivity = conductivity;
+    this->thickness = thickness;
 }
 
-ObstacleType Obstacle::getType() {
-    return this->type;
+ObstacleType Obstacle::getMaterial() {
+    return this->material;
 }
 
 QPoint Obstacle::getStartCoordinates() {
@@ -20,11 +21,11 @@ QPoint Obstacle::getEndCoordinates() {
     return this->end_coordinates;
 }
 
-float Obstacle::getRelativePermittivity() {
-    return this->relative_permittivity;
+qreal Obstacle::getRelativePermittivity() {
+    return this->properties.relative_permittivity;
 }
 
-float Obstacle::getConductivity() {
-    return this->conductivity;
+qreal Obstacle::getConductivity() {
+    return this->properties.conductivity;
 }
 

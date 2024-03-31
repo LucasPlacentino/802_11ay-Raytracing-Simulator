@@ -3,7 +3,13 @@
 
 #include <QGraphicsRectItem>
 #include <QPoint> // TODO: this one?
+#include <complex>
 
+
+struct WallProperties {
+    qreal relative_permittivity;
+    qreal conductivity;
+};
 
 enum ObstacleType {
     BrickWall,
@@ -13,28 +19,38 @@ enum ObstacleType {
     ConcreteWall
 };
 
-class Obstacle//: QGraphicsPolygonItem // QGraphicsRectItem? QGraphicsItem? QGraphicsPolygonItem? QGraphicsPathItem?
+struct Wall {
+    ObstacleType material;
+    WallProperties properties;
+    //std::complex<qreal> todo;
+};
+
+class Obstacle: Wall, QGraphicsLineItem//: QGraphicsPolygonItem // QGraphicsRectItem? QGraphicsItem? QGraphicsPolygonItem? QGraphicsPathItem?
 {
 public:
     Obstacle(
-        ObstacleType type,
         QPoint start_coordinates,
         QPoint end_coordinates,
-        float relative_permittivity,
-        float conductivity
+        ObstacleType material,
+        qreal relative_permittivity, // $\epsilon_r$
+        qreal conductivity, // $\sigma$
+        int thickness
     ); // constructor
 
-    ObstacleType getType();
+    ObstacleType getMaterial();
     QPoint getStartCoordinates();
     QPoint getEndCoordinates();
-    float getRelativePermittivity(); // really needed?
-    float getConductivity(); // really needed?
+    qreal getRelativePermittivity(); // really needed?
+    qreal getConductivity(); // really needed?
 private:
-    ObstacleType type;
+    int thickness;
     QPoint start_coordinates;
     QPoint end_coordinates;
+    /* // in Wall class
+    ObstacleType type;
     float relative_permittivity;
     float conductivity;
+    */
 };
 
 #endif // OBSTACLE_H

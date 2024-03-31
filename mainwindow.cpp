@@ -148,7 +148,7 @@ void MainWindow::on_actionSave_image_triggered()
 void MainWindow::initFirstBaseStation() {
     //TODO: create a new transmitter object
     simulation.createBaseStation(
-        Transmitter(0, "Base Station 1", 20)
+        Transmitter(0, "Base Station 1", 20, QPoint(1,1)) // TODO: QPoint
         );
 }
 
@@ -187,7 +187,7 @@ void MainWindow::on_addTransmitterButton_clicked()
 
         int new_item_index = ui->transmitterSelector->findText(new_item);
 
-        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20));
+        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPoint(1,1))); // TODO: QPoint
 
         on_transmitterSelector_activated(new_item_index);
         ui->transmitterSelector->setCurrentIndex(new_item_index);
@@ -202,7 +202,7 @@ void MainWindow::on_addTransmitterButton_clicked()
 void MainWindow::on_deleteBaseStationPushButton_clicked()
 {
     //currentEditingBaseStation_index
-    if (ui->transmitterSelector->count()>1 && currentEditingBaseStation_index != 1)
+    if (ui->transmitterSelector->count()>1 && currentEditingBaseStation_index != 0)
     {
         ui->transmitterSelector->removeItem(currentEditingBaseStation_index);
         simulation.deleteBaseStation(currentEditingBaseStation_index);
