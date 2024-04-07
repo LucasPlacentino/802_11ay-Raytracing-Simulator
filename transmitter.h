@@ -4,7 +4,7 @@
 #include <QGraphicsEllipseItem>
 
 
-class Transmitter//: QGraphicsEllipseItem // QGraphicsEllipseItem?
+class Transmitter// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
 {
 public:
     Transmitter(
@@ -25,6 +25,8 @@ private:
     QPoint coordinates;
     qulonglong frequency = 60*1e9; // 802.11ay spec. Compiler complains with 60e9
     qulonglong* f = &frequency;
+    // qreal beta_0 = ...;
+    // qreal h_e = ...;
 };
 
 #endif // TRANSMITTER_H

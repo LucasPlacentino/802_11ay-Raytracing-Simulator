@@ -23,9 +23,15 @@ struct Wall {
     ObstacleType material;
     WallProperties properties;
     //std::complex<qreal> todo;
+    //std::complex<qreal> gamma_m;
+    //qreal alpha_m;
+    //qreal beta_m;
+    //qreal beta_0;
+    //std::complex<qreal> Z;
+    //qreal Z_0;
 };
 
-class Obstacle: Wall, QGraphicsLineItem//: QGraphicsPolygonItem // QGraphicsRectItem? QGraphicsItem? QGraphicsPolygonItem? QGraphicsPathItem?
+class Obstacle: Wall, public QGraphicsLineItem//: QGraphicsPolygonItem // QGraphicsRectItem? QGraphicsItem? QGraphicsPolygonItem? QGraphicsPathItem?
 {
 public:
     Obstacle(
@@ -34,7 +40,7 @@ public:
         ObstacleType material,
         qreal relative_permittivity, // $\epsilon_r$
         qreal conductivity, // $\sigma$
-        int thickness
+        int thickness_cm
     ); // constructor
 
     ObstacleType getMaterial();
@@ -43,7 +49,7 @@ public:
     qreal getRelativePermittivity(); // really needed?
     qreal getConductivity(); // really needed?
 private:
-    int thickness;
+    int thickness_cm;
     QPoint start_coordinates;
     QPoint end_coordinates;
     /* // in Wall class

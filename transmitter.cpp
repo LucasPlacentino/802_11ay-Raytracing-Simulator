@@ -2,6 +2,7 @@
 
 Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPoint coordinates)
 {
+    //setAcceptHoverEvents(true);
     this->selector_index = selector_index;
     this->name = name;
     this->power_dBm = power_dBm;
