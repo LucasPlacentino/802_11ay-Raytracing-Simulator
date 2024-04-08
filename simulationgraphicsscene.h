@@ -1,13 +1,15 @@
 #ifndef SIMULATIONGRAPHICSSCENE_H
 #define SIMULATIONGRAPHICSSCENE_H
 
+#include "heatmapgradientlegend.h"
+
 #include <QGraphicsScene>
 
 class SimulationGraphicsScene : public QGraphicsScene
 {
 public:
-    //explicit SimulationGraphicsScene(QObject *parent = nullptr);
-    SimulationGraphicsScene();
+    SimulationGraphicsScene(QObject *parent = nullptr);
+    //SimulationGraphicsScene();
 
     void drawScene();
 
@@ -17,7 +19,10 @@ private:
     void drawWalls(); // or drawWall() ?
     //void drawGrid(); // ?
 
-    QLinearGradient* gradient; // power color gradient
+    void drawGradientLegend();
+    HeatmapGradientLegend *gradient_legend = new HeatmapGradientLegend();
+    //QLinearGradient* gradient; // power color gradient
+    // gradient is a QColor::fromHsl([value between 0 and 240, 0 being red and 240 darkblue], 255, 128 or 92)
 
 };
 

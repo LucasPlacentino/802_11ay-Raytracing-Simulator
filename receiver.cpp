@@ -23,9 +23,9 @@ Receiver::Receiver(double power_dBm)
         this->bitrate_Mbps = ((power_mW - min_power_mW) / (max_power_mW - min_power_mW)) * (max_bitrate_Mbps - min_bitrate_Mbps) + min_bitrate_Mbps;
 
         // Color gradient heatmap scale:
-        // normalize power_dBm (or bitrate) to [0,360[
-        int h = static_cast<int>((power_dBm - -90) * (360 - 0) / (-40 - -90) + 0) % 360; // modulo 360 because QColor::fromHsl() h is in [0,359]
-        this->cell_color = QColor::fromHsl(h, 255, 128); // or QColor::fromHsv()
+        // normalize power_dBm (or bitrate) to [0,360[ or more like [0,240] so that we have between red and dark blue
+        int h = static_cast<int>((power_dBm - -90) * (0 - 240) / (-40 - -90) + 240); // ? modulo 360 because QColor::fromHsl() h is in [0,359]
+        this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
     }
 
     this->setToolTip(QString("Signal: %1dBm").arg(this->power_dBm)); // here ? or in a ::hoverMoveEvent() ?

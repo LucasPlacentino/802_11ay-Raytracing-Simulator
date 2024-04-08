@@ -6,9 +6,9 @@ Simulation::Simulation() {
     this->number_of_obstacles = std::size(this->obstacles);
     //this->baseStations = std::vector<Transmitter>();
     ////this->simulation_scene; // not needed, will be default-initialized when Simulation is initialized
+    //this->scene = scene;
 }
 
-// destructor
 void Simulation::resetAll() {
     // TODO: reset all simualtion parameters
 
@@ -38,3 +38,4 @@ void Simulation::deleteBaseStation(int index) {
         throw std::out_of_range("deleteBaseStation error: index out of range");
     }
 }
+

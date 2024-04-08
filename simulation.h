@@ -15,12 +15,13 @@ public:
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
 
-    //SimulationGraphicsScene simulation_scene;
+    SimulationGraphicsScene* scene=nullptr;
+
 private:
-    std::vector<Obstacle> obstacles; // NOT USE A LIST ? => vector<Type>
+
+    std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type>
     unsigned int number_of_obstacles;
     std::vector<Transmitter> baseStations;
-
 
 };
 

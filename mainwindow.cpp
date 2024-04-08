@@ -14,8 +14,11 @@
 ////#include <QPainter> // use QPainter to render the floorplan and rays ?
 
 #include "simulation.h"
+#include "simulationgraphicsscene.h"
 
-Simulation simulation; // use `extern Simulation simulation;` in other files?
+//SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
+Simulation simulation = Simulation(); // global simulation object, use `extern Simulation simulation;` in other files?
+//QGraphicsView simulation_view(simulation_scene);
 
 int currentEditingBaseStation_index = 0;
 
@@ -26,6 +29,13 @@ MainWindow::MainWindow(QWidget *parent)
     initFirstBaseStation();
     ui->setupUi(this);
     showFirstBaseStation();
+
+    SimulationGraphicsScene simulation_scene = new SimulationGraphicsScene(this);
+    ui->simulationGraphicsView->setScene(&simulation_scene);
+    // useful to pass the scene to Simulation ? like:
+    simulation.scene = &simulation_scene;
+
+    ui->simulationGraphicsView->show(); // ?
 }
 
 MainWindow::~MainWindow()
@@ -127,13 +137,13 @@ void MainWindow::on_actionSave_image_triggered()
 
     // get the simulation Scene ?
     //QGraphicsScene* scene = &simulation.simulation_scene;
-
-    //size = scene->sceneRect().size().toSize(); // get the Scene size
-    QImage img(size(), QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+    // scene is: simulation_scene or simulation->scene
+    QSize size = simulation.scene->sceneRect().size().toSize(); // get the Scene size // FIXME: SEG FAULTS ?
+    QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing);
     // renderscene() //&painter //? scene->render(&painter);
-    //scene->render(&painter);
+    simulation.scene->render(&painter);
 
     QString img_filename= QFileDialog::getSaveFileName(
         this,
