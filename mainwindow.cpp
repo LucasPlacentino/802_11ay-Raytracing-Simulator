@@ -31,11 +31,21 @@ MainWindow::MainWindow(QWidget *parent)
     showFirstBaseStation();
 
     SimulationGraphicsScene simulation_scene = new SimulationGraphicsScene(this);
-    ui->simulationGraphicsView->setScene(&simulation_scene);
-    // useful to pass the scene to Simulation ? like:
     simulation.scene = &simulation_scene;
+    simulation.scene->setSceneRect(QRectF(0,0, 1000, 500));
+    //qDebug() << "scene pointer (&simulation_scene): " << &simulation_scene << "\n";
+    //qDebug() << "scene pointer (simulation.scene): " << simulation.scene << "\n";
+    simulation.view = ui->simulationGraphicsView;
+    simulation.view->setScene(simulation.scene);
 
-    ui->simulationGraphicsView->show(); // ?
+    //?????????????? :
+    simulation.scene->setBackgroundBrush(Qt::black);
+    simulation.view->setBackgroundBrush(Qt::black);
+    simulation.view->scene()->setBackgroundBrush(Qt::black);
+
+    simulation.view->scene()->update();
+    simulation.view->viewport()->update();
+    simulation.view->show();
 }
 
 MainWindow::~MainWindow()

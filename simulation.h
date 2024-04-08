@@ -16,6 +16,7 @@ public:
     void deleteBaseStation(int index);
 
     SimulationGraphicsScene* scene=nullptr;
+    QGraphicsView* view=nullptr;
 
 private:
 
