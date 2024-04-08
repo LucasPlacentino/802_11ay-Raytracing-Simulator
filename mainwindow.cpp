@@ -58,7 +58,7 @@ void MainWindow::on_runSimulationButton_clicked()
     // TODO: run whole simulation
     qInfo("Starting simulation");
     bool res = runSimulation();
-    // TODO: show a small simualtion ran successfully text
+    // TODO: show a small simulation ran successfully text
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
     ui->runSuccessOrFailText->setText(res ? "Success": "Failed");
 }
@@ -91,6 +91,7 @@ void MainWindow::on_sliderBaseStationPower_valueChanged(int value)
     changeBaseStationPower(value);
 }
 
+// TODO: do the same with base station coordinates
 void MainWindow::on_spinBoxBaseStationPower_valueChanged(int value)
 {
     changeBaseStationPower(value);
