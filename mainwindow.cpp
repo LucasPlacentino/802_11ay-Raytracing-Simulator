@@ -126,7 +126,7 @@ void MainWindow::on_actionSave_image_triggered()
     */
 
     // get the simulation Scene ?
-    QGraphicsScene* scene = &simulation.simulation_scene;
+    //QGraphicsScene* scene = &simulation.simulation_scene;
 
     //size = scene->sceneRect().size().toSize(); // get the Scene size
     QImage img(size(), QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?

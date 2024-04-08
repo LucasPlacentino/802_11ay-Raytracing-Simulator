@@ -12,6 +12,8 @@ public:
     qulonglong getBitrateMbps();
     QColor getCellColor();
 
+protected:
+    //void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 private:
     double power_dBm;
     qulonglong bitrate_Mbps;

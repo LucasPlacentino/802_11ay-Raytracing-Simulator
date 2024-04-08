@@ -28,8 +28,16 @@ Receiver::Receiver(double power_dBm)
         this->cell_color = QColor::fromHsl(h, 255, 128); // or QColor::fromHsv()
     }
 
-    setAcceptHoverEvents(true); // show details on mouse hover
+    this->setToolTip(QString("Signal: %1dBm").arg(this->power_dBm)); // here ? or in a ::hoverMoveEvent() ?
+    //setAcceptHoverEvents(true); // trigger function below on mouse hover events (i.e show a tooltip)
 }
+
+/*
+void Receiver::hoverMoveEvent(QGraphicsSceneHoverEvent* event) // ?
+{
+    this->setToolTip(QString("Signal: %1dBm").arg(this->power_dBm)); // here ? or just in constructor ?
+}
+*/
 
 double Receiver::getPower_dBm()
 {

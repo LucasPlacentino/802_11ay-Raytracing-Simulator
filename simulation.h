@@ -14,7 +14,8 @@ public:
     void createBaseStation(Transmitter transmitter);
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
-    SimulationGraphicsScene simulation_scene;
+
+    //SimulationGraphicsScene simulation_scene;
 private:
     std::vector<Obstacle> obstacles; // NOT USE A LIST ? => vector<Type>
     unsigned int number_of_obstacles;
