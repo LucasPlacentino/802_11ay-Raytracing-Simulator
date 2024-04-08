@@ -13,6 +13,8 @@ public:
     qreal start_y;
     qreal end_x;
     qreal end_y;
+
+
 private:
 
 };

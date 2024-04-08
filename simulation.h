@@ -16,9 +16,11 @@ public:
     void deleteBaseStation(int index);
     SimulationGraphicsScene simulation_scene;
 private:
-    std::vector<Obstacle> obstacles; // TODO: NOT USE A LIST ?!
+    std::vector<Obstacle> obstacles; // NOT USE A LIST ? => vector<Type>
     unsigned int number_of_obstacles;
     std::vector<Transmitter> baseStations;
+
+
 };
 
 #endif // SIMULATION_H
