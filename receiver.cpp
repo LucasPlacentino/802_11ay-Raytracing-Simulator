@@ -1,6 +1,6 @@
 #include "receiver.h"
 
-Receiver::Receiver(int power_dBm)
+Receiver::Receiver(double power_dBm)
 {
     this->cell_color = Qt::black;
 
@@ -13,17 +13,16 @@ Receiver::Receiver(int power_dBm)
     } else {
         // TODO: conversion to bitrate (beware log scale)
 
-        double value = 0.5; // TODO: normalize power_dBm (or bitrate) to [0,1]
-        double h = (1 - value) * 100;
-        double s = 100;
-        double l = value * 50;
-        this->cell_color = QColor::fromHsl(h, s, l); // or QColor::fromHsv()
+        // Color gradient heatmap scale:
+        // normalize power_dBm (or bitrate) to [0,360]
+        int h = static_cast<int>((power_dBm - -90) * (360 - 0) / (-40 - -90) + 0) % 360; // modulo 360 because QColor::fromHsl() h is in [0,359]
+        this->cell_color = QColor::fromHsl(h, 255, 128); // or QColor::fromHsv()
     }
 
     setAcceptHoverEvents(true); // show details on mouse hover
 }
 
-int Receiver::getPower_dBm()
+double Receiver::getPower_dBm()
 {
     return this->power_dBm;
 }
