@@ -9,12 +9,12 @@ public:
     Receiver(double power_dBm);
 
     double getPower_dBm();
-    qulonglong getBitrate();
+    qulonglong getBitrateMbps();
     QColor getCellColor();
 
 private:
     double power_dBm;
-    qulonglong bitrate;
+    qulonglong bitrate_Mbps;
     QColor cell_color;
 };
 
