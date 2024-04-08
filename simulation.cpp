@@ -5,6 +5,7 @@ Simulation::Simulation() {
 
     this->number_of_obstacles = std::size(this->obstacles);
     //this->baseStations = std::vector<Transmitter>();
+    this->simulation_scene; // ?
 }
 
 // destructor
