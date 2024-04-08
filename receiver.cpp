@@ -11,7 +11,7 @@ Receiver::Receiver(int power_dBm)
         this->bitrate = 0;
         this->cell_color = Qt::black;
     } else {
-        //TODO: conversion to bitrate (beware log scale)
+        // TODO: conversion to bitrate (beware log scale)
 
         double value = 0.5; // TODO: normalize power_dBm (or bitrate) to [0,1]
         double h = (1 - value) * 100;
@@ -28,7 +28,7 @@ int Receiver::getPower_dBm()
     return this->power_dBm;
 }
 
-long Receiver::getBitrate()
+qulonglong Receiver::getBitrate()
 {
     return this->bitrate;
 }

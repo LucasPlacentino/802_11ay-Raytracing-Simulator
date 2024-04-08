@@ -9,12 +9,12 @@ public:
     Receiver(int power_dBm);
 
     int getPower_dBm();
-    long getBitrate();
+    qulonglong getBitrate();
     QColor getCellColor();
 
 private:
     int power_dBm;
-    long bitrate;
+    qulonglong bitrate;
     QColor cell_color;
 };
 
