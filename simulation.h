@@ -2,6 +2,7 @@
 #define SIMULATION_H
 
 #include "obstacle.h"
+#include "receiver.h"
 #include "simulationgraphicsscene.h"
 #include "transmitter.h"
 
@@ -16,11 +17,15 @@ public:
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
     std::vector<Obstacle>* getObstacles();
+    int getNumberOfBaseStations();
 
     SimulationGraphicsScene* scene=nullptr;
     QGraphicsView* view=nullptr;
 
 private:
+
+    QList<QList<Receiver>> cells_matrix;
+    void computeCell(Receiver cell);
 
     std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type>
     unsigned int number_of_obstacles;

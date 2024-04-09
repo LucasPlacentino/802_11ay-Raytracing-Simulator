@@ -32,6 +32,7 @@ QPointF Transmitter::getCoordinates()
 void Transmitter::changeCoordinates(QPointF new_coordinates)
 {
     this->coordinates = new_coordinates;
+    // TODO: update the GraphicsScene to show base station at new coordinates.
 }
 
 

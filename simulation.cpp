@@ -7,6 +7,8 @@ Simulation::Simulation() {
     //this->baseStations = std::vector<Transmitter>();
     ////this->simulation_scene; // not needed, will be default-initialized when Simulation is initialized
     //this->scene = scene;
+
+
 }
 
 void Simulation::run()
@@ -49,5 +51,16 @@ void Simulation::deleteBaseStation(int index) {
 std::vector<Obstacle>* Simulation::getObstacles()
 {
     return &this->obstacles;
+}
+
+int Simulation::getNumberOfBaseStations()
+{
+    return this->baseStations.size();
+}
+
+void Simulation::computeCell(Receiver cell)
+{
+    // TODO: recursive function for each ray bounce from the transmitter
+
 }
 

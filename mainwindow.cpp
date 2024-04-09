@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
     simulation.scene = simulation_scene;
     //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
-    qDebug() << "scene pointer (&simulation_scene): " << simulation_scene << "\n";
-    qDebug() << "scene pointer (simulation.scene): " << simulation.scene << "\n";
+    qDebug() << "scene pointer (&simulation_scene): " << simulation_scene;
+    qDebug() << "scene pointer (simulation.scene): " << simulation.scene;
 
 
     // TESTING :
@@ -55,12 +55,12 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); // needed ?
 
     //simulation.view = ui->simulationGraphicsView;
-    //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView) << "\n";
-    //qDebug() << "view pointer (simulation.view): " << &simulation.view << "\n";
+    //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView);
+    //qDebug() << "view pointer (simulation.view): " << &simulation.view;
     //ui->simulationGraphicsView->setScene(simulation.scene);
     ui->simulationGraphicsView->setScene(simulation_scene);
-    //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene() << "\n";
-    //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene()<< "\n";
+    //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene();
+    //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene();
 
     //ui->simulationGraphicsView->scene()->setSceneRect(ui->simulationGraphicsView->frameRect());
     ui->simulationGraphicsView->fitInView(simulation_scene->itemsBoundingRect());
@@ -252,7 +252,7 @@ void MainWindow::initFirstBaseStation()
     // Creates the first (non-deletable) Base Station
     //TODO: create a new transmitter object
     simulation.createBaseStation(
-        Transmitter(0, "Base Station 1", 20, QPointF(1,1)) // TODO: QPoint
+        Transmitter(0, "Base Station 1", 20, QPointF(1,-1)) // TODO: QPoint
         );
 }
 
@@ -306,7 +306,7 @@ void MainWindow::on_addTransmitterButton_clicked()
 
         int new_item_index = ui->transmitterSelector->findText(new_item);
 
-        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,1))); // TODO: QPoint
+        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,-1))); // TODO: QPoint
 
         on_transmitterSelector_activated(new_item_index);
         ui->transmitterSelector->setCurrentIndex(new_item_index);

@@ -17,11 +17,12 @@ Obstacle::Obstacle(
     this->properties.conductivity = conductivity; // set properties hard coded in the switch case below ?
     this->thickness_cm = thickness_cm;
 
+    this->drawing_thickness = 2;
 
     QLineF line(this->start_coordinates,this->end_coordinates); // in func args ?
     setLine(line);
     QPen *pen = new QPen();
-    pen->setWidth(this->thickness_cm/100);
+    pen->setWidth(this->drawing_thickness);
 
     switch (this->material) {
     case BrickWall:

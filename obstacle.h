@@ -49,6 +49,7 @@ public:
     qreal getRelativePermittivity(); // really needed?
     qreal getConductivity(); // really needed?
 private:
+    int drawing_thickness;
     int thickness_cm;
     QPoint start_coordinates;
     QPoint end_coordinates;

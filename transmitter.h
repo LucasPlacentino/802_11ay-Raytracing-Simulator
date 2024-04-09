@@ -18,6 +18,8 @@ public:
     void setPower_dBm(int power_dBm);
     QPointF getCoordinates();
     void changeCoordinates(QPointF new_coordinates);
+
+    QGraphicsEllipseItem* graphicsIcon = new QGraphicsEllipseItem();
 private:
     int selector_index;
     QString name;

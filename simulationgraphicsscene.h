@@ -15,8 +15,9 @@ public:
 
 private:
     void drawRays(); // or drawRay() ?
-    void drawTransmitter();
+    void drawTransmitters(); // Base Station(s)
     void drawWalls(); // or drawWall() ?
+    void drawCells(); // "Receivers"
     //void drawGrid(); // ?
 
     void drawGradientLegend();

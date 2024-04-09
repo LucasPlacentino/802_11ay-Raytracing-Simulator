@@ -5,8 +5,10 @@ double min_power_dBm = -90.0;
 qulonglong max_bitrate_Mbps = 40*1e3;
 qulonglong min_bitrate_Mbps = 50;
 
-Receiver::Receiver(double power_dBm)
+Receiver::Receiver(double power_dBm, QPointF center_coordinates)
 {
+    this->center_coordinates = center_coordinates;
+    this->power_dBm = power_dBm;
     this->cell_color = Qt::black;
 
     if (power_dBm > max_power_dBm) {
@@ -28,14 +30,14 @@ Receiver::Receiver(double power_dBm)
         this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
     }
 
-    this->setToolTip(QString("Signal: %1dBm").arg(this->power_dBm)); // here ? or in a ::hoverMoveEvent() ?
+    this->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or in a ::hoverMoveEvent() ?
     //setAcceptHoverEvents(true); // trigger function below on mouse hover events (i.e show a tooltip)
 }
 
 /*
 void Receiver::hoverMoveEvent(QGraphicsSceneHoverEvent* event) // ?
 {
-    this->setToolTip(QString("Signal: %1dBm").arg(this->power_dBm)); // here ? or just in constructor ?
+    this->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or just in constructor ?
 }
 */
 

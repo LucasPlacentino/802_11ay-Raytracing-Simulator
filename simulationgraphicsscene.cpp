@@ -14,8 +14,19 @@ void SimulationGraphicsScene::drawRays()
 
 }
 
-void SimulationGraphicsScene::drawTransmitter()
+void SimulationGraphicsScene::drawTransmitters()
 {
+    for (int i = 0; i != simulation.getNumberOfBaseStations(); i++)
+    {
+        qDebug() << "Drawing base station " << i;
+        Transmitter* base_station = simulation.getBaseStation(i);
+        this->addItem(base_station->graphicsIcon);
+    }
+}
+
+void SimulationGraphicsScene::drawCells()
+{
+    // TODO: iterate over whole grid and draw each cell with its cell_color
 
 }
 
@@ -38,6 +49,7 @@ void SimulationGraphicsScene::drawWalls()
 
     for (auto it = walls->begin(); it != walls->end(); it++)
     {
+        qDebug("Drawing wall");
         // iterates through each obstacle
 
         // draw
