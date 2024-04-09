@@ -115,7 +115,8 @@ bool MainWindow::runSimulation()
     try {
         ////simulation = Simulation(); //do not override the object, change/reset global one
 
-        simulation.run(); // TODO: this
+        // TODO: user button to set if the lift is on this floor or not (bool simulation->liftIsOnFloor)
+        simulation.run(); // TODO: the run func
 
         qInfo("Simulation ended successfully");
         return true;

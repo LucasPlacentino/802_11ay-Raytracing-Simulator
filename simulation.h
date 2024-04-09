@@ -2,6 +2,7 @@
 #define SIMULATION_H
 
 #include "obstacle.h"
+#include "ray.h"
 #include "receiver.h"
 #include "simulationgraphicsscene.h"
 #include "transmitter.h"
@@ -17,18 +18,22 @@ public:
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
     std::vector<Obstacle>* getObstacles();
+    unsigned int getNumberOfObstacles();
     int getNumberOfBaseStations();
 
     SimulationGraphicsScene* scene=nullptr;
     QGraphicsView* view=nullptr;
 
+    bool lift_is_on_floor = false;
+    int max_ray_reflections = 2;
+
 private:
 
     QList<QList<Receiver>> cells_matrix;
     void computeCell(Receiver cell);
+    void traceRay(Ray* ray, int num_reflections);
 
-    std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type>
-    unsigned int number_of_obstacles;
+    std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
     std::vector<Transmitter> baseStations;
 
 };

@@ -7,13 +7,10 @@
 class Ray : public QGraphicsLineItem
 {
 public:
-    Ray();
+    Ray(QPointF start_point, QPointF end_point);
 
-    qreal start_x;
-    qreal start_y;
-    qreal end_x;
-    qreal end_y;
-
+    QList<QPointF> points;
+    int num_reflections = 0;
 
 private:
 

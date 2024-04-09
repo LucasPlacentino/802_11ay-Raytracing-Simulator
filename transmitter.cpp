@@ -9,12 +9,12 @@ Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPoint
     this->coordinates = coordinates;
 }
 
-int Transmitter::getPower_dBm()
+int Transmitter::getPower_dBm() const
 {
     return this->power_dBm;
 }
 
-double Transmitter::getPower()
+double Transmitter::getPower() const
 {
     return pow(10, this->power_dBm / 10);
 }
@@ -24,7 +24,7 @@ void Transmitter::setPower_dBm(int power_dBm)
     this->power_dBm = power_dBm;
 }
 
-QPointF Transmitter::getCoordinates()
+QPointF Transmitter::getCoordinates() const
 {
     return this->coordinates;
 }

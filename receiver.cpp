@@ -5,7 +5,7 @@ double min_power_dBm = -90.0;
 qulonglong max_bitrate_Mbps = 40*1e3;
 qulonglong min_bitrate_Mbps = 50;
 
-Receiver::Receiver(double power_dBm, QPointF center_coordinates)
+Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
 {
     this->center_coordinates = center_coordinates;
     this->power_dBm = power_dBm;
@@ -41,12 +41,12 @@ void Receiver::hoverMoveEvent(QGraphicsSceneHoverEvent* event) // ?
 }
 */
 
-double Receiver::getPower_dBm()
+double Receiver::getPower_dBm() const
 {
     return this->power_dBm;
 }
 
-qulonglong Receiver::getBitrateMbps()
+qulonglong Receiver::getBitrateMbps() const
 {
     return this->bitrate_Mbps;
 }
@@ -54,5 +54,10 @@ qulonglong Receiver::getBitrateMbps()
 QColor Receiver::getCellColor()
 {
     return this->cell_color;
+}
+
+QPointF Receiver::getCenterCoordinates() const
+{
+    return this->center_coordinates;
 }
 

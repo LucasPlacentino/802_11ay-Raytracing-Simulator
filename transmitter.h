@@ -13,10 +13,10 @@ public:
         int power_dBm,
         QPointF coordinates // QPoint ?
         );
-    int getPower_dBm();
-    double getPower();
+    int getPower_dBm() const;
+    double getPower() const;
     void setPower_dBm(int power_dBm);
-    QPointF getCoordinates();
+    QPointF getCoordinates() const;
     void changeCoordinates(QPointF new_coordinates);
 
     QGraphicsEllipseItem* graphicsIcon = new QGraphicsEllipseItem();

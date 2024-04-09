@@ -6,11 +6,12 @@
 class Receiver : public QGraphicsRectItem // each cell of the simulation grid acts like a receiver
 {
 public:
-    Receiver(double power_dBm, QPointF center_coordinates);
+    Receiver(double power_dBm, const QPointF center_coordinates);
 
-    double getPower_dBm();
-    qulonglong getBitrateMbps();
+    double getPower_dBm() const;
+    qulonglong getBitrateMbps() const;
     QColor getCellColor();
+    QPointF getCenterCoordinates() const;
 
 protected:
     //void hoverMoveEvent(QGraphicsSceneHoverEvent *event);

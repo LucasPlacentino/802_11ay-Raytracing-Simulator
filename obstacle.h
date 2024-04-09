@@ -35,24 +35,24 @@ class Obstacle: Wall, public QGraphicsLineItem//: QGraphicsPolygonItem // QGraph
 {
 public:
     Obstacle(
-        QPoint start_coordinates,
-        QPoint end_coordinates,
+        QPointF start_coordinates,
+        QPointF end_coordinates,
         ObstacleType material,
-        qreal relative_permittivity, // $\epsilon_r$
-        qreal conductivity, // $\sigma$
+        //qreal relative_permittivity, // $\epsilon_r$
+        //qreal conductivity, // $\sigma$
         int thickness_cm
     ); // constructor
 
     ObstacleType getMaterial();
-    QPoint getStartCoordinates();
-    QPoint getEndCoordinates();
-    qreal getRelativePermittivity(); // really needed?
-    qreal getConductivity(); // really needed?
+    QPointF getStartCoordinates() const;
+    QPointF getEndCoordinates() const;
+    qreal getRelativePermittivity() const; // really needed?
+    qreal getConductivity() const; // really needed?
 private:
     int drawing_thickness;
     int thickness_cm;
-    QPoint start_coordinates;
-    QPoint end_coordinates;
+    QPointF start_coordinates;
+    QPointF end_coordinates;
     /* // in Wall class
     ObstacleType type;
     float relative_permittivity;
