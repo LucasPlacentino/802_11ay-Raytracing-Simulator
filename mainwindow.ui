@@ -217,7 +217,10 @@
      </rect>
     </property>
     <property name="renderHints">
-     <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+     <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+    </property>
+    <property name="viewportUpdateMode">
+     <enum>QGraphicsView::FullViewportUpdate</enum>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">

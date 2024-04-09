@@ -10,10 +10,12 @@ class Simulation
 public:
     Simulation(); // constructor
 
+    void run();
     void resetAll();
     void createBaseStation(Transmitter transmitter);
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
+    std::vector<Obstacle>* getObstacles();
 
     SimulationGraphicsScene* scene=nullptr;
     QGraphicsView* view=nullptr;

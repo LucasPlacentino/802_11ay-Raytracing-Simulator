@@ -1,6 +1,6 @@
 #include "transmitter.h"
 
-Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPoint coordinates)
+Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPointF coordinates)
 {
     //setAcceptHoverEvents(true);
     this->selector_index = selector_index;
@@ -24,12 +24,12 @@ void Transmitter::setPower_dBm(int power_dBm)
     this->power_dBm = power_dBm;
 }
 
-QPoint Transmitter::getCoordinates()
+QPointF Transmitter::getCoordinates()
 {
     return this->coordinates;
 }
 
-void Transmitter::changeCoordinates(QPoint new_coordinates)
+void Transmitter::changeCoordinates(QPointF new_coordinates)
 {
     this->coordinates = new_coordinates;
 }

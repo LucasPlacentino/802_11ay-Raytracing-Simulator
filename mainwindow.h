@@ -43,12 +43,18 @@ private slots:
 
     void on_deleteBaseStationPushButton_clicked();
 
+    void on_baseStationXspinBox_valueChanged(double arg1);
+
+    void on_baseStationYspinBox_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();
     void changeBaseStationPower(int value);
+    void changeBaseStationCoordinates(QPointF point);
     void initFirstBaseStation();
     void showFirstBaseStation();
     void showBaseStationPower(int value_dBm);
+    void showBaseStationCoordinates(QPointF point);
 };
 #endif // MAINWINDOW_H

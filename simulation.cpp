@@ -9,6 +9,13 @@ Simulation::Simulation() {
     //this->scene = scene;
 }
 
+void Simulation::run()
+{
+    // TODO: compute everything
+
+
+}
+
 void Simulation::resetAll() {
     // TODO: reset all simualtion parameters
 
@@ -37,5 +44,10 @@ void Simulation::deleteBaseStation(int index) {
         qWarning("deleteBaseStation error: index out of range");
         throw std::out_of_range("deleteBaseStation error: index out of range");
     }
+}
+
+std::vector<Obstacle>* Simulation::getObstacles()
+{
+    return &this->obstacles;
 }
 

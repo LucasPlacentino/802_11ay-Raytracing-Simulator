@@ -17,57 +17,105 @@
 #include "simulationgraphicsscene.h"
 
 //SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
-Simulation simulation = Simulation(); // global simulation object, use `extern Simulation simulation;` in other files?
+Simulation simulation = Simulation(); // The global simulation object, use `extern Simulation simulation;` in other files?
 //QGraphicsView simulation_view(simulation_scene);
 
-int currentEditingBaseStation_index = 0;
+int currentEditingBaseStation_index = 0; // The base station that is currently selected for user edit
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    // MainWindow constructor, is ran on program's UI launch
     initFirstBaseStation();
     ui->setupUi(this);
     showFirstBaseStation();
 
-    SimulationGraphicsScene simulation_scene = new SimulationGraphicsScene(this);
-    simulation.scene = &simulation_scene;
-    simulation.scene->setSceneRect(QRectF(0,0, 1000, 500));
-    //qDebug() << "scene pointer (&simulation_scene): " << &simulation_scene << "\n";
-    //qDebug() << "scene pointer (simulation.scene): " << simulation.scene << "\n";
-    simulation.view = ui->simulationGraphicsView;
-    simulation.view->setScene(simulation.scene);
+    SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
+    simulation.scene = simulation_scene;
+    //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
+    qDebug() << "scene pointer (&simulation_scene): " << simulation_scene << "\n";
+    qDebug() << "scene pointer (simulation.scene): " << simulation.scene << "\n";
+
+
+    // TESTING :
+    simulation_scene->addRect(20, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::green)); simulation_scene->addEllipse(120, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::yellow)); simulation_scene->addPolygon(QPolygonF() << QPointF(220, 80) << QPointF(280, 80) << QPointF(250, 20), QPen(Qt::blue, 3), QBrush(Qt::magenta));
+
+
 
     //?????????????? :
     simulation.scene->setBackgroundBrush(Qt::black);
-    simulation.view->setBackgroundBrush(Qt::black);
-    simulation.view->scene()->setBackgroundBrush(Qt::black);
+    simulation_scene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    simulation.scene->setForegroundBrush(Qt::white);
+    simulation.scene->addText("Hello World!");
 
-    simulation.view->scene()->update();
-    simulation.view->viewport()->update();
-    simulation.view->show();
+    //simulation.scene->drawScene();
+
+    //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // needed ?
+    //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); // needed ?
+
+    //simulation.view = ui->simulationGraphicsView;
+    //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView) << "\n";
+    //qDebug() << "view pointer (simulation.view): " << &simulation.view << "\n";
+    //ui->simulationGraphicsView->setScene(simulation.scene);
+    ui->simulationGraphicsView->setScene(simulation_scene);
+    //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene() << "\n";
+    //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene()<< "\n";
+
+    //ui->simulationGraphicsView->scene()->setSceneRect(ui->simulationGraphicsView->frameRect());
+    ui->simulationGraphicsView->fitInView(simulation_scene->itemsBoundingRect());
+
+    //simulation.view->setBackgroundBrush(Qt::black);
+    //simulation.view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    //simulation.view->setForegroundBrush(Qt::white);
+    ui->simulationGraphicsView->setBackgroundBrush(Qt::black);
+    ui->simulationGraphicsView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    ui->simulationGraphicsView->setForegroundBrush(Qt::white);
+    //simulation.view->scene()->setBackgroundBrush(Qt::black);
+    //simulation.view->scene()->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    //simulation.view->scene()->setForegroundBrush(Qt::white);
+
+    ui->simulationGraphicsView->setRenderHints(QPainter::Antialiasing); // ?
+
+    //simulation.view->scene()->update();
+    ui->simulationGraphicsView->scene()->update();
+    ////simulation.view->viewport()->update();
+    ////ui->simulationGraphicsView->viewport()->update();
+    //simulation.view->show();
+    ui->simulationGraphicsView->show();
 }
 
 MainWindow::~MainWindow()
 {
+    // MainWindow destructor
     delete ui;
 }
 
 void MainWindow::on_runSimulationButton_clicked()
 {
-    // TODO: run whole simulation
+    // User clicked on the "Run Simulation" button
     qInfo("Starting simulation");
     bool res = runSimulation();
-    // TODO: show a small simulation ran successfully text
+    // Turn the text green if simulation ran successfully, red otherwise
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
     ui->runSuccessOrFailText->setText(res ? "Success": "Failed");
+
+    // -- TEST : ? --
+    //simulation.view->scene()->update();
+    ui->simulationGraphicsView->scene()->update();
+    ////simulation.view->viewport()->update();
+    ////ui->simulationGraphicsView->viewport()->update();
+    //simulation.view->show();
+    ui->simulationGraphicsView->show();
 }
 
 bool MainWindow::runSimulation()
 {
+    // Run the simulation and returns true if no errors ocurred
     try {
-        // TODO
         ////simulation = Simulation(); //do not override the object, change/reset global one
+
+        simulation.run(); // TODO: this
 
         qInfo("Simulation ended successfully");
         return true;
@@ -80,7 +128,7 @@ bool MainWindow::runSimulation()
 
 void MainWindow::changeBaseStationPower(int value)
 {
-    // TODO: change value for this specific base station
+    // Modify the current editing base station with the new user chosen power
     Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
     base_station->setPower_dBm(value);
     showBaseStationPower(value);
@@ -88,18 +136,45 @@ void MainWindow::changeBaseStationPower(int value)
 
 void MainWindow::on_sliderBaseStationPower_valueChanged(int value)
 {
+    // User changed the current editing base station power (with slider)
     changeBaseStationPower(value);
 }
 
-// TODO: do the same with base station coordinates
 void MainWindow::on_spinBoxBaseStationPower_valueChanged(int value)
 {
+    // User changed the current editing base station power (with spin box)
     changeBaseStationPower(value);
 }
 
+void MainWindow::changeBaseStationCoordinates(QPointF point)
+{
+    // Modify the current editing base station with the new user chosen coordinates
+    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    base_station->changeCoordinates(point);
+    showBaseStationCoordinates(point);
+}
+
+void MainWindow::on_baseStationXspinBox_valueChanged(double x)
+{
+    // User changed the current editing base station X coordinate
+    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    QPointF coordinates = base_station->getCoordinates();
+    coordinates.setX(x);
+    changeBaseStationCoordinates(coordinates);
+}
+
+void MainWindow::on_baseStationYspinBox_valueChanged(double y)
+{
+    // User changed the current editing base station Y coordinate
+    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    QPointF coordinates = base_station->getCoordinates();
+    coordinates.setY(y);
+    changeBaseStationCoordinates(coordinates);
+}
 
 void MainWindow::on_actionExit_triggered()
 {
+    // User clicked on the menu's "Exit" button, or presse "CTRL+W"
     printf("Closing app...\n");
     qApp->quit();
 }
@@ -107,10 +182,11 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionReset_triggered()
 {
+    // User clicked on the menu's "Reset" button, or presse "CTRL+R"
     qInfo("Resetting all values and restarting app...");
 
-    // TODO: reset all user input values to default/reset app
-    simulation.resetAll();
+    // Reset all user input values to default/reset app
+    //simulation.resetAll(); // not necessary as we restart the whole program?
 
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -119,13 +195,14 @@ void MainWindow::on_actionReset_triggered()
 
 void MainWindow::on_actionSee_Github_triggered()
 {
-    // TODO: open github repo
+    // User clicked on the menu's "See Github" button
     QDesktopServices::openUrl(QUrl("https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator", QUrl::TolerantMode));
 }
 
 
 void MainWindow::on_actionAbout_triggered()
 {
+    // User clicked on the menu's "About" button
     QMessageBox::about(this, tr("About this application"),
                        tr("This <b>802.11ay Raytracing Simulator</b> was made as a "
                           "project for the course <b>ELEC-H304</b> Telecommunications Physics "
@@ -136,6 +213,8 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionSave_image_triggered()
 {
+    // User clicked on the menu's "Save Image" button, captures an image of the simulation view.
+
     /*
     if (simulation.ran) // checks if a simulation has run
     {
@@ -168,38 +247,55 @@ void MainWindow::on_actionSave_image_triggered()
 }
 
 
-void MainWindow::initFirstBaseStation() {
+void MainWindow::initFirstBaseStation()
+{
+    // Creates the first (non-deletable) Base Station
     //TODO: create a new transmitter object
     simulation.createBaseStation(
-        Transmitter(0, "Base Station 1", 20, QPoint(1,1)) // TODO: QPoint
+        Transmitter(0, "Base Station 1", 20, QPointF(1,1)) // TODO: QPoint
         );
 }
 
-void MainWindow::showFirstBaseStation() {
+void MainWindow::showFirstBaseStation()
+{
+    // Makes sure the first (non-deletable) Base Station is shown on the base station user edit box
     QString new_item = QString("Base Station 1");
     ui->transmitterSelector->addItem(new_item);
     ui->transmitterSelector->setCurrentIndex(0);
     on_transmitterSelector_activated(0);
 }
 
-void MainWindow::showBaseStationPower(int value_dBm) {
+void MainWindow::showBaseStationPower(int value_dBm)
+{
+    // Updates the UI to show this base station power
     ui->spinBoxBaseStationPower->setValue(value_dBm);
     ui->sliderBaseStationPower->setValue(value_dBm);
 }
 
+void MainWindow::showBaseStationCoordinates(QPointF point)
+{
+    // Updates the UI to show these base station coordinates
+    ui->baseStationXspinBox->setValue(point.x());
+    ui->baseStationYspinBox->setValue(point.y());
+}
+
 void MainWindow::on_transmitterSelector_activated(int index)
 {
+    // User selected a base station in the dropdown
     qDebug() << "Selected base station: " << index+1;
 
     // set current editing transmitter to this one
     currentEditingBaseStation_index = index;
     showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index)->getPower_dBm());
     //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
+
+    showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
 }
 
 
 void MainWindow::on_addTransmitterButton_clicked()
 {
+    // User clicked "Add Base Station" button
     if (ui->transmitterSelector->count() < ui->transmitterSelector->maxCount()) //check if has not reached the max number of transmitters
     {
         qDebug("Added base station");
@@ -210,7 +306,7 @@ void MainWindow::on_addTransmitterButton_clicked()
 
         int new_item_index = ui->transmitterSelector->findText(new_item);
 
-        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPoint(1,1))); // TODO: QPoint
+        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,1))); // TODO: QPoint
 
         on_transmitterSelector_activated(new_item_index);
         ui->transmitterSelector->setCurrentIndex(new_item_index);
@@ -224,6 +320,7 @@ void MainWindow::on_addTransmitterButton_clicked()
 
 void MainWindow::on_deleteBaseStationPushButton_clicked()
 {
+    // User clicked on the "Delete Base Station" button
     //currentEditingBaseStation_index
     if (ui->transmitterSelector->count()>1 && currentEditingBaseStation_index != 0)
     {
@@ -237,4 +334,3 @@ void MainWindow::on_deleteBaseStationPushButton_clicked()
         qDebug("Cannot delete Base Station 1");
     }
 }
-

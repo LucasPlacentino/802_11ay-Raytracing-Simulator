@@ -1,5 +1,7 @@
 #include "obstacle.h"
 
+#include <QPen>
+
 Obstacle::Obstacle(
     QPoint start_coordinates,
     QPoint end_coordinates,
@@ -15,34 +17,34 @@ Obstacle::Obstacle(
     this->properties.conductivity = conductivity; // set properties hard coded in the switch case below ?
     this->thickness_cm = thickness_cm;
 
-    /*
-    //QLineF line; // in func args ?
+
+    QLineF line(this->start_coordinates,this->end_coordinates); // in func args ?
     setLine(line);
-    QPen pen;
-    pen.setWidth(this->thickness);
+    QPen *pen = new QPen();
+    pen->setWidth(this->thickness_cm/100);
 
     switch (this->material) {
     case BrickWall:
-        pen.setColor(Qt::darkRed);
+        pen->setColor(Qt::darkRed);
         break;
     case Window:
-        pen.setColor(Qt::cyan);
+        pen->setColor(Qt::cyan);
         break;
     case MetalWall:
-        pen.setColor(Qt::gray);
+        pen->setColor(Qt::gray);
         break;
     case DryWall:
-        pen.setColor(Qt::lightGray);
+        pen->setColor(Qt::lightGray);
         break;
     case ConcreteWall:
-        pen.setColor(Qt::green);
+        pen->setColor(Qt::green);
         break;
     default:
-        pen.setColor(Qt::white);
+        pen->setColor(Qt::white);
         break;
     }
-    setPen(pen);
-    */
+    setPen(*pen);
+
     //setAcceptHoverEvents(true); // really needed ?
 }
 
