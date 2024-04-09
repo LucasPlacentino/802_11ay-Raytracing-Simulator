@@ -61,3 +61,8 @@ QPointF Receiver::getCenterCoordinates() const
     return this->center_coordinates;
 }
 
+QVector2D Receiver::get2DVector() const
+{
+    return QVector2D(this->center_coordinates); // but we use the mean power of the local zone (50cm x 50cm)
+}
+

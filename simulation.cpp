@@ -65,12 +65,15 @@ void Simulation::run()
     QPair<int, int> matrix_size = {this->cells_matrix[0].size(), this->cells_matrix.size()};
     for (int l = 0; l < matrix_size.first; l++) {
         // loops over each line
+        qDebug() << "Cells line " << l;
 
         for (int c = 0; c < matrix_size.second; c++) {
             // loops over each column of each line
+            qDebug() << "Cell column " << c;
 
-            for (int r = 0; r < this->max_ray_reflections; r++) {
-                traceRay(new Ray(getBaseStation(0)->getCoordinates(), cells_matrix.at(l).at(c).getCenterCoordinates()), r);
+            for (int reflections = 0; reflections < this->max_ray_reflections; reflections++) {
+                qDebug() << "Ray(s) with " << reflections << " reflections";
+                traceRays(reflections);
             }
 
             // add power of every ray to this cell.
@@ -79,9 +82,16 @@ void Simulation::run()
 
 }
 
-void Simulation::traceRay(Ray* ray, int num_reflections)
+void Simulation::traceRays(int num_reflections)
 {
-    if (ray->num_reflections < num_reflections) {
+    // ! TODO: but we can have multiple possible rays for a set number of reflections ?
+    // TODO: find how many rays we can compute for num_reflections
+    traceRay(Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix), num_reflections);
+}
+
+void Simulation::traceRay(Ray* ray, int reflections)
+{
+    if (ray->num_reflections < reflections) {
         QPointF intersection_point;
         //... compute
 
@@ -91,10 +101,9 @@ void Simulation::traceRay(Ray* ray, int num_reflections)
         //traceRay(ray, num_reflections);
     } else {
 
-        //free(ray);
+        free(ray);
         return;
     }
-
 }
 
 void Simulation::resetAll()

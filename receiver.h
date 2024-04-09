@@ -2,6 +2,7 @@
 #define RECEIVER_H
 
 #include <QGraphicsRectItem>
+#include <QVector2D>
 
 class Receiver : public QGraphicsRectItem // each cell of the simulation grid acts like a receiver
 {
@@ -12,6 +13,8 @@ public:
     qulonglong getBitrateMbps() const;
     QColor getCellColor();
     QPointF getCenterCoordinates() const;
+
+    QVector2D get2DVector() const;
 
 protected:
     //void hoverMoveEvent(QGraphicsSceneHoverEvent *event);

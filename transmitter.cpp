@@ -35,4 +35,9 @@ void Transmitter::changeCoordinates(QPointF new_coordinates)
     // TODO: update the GraphicsScene to show base station at new coordinates.
 }
 
+QVector2D Transmitter::get2DVector() const
+{
+    return QVector2D(this->coordinates);
+}
+
 

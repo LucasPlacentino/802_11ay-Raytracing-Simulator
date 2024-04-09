@@ -31,7 +31,8 @@ private:
 
     QList<QList<Receiver>> cells_matrix;
     void computeCell(Receiver cell);
-    void traceRay(Ray* ray, int num_reflections);
+    void traceRays(int num_reflections);
+    void traceRay(Ray *ray, int reflections);
 
     std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
     std::vector<Transmitter> baseStations;

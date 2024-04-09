@@ -2,6 +2,7 @@
 #define TRANSMITTER_H
 
 #include <QGraphicsEllipseItem>
+#include <QVector2D>
 
 
 class Transmitter// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
@@ -18,6 +19,8 @@ public:
     void setPower_dBm(int power_dBm);
     QPointF getCoordinates() const;
     void changeCoordinates(QPointF new_coordinates);
+
+    QVector2D get2DVector() const;
 
     QGraphicsEllipseItem* graphicsIcon = new QGraphicsEllipseItem();
 private:
