@@ -26,6 +26,7 @@ public:
 
     bool lift_is_on_floor = false;
     int max_ray_reflections = 2;
+    bool showRaySingleCell = false;
 
 private:
 
