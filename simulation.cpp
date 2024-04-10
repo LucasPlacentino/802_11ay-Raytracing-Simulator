@@ -86,7 +86,7 @@ void Simulation::traceRays(int num_reflections)
 {
     // ! TODO: but we can have multiple possible rays for a set number of reflections ?
     // TODO: find how many rays we can compute for num_reflections
-    traceRay(Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix), num_reflections);
+    traceRay(&Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix), num_reflections);
 }
 
 void Simulation::traceRay(Ray* ray, int reflections)
@@ -95,13 +95,17 @@ void Simulation::traceRay(Ray* ray, int reflections)
         QPointF intersection_point;
         //... compute
 
-        ray->points.push_back(intersection_point);
+        ray->addPoint(intersection_point);
+
+        // TODO: create sub-ray ?
 
         // recursive reflections
         //traceRay(ray, num_reflections);
     } else {
 
-        free(ray);
+        if (!this->showRaySingleCell) {
+            free(ray); // frees the Ray object from memory once the computation is done with this ray.
+        }
         return;
     }
 }
