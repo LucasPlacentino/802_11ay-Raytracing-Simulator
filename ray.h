@@ -11,7 +11,7 @@ enum Interaction {
 };
 
 struct InteractionPoint {
-    QPointF coordinates;
+    QPointF coordinates; // TODO: change to QVector2D ?
     Interaction type;
     qreal power_attenutation;
     qreal incidence_angle; // needed ?
@@ -32,7 +32,7 @@ public:
 
 private:
     QList<InteractionPoint> interaction_points;
-    QList<QPointF> points;
+    QList<QPointF> points; // TODO: change to QVector2D ?
     QSharedPointer<Receiver> target_cell;
     QPointF end_point;
 

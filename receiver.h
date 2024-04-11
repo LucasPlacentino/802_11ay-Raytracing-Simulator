@@ -7,7 +7,7 @@
 class Receiver : public QGraphicsRectItem // each cell of the simulation grid acts like a receiver
 {
 public:
-    Receiver(double power_dBm, const QPointF center_coordinates);
+    Receiver(double power_dBm, const QPointF center_coordinates); // TODO: change to QVector2D ?
 
     double getPower_dBm() const;
     qulonglong getBitrateMbps() const;
@@ -22,7 +22,7 @@ private:
     double power_dBm;
     qulonglong bitrate_Mbps;
     QColor cell_color;
-    QPointF center_coordinates;
+    QPointF center_coordinates; // TODO: change to QVector2D ?
 };
 
 #endif // RECEIVER_H

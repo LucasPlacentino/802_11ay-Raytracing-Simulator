@@ -94,7 +94,7 @@ void Simulation::run()
             // loops over each column of each line
             qDebug() << "Cell column " << c;
 
-            for (int reflections = 0; reflections < this->max_ray_reflections; reflections++) {
+            for (int reflections = 0; reflections <= this->max_ray_reflections; reflections++) {
                 qDebug() << "Ray(s) with " << reflections << " reflections";
                 traceRaysToCell(QPair<int,int>(l,c),reflections);
             }
@@ -107,6 +107,7 @@ void Simulation::run()
 
 void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
 {
+    qDebug() << "Tracing Ray(s) with" << num_reflections << "reflections to cell ("<<cell_index.first<<","<<cell_index.second<<")";
     // ! TODO: but we can have multiple possible rays for a set number of reflections ?
     // TODO: find how many rays we can compute for num_reflections
     traceRay(QSharedPointer<Ray>(new Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix[cell_index.first][cell_index.second])), num_reflections); // Careful about memory leak if using raw pointer
@@ -114,6 +115,7 @@ void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
 
 void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 {
+    qDebug() << "Tracing ray";
     if (ray->num_reflections < reflections) {
         QPointF intersection_point;
         //... compute
@@ -146,19 +148,23 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 void Simulation::createCellsMatrix()
 {
     qDebug() << "cells_matrix initial size:" << this->cells_matrix.size();
-    int max_x_count = ceil(this->max_x/this->resolution);
-    int max_y_count = ceil(-this->min_y/this->resolution);
+    int max_x_count = ceil(this->max_x/this->resolution); // -1 ?
+    qDebug() << "Max count of cells X:" << max_x_count;
+    int max_y_count = ceil(-this->min_y/this->resolution); // -1 ?
+    qDebug() << "Max count of cells Y:" << max_y_count;
     for (int x_count=0; x_count < max_x_count; x_count++) {
+        qDebug() << "Creating new line of cells_matrix...";
         qreal x = 0+(this->resolution*x_count);
+        QList<QSharedPointer<Receiver>> temp_list;
         for (int y_count=0; y_count < max_y_count; y_count++) {
             qreal y = 0-(this->resolution*y_count);
-            this->cells_matrix[x_count].push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
-            y_count++;
-            qDebug() << "cells_matrix line"<< x_count << "size:" << this->cells_matrix.size();
+            temp_list.push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
+            qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
         }
-        x_count++;
+        this->cells_matrix.push_back(temp_list);
         qDebug() << "cells_matrix size:" << this->cells_matrix.size();
     }
+    qDebug() << "cells_matrix created";
 }
 
 void Simulation::resetAll()

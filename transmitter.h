@@ -12,7 +12,7 @@ public:
         int selector_index,
         QString name,
         int power_dBm,
-        QPointF coordinates // QPoint ?
+        QPointF coordinates // QPoint ? // TODO: change to QVector2D ?
         );
     int getPower_dBm() const;
     qreal getPower() const;
@@ -29,7 +29,7 @@ private:
     QString name;
     int power_dBm;
     qreal gain;
-    QPointF coordinates;
+    QPointF coordinates; // TODO: change to QVector2D ?
     qulonglong frequency = 60*1e9; // 802.11ay spec. Compiler complains with 60e9
     qulonglong* f = &frequency;
     // qreal beta_0 = ...;

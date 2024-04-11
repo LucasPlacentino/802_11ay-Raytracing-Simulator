@@ -35,8 +35,8 @@ class Obstacle: Wall, public QGraphicsLineItem//: QGraphicsPolygonItem // QGraph
 {
 public:
     Obstacle(
-        QPointF start_coordinates,
-        QPointF end_coordinates,
+        QPointF start_coordinates, // TODO: change to QVector2D ?
+        QPointF end_coordinates, // TODO: change to QVector2D ?
         ObstacleType material,
         //qreal relative_permittivity, // $\epsilon_r$
         //qreal conductivity, // $\sigma$

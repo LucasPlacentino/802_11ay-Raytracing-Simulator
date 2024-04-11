@@ -35,8 +35,9 @@ private:
     qreal min_x = 0;
     qreal max_y = 0;
     qreal min_y = -8;
-
     qreal resolution = 0.5;
+
+    //QVector2D origin = QVector2D(0,0);
 
     QList<QList<QSharedPointer<Receiver>>> cells_matrix;
     void computeCell(QSharedPointer<Receiver> cell);
