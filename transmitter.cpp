@@ -19,6 +19,11 @@ double Transmitter::getPower() const
     return pow(10, this->power_dBm / 10);
 }
 
+qreal Transmitter::getGain() const
+{
+    return this->gain;
+}
+
 void Transmitter::setPower_dBm(int power_dBm)
 {
     this->power_dBm = power_dBm;

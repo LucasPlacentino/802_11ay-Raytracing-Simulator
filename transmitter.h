@@ -15,7 +15,8 @@ public:
         QPointF coordinates // QPoint ?
         );
     int getPower_dBm() const;
-    double getPower() const;
+    qreal getPower() const;
+    qreal getGain() const;
     void setPower_dBm(int power_dBm);
     QPointF getCoordinates() const;
     void changeCoordinates(QPointF new_coordinates);
@@ -27,6 +28,7 @@ private:
     int selector_index;
     QString name;
     int power_dBm;
+    qreal gain;
     QPointF coordinates;
     qulonglong frequency = 60*1e9; // 802.11ay spec. Compiler complains with 60e9
     qulonglong* f = &frequency;

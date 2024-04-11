@@ -33,7 +33,7 @@ public:
 private:
 
     QList<QList<QSharedPointer<Receiver>>> cells_matrix;
-    void computeCell(Receiver cell);
+    void computeCell(QSharedPointer<Receiver> cell);
     void traceRaysToCell(QPair<int,int> cell_index, int num_reflections);
     void traceRay(QSharedPointer<Ray> ray, int reflections);
 

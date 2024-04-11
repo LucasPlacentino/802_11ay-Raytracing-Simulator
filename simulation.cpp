@@ -1,6 +1,8 @@
 #include "simulation.h"
 #include "utils.h"
 
+#include <QtMath>
+
 Simulation::Simulation() {
     // constructor
 
@@ -184,10 +186,20 @@ int Simulation::getNumberOfBaseStations()
     return this->baseStations.size();
 }
 
-void Simulation::computeCell(Receiver cell)
+void Simulation::computeCell(QSharedPointer<Receiver> cell)
 {
     // TODO: recursive function for each ray bounce from the transmitter
 
+    qreal Ra = 1; // ????
+    qulonglong rx_power = ((60*pow(wavelength,2))/(8*M_PI*Ra))*this->getBaseStation(0)->getPower()*this->getBaseStation(0)->getGain();
+    /*
+    for (qreal Gamma; todo) {
+        rx_power *= pow(qAbs(Gamma),2);
+    }
+    for (qreal T; todo) {
+        rx_power *= pow(qAbs(T),2);
+    }
+    */
 }
 
 void Simulation::test()
@@ -210,19 +222,20 @@ void Simulation::test()
     QVector2D tx = QVector2D(5,3.5); // r_TX or s
 
     if (!checkSameSideOfWall(n,rx,tx)) {
-        // transmission through this wall then.
+        // has to be transmission through this wall then.
+        // p point will need to be determined from the next point (other p, or rx if no more reflection or transmission)
         return;
+    } else {
+        QVector2D tx_image = rx - 2*n*QVector2D::dotProduct(tx,n); // image of tx with this wall
+
+        QVector2D d = rx-tx_image; // distance vector (between the tx image and rx but its norm is also the distance the ray has travelled
+        float ray_length = d.length(); // used ?
+        float dx = d.x();
+        float dy = d.y();
+
+        float t = (dy*(wall_start.x()*rx.x())-dx*(wall_start.y()-rx.y()))/(dx*u.y()-dy*u.x());
+        p = wall_start + t*u; // the intersection point P vector
     }
-
-    QVector2D tx_image = rx - 2*n*QVector2D::dotProduct(tx,n); // image of tx with this wall
-
-    QVector2D d = rx-tx_image; // distance vector (between the tx image and rx but its norm is also the distance the ray has travelled
-    float ray_length = d.length();
-    float dx = d.x();
-    float dy = d.y();
-
-    float t = (dy*(wall_start.x()*rx.x())-dx*(wall_start.y()-rx.y()))/(dx*u.y()-dy*u.x());
-    p = wall_start + t*u; // the intersection point P vector
 
     // do it again for another wall (next reflection) ?
     // tx_image will be the new tx, and we use a new wall
