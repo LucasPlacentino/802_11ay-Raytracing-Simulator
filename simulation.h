@@ -7,12 +7,17 @@
 #include "simulationgraphicsscene.h"
 #include "transmitter.h"
 
+#include <QElapsedTimer>
+
 class Simulation
 {
 public:
     Simulation(); // constructor
+    bool ran = false;
+    bool is_running = false;
 
     void run();
+    void clear();
     void resetAll();
     void createBaseStation(Transmitter transmitter);
     Transmitter* getBaseStation(int index);
@@ -20,6 +25,7 @@ public:
     std::vector<Obstacle*>* getObstacles();
     unsigned int getNumberOfObstacles();
     int getNumberOfBaseStations();
+    qint64 getSimulationTime() const;
 
     SimulationGraphicsScene* scene=nullptr;
     QGraphicsView* view=nullptr;
@@ -31,6 +37,9 @@ public:
 
     void test();
 private:
+    QElapsedTimer timer;
+    qint64 simulation_time;
+
     qreal max_x = 15;
     qreal min_x = 0;
     qreal max_y = 0;

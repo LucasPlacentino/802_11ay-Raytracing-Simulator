@@ -97,6 +97,19 @@ MainWindow::~MainWindow()
 void MainWindow::on_runSimulationButton_clicked()
 {
     // User clicked on the "Run Simulation" button
+
+    /*
+    if (simulation.ran) {
+        ui->runSuccessOrFailText->setStyleSheet("color: darkorange;");
+        ui->runSuccessOrFailText->setText("Please reset: [Menu->Reset App], or (Ctrl+R)");
+        return;
+    }
+    */
+
+    if (simulation.is_running) {
+        return;
+    }
+
     qInfo("Starting simulation");
     bool res = runSimulation();
     // Turn the text green if simulation ran successfully, red otherwise
@@ -110,12 +123,15 @@ void MainWindow::on_runSimulationButton_clicked()
     ////ui->simulationGraphicsView->viewport()->update();
     //simulation.view->show();
     ui->simulationGraphicsView->show();
+    simulation.is_running = false;
 }
 
 bool MainWindow::runSimulation()
 {
     simulation.test();
     // Run the simulation and returns true if no errors ocurred
+    simulation.ran = true;
+    simulation.is_running = true;
     try {
         ////simulation = Simulation(); //do not override the object, change/reset global one
 

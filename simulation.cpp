@@ -56,11 +56,12 @@ Simulation::Simulation() {
 void Simulation::run()
 {
     // TODO: compute everything
+    this->timer.start();
     qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
 
-    if (!this->showRaySingleCell) {
-        createCellsMatrix();
-    }
+    this->cells_matrix.clear();
+    this->rays_list.clear();
+    this->obstacles.clear();
 
     if (this->lift_is_on_floor) { // Adds the lift metal walls if set as present
         qDebug() << "Lift is on this floor.";
@@ -73,6 +74,13 @@ void Simulation::run()
         this->obstacles.insert(this->obstacles.end(), lift_walls.begin(), lift_walls.end());
     }
 
+    if (!this->showRaySingleCell) {
+        createCellsMatrix();
+    } else {
+        // single cell simulation
+        // TODO:
+        return;
+    }
 
     // ...
     /*
@@ -103,6 +111,9 @@ void Simulation::run()
         }
     }
 
+    //end
+    this->simulation_time = this->timer.elapsed();
+    qDebug() << "Simulation time:" << this->simulation_time << "ms";
 }
 
 void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
@@ -110,7 +121,7 @@ void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
     qDebug() << "Tracing Ray(s) with" << num_reflections << "reflections to cell ("<<cell_index.first<<","<<cell_index.second<<")";
     // ! TODO: but we can have multiple possible rays for a set number of reflections ?
     // TODO: find how many rays we can compute for num_reflections
-    traceRay(QSharedPointer<Ray>(new Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix[cell_index.first][cell_index.second])), num_reflections); // Careful about memory leak if using raw pointer
+    traceRay(QSharedPointer<Ray>(new Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix[cell_index.second][cell_index.first])), num_reflections); // Careful about memory leak if using raw pointer
 }
 
 void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
@@ -231,6 +242,11 @@ void Simulation::computeCell(QSharedPointer<Receiver> cell)
         rx_power *= pow(qAbs(T),2);
     }
     */
+}
+
+qint64 Simulation::getSimulationTime() const
+{
+    return this->simulation_time;
 }
 
 void Simulation::test()
