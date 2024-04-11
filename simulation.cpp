@@ -53,8 +53,10 @@ Simulation::Simulation() {
 void Simulation::run()
 {
     // TODO: compute everything
+    qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell);
 
     if (this->lift_is_on_floor) { // Adds the lift metal walls if set as present
+        qDebug() << "Lift is on this floor.";
         std::vector<Obstacle*> lift_walls;
         lift_walls.push_back(new Obstacle(QPointF(),QPointF(), MetalWall, 5));
         lift_walls.push_back(new Obstacle(QPointF(),QPointF(), MetalWall, 5));

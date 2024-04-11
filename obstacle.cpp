@@ -30,6 +30,7 @@ Obstacle::Obstacle(
     //qreal conductivity,
     int thickness_cm)
 {
+    qDebug() << "Creating Obstacle.";
     this->material = material;
     this->start_coordinates = start_coordinates;
     this->end_coordinates = end_coordinates;

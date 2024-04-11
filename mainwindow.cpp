@@ -118,7 +118,8 @@ bool MainWindow::runSimulation()
     try {
         ////simulation = Simulation(); //do not override the object, change/reset global one
 
-        // TODO: user button to set if the lift is on this floor or not (bool simulation->liftIsOnFloor)
+        // TODO: show a progress bar ? or at least a
+
         simulation.run(); // TODO: the run func
 
         qInfo("Simulation ended successfully");
@@ -156,6 +157,8 @@ void MainWindow::changeBaseStationCoordinates(QPointF point)
     Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
     base_station->changeCoordinates(point);
     showBaseStationCoordinates(point);
+
+    // TODO: redraw the base station at new position on view
 }
 
 void MainWindow::on_baseStationXspinBox_valueChanged(double x)
@@ -311,6 +314,8 @@ void MainWindow::on_transmitterSelector_activated(int index)
     //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
 
     showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
+
+    // TODO: highlight the current editing base station in another color on the view, redraw the transmitter
 }
 
 
@@ -351,6 +356,8 @@ void MainWindow::on_deleteBaseStationPushButton_clicked()
         int previous_item_index = currentEditingBaseStation_index-1;
         on_transmitterSelector_activated(previous_item_index);
         ui->transmitterSelector->setCurrentIndex(previous_item_index);
+
+        // TODO: undraw this base station from the view
     } else {
         qDebug("Cannot delete Base Station 1");
     }
@@ -358,16 +365,29 @@ void MainWindow::on_deleteBaseStationPushButton_clicked()
 
 void MainWindow::on_coverageHeatmapRadioButton_clicked(bool checked)
 {
+    simulation.showRaySingleCell = !checked;
     toggleCoverageParametersLayout(checked);
     toggleCellParametersLayout(!checked);
-    qDebug() << "Coverage parameters " << (checked? "enabled" : "disabled") << ", Cell parameters " << (!checked? "enabled" : "disabled");
+    qDebug() << "Coverage parameters" << (checked? "enabled," : "disabled,") << "Cell parameters" << (!checked? "enabled" : "disabled");
+
+    // TODO: unhightlight the selected cell on the view
 }
 
 
 void MainWindow::on_singleCellRadioButton_clicked(bool checked)
 {
+    simulation.showRaySingleCell = checked;
     toggleCellParametersLayout(checked);
     toggleCoverageParametersLayout(!checked);
-    qDebug() << "Coverage parameters " << (!checked? "enabled" : "disabled") << ", Cell parameters " << (checked? "enabled" : "disabled");
+    qDebug() << "Coverage parameters" << (!checked? "enabled," : "disabled,") << "Cell parameters" << (checked? "enabled" : "disabled");
+
+    // TODO: hightlight the selected cell on the view, redraw the cell
+}
+
+
+void MainWindow::on_liftOnFloorCheckBox_clicked(bool checked)
+{
+    qDebug() << "Set lift:" << checked;
+    simulation.lift_is_on_floor = checked;
 }
 

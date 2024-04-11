@@ -51,6 +51,8 @@ private slots:
 
     void on_coverageHeatmapRadioButton_clicked(bool checked);
 
+    void on_liftOnFloorCheckBox_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();
