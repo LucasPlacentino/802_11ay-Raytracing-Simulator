@@ -114,7 +114,7 @@ void MainWindow::on_runSimulationButton_clicked()
     bool res = runSimulation();
     // Turn the text green if simulation ran successfully, red otherwise
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
-    ui->runSuccessOrFailText->setText(res ? "Success": "Failed");
+    ui->runSuccessOrFailText->setText(res ? QString("Success, took %1ms").arg(simulation.getSimulationTime()): "Failed");
 
     // -- TEST : ? --
     //simulation.view->scene()->update();
