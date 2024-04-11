@@ -3,7 +3,7 @@
 
 - Rapport: [latex/rapport.pdf](./latex/rapport.pdf) (ou via [Overleaf](https://www.overleaf.com/read/vtwgdykmyfpp#31a346))
 
-- Code: ce repo
+- Code: ce repository
 
 ## Auteurs
 - Lucas Placentino
