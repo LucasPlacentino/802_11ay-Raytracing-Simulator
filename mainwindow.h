@@ -47,6 +47,10 @@ private slots:
 
     void on_baseStationYspinBox_valueChanged(double arg1);
 
+    void on_singleCellRadioButton_clicked(bool checked);
+
+    void on_coverageHeatmapRadioButton_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();
@@ -56,5 +60,8 @@ private:
     void showFirstBaseStation();
     void showBaseStationPower(int value_dBm);
     void showBaseStationCoordinates(QPointF point);
+
+    void toggleCellParametersLayout(bool enabled);
+    void toggleCoverageParametersLayout(bool enabled);
 };
 #endif // MAINWINDOW_H

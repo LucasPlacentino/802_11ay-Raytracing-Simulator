@@ -11,6 +11,7 @@ SimulationGraphicsScene::SimulationGraphicsScene(QObject *parent)
 
 void SimulationGraphicsScene::drawRays()
 {
+    // Only when doing the simulation for rays to single cell
 
 }
 
@@ -45,7 +46,7 @@ SimulationGraphicsScene::SimulationGraphicsScene()
 void SimulationGraphicsScene::drawWalls()
 {
     // TODO: get floorplan
-    std::vector<Obstacle>* walls = simulation.getObstacles();
+    std::vector<Obstacle*>* walls = simulation.getObstacles();
 
     for (auto it = walls->begin(); it != walls->end(); it++)
     {
@@ -53,7 +54,7 @@ void SimulationGraphicsScene::drawWalls()
         // iterates through each obstacle
 
         // draw
-        this->addItem(&(*it));
+        this->addItem(*it);
     }
 }
 

@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     showFirstBaseStation();
 
+    toggleCoverageParametersLayout(true);
+    toggleCellParametersLayout(false);
+
     SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
     simulation.scene = simulation_scene;
     //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
@@ -280,6 +283,23 @@ void MainWindow::showBaseStationCoordinates(QPointF point)
     ui->baseStationYspinBox->setValue(point.y());
 }
 
+void MainWindow::toggleCellParametersLayout(bool enabled)
+{
+    //ui->cellParametersLayout->setEnabled(enabled);
+    ui->cellCoordinatesLabel->setEnabled(enabled);
+    ui->cellCoordinatesXLabel->setEnabled(enabled);
+    ui->cellCoordinatesYLabel->setEnabled(enabled);
+    ui->cellXspinBox->setEnabled(enabled);
+    ui->cellYspinBox->setEnabled(enabled);
+}
+
+void MainWindow::toggleCoverageParametersLayout(bool enabled)
+{
+    //ui->
+    ui->coverageHeatmapTestLabel->setEnabled(enabled);
+    //...
+}
+
 void MainWindow::on_transmitterSelector_activated(int index)
 {
     // User selected a base station in the dropdown
@@ -335,3 +355,19 @@ void MainWindow::on_deleteBaseStationPushButton_clicked()
         qDebug("Cannot delete Base Station 1");
     }
 }
+
+void MainWindow::on_coverageHeatmapRadioButton_clicked(bool checked)
+{
+    toggleCoverageParametersLayout(checked);
+    toggleCellParametersLayout(!checked);
+    qDebug() << "Coverage parameters " << (checked? "enabled" : "disabled") << ", Cell parameters " << (!checked? "enabled" : "disabled");
+}
+
+
+void MainWindow::on_singleCellRadioButton_clicked(bool checked)
+{
+    toggleCellParametersLayout(checked);
+    toggleCoverageParametersLayout(!checked);
+    qDebug() << "Coverage parameters " << (!checked? "enabled" : "disabled") << ", Cell parameters " << (checked? "enabled" : "disabled");
+}
+

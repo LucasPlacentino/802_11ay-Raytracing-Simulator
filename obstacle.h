@@ -42,6 +42,7 @@ public:
         //qreal conductivity, // $\sigma$
         int thickness_cm
     ); // constructor
+    //Obstacle(Obstacle&& other) noexcept; // move constructor
 
     ObstacleType getMaterial();
     QPointF getStartCoordinates() const;

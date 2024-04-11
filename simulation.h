@@ -17,7 +17,7 @@ public:
     void createBaseStation(Transmitter transmitter);
     Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
-    std::vector<Obstacle>* getObstacles();
+    std::vector<Obstacle*>* getObstacles();
     unsigned int getNumberOfObstacles();
     int getNumberOfBaseStations();
 
@@ -30,13 +30,15 @@ public:
 
 private:
 
-    QList<QList<Receiver>> cells_matrix;
+    QList<QList<QSharedPointer<Receiver>>> cells_matrix;
     void computeCell(Receiver cell);
-    void traceRays(int num_reflections);
-    void traceRay(Ray *ray, int reflections);
+    void traceRaysToCell(QPair<int,int> cell_index, int num_reflections);
+    void traceRay(QSharedPointer<Ray> ray, int reflections);
 
-    std::vector<Obstacle> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
+    std::vector<Obstacle*> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
     std::vector<Transmitter> baseStations;
+
+    QList<QSharedPointer<Ray>> rays_list;
 
 };
 

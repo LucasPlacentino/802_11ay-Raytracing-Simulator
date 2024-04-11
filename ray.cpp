@@ -1,11 +1,19 @@
 #include "ray.h"
 
 
-
+/*
 Ray::Ray(QPointF start_point, QPointF end_point)
 {
     this->end_point = end_point;
     this->points.push_back(start_point);
+}
+*/
+
+Ray::Ray(QPointF start_point, QSharedPointer<Receiver> target_cell)
+{
+    this->points.push_back(start_point);
+    this->target_cell = target_cell;
+    // TODO: ?
 }
 
 void Ray::addPoint(QPointF point)
