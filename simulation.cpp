@@ -1,4 +1,5 @@
 #include "simulation.h"
+#include "utils.h"
 
 Simulation::Simulation() {
     // constructor
@@ -189,3 +190,42 @@ void Simulation::computeCell(Receiver cell)
 
 }
 
+void Simulation::test()
+{
+    // math needed :
+    QVector2D p; // intersection between ray and wall, reflection point
+
+    QVector2D wall_start = QVector2D(2,-3); // r_0 // used so it does not need to be at (0,0)
+    QVector2D wall_end = QVector2D(0,5); // r_1
+    QVector2D u = (wall_end-wall_start).normalized(); // normalized tangent vector to this wall
+    qDebug() << "u norm =" << u.length();
+
+    bool dir = true; // TODO: determine
+    QVector2D n = transpose2DVector(&u, dir).normalized(); // normalized normal vector to this wall
+    qDebug() << "n norm =" << n.length();
+
+    qDebug() << "Check <u,n>?=0 :" << QVector2D::dotProduct(u,n);
+
+    QVector2D rx = QVector2D(4,0.5); // r_RX
+    QVector2D tx = QVector2D(5,3.5); // r_TX or s
+
+    if (!checkSameSideOfWall(n,rx,tx)) {
+        // transmission through this wall then.
+        return;
+    }
+
+    QVector2D tx_image = rx - 2*n*QVector2D::dotProduct(tx,n); // image of tx with this wall
+
+    QVector2D d = rx-tx_image; // distance vector (between the tx image and rx but its norm is also the distance the ray has travelled
+    float ray_length = d.length();
+    float dx = d.x();
+    float dy = d.y();
+
+    float t = (dy*(wall_start.x()*rx.x())-dx*(wall_start.y()-rx.y()))/(dx*u.y()-dy*u.x());
+    p = wall_start + t*u; // the intersection point P vector
+
+    // do it again for another wall (next reflection) ?
+    // tx_image will be the new tx, and we use a new wall
+    // we need to check if the new wall can in fact reflect from the new tx
+    // => check if sign(dotProduct(n, rx))==sign(dotProduct(n, tx))
+}

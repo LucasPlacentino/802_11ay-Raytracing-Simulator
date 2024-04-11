@@ -114,6 +114,7 @@ void MainWindow::on_runSimulationButton_clicked()
 
 bool MainWindow::runSimulation()
 {
+    simulation.test();
     // Run the simulation and returns true if no errors ocurred
     try {
         ////simulation = Simulation(); //do not override the object, change/reset global one

@@ -30,6 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         simulationgraphicsscene.h simulationgraphicsscene.cpp
         receiver.h receiver.cpp
         heatmapgradientlegend.h heatmapgradientlegend.cpp
+        utils.h
 
 
 

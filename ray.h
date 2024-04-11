@@ -5,6 +5,17 @@
 
 #include <QGraphicsLineItem>
 
+enum Interaction {
+    TRANSMISSION,
+    REFLECTION
+};
+
+struct InteractionPoint {
+    QPointF coordinates;
+    Interaction type;
+    qreal power_attenutation;
+    qreal incidence_angle; // needed ?
+};
 
 class Ray : public QGraphicsLineItem
 {
@@ -16,9 +27,11 @@ public:
 
     int num_reflections = 0;
     void addPoint(QPointF point);
+    void addInteractionPoint(InteractionPoint point);
     QList<QPointF> getFinishedRayPoints() const;
 
 private:
+    QList<InteractionPoint> interaction_points;
     QList<QPointF> points;
     QSharedPointer<Receiver> target_cell;
     QPointF end_point;

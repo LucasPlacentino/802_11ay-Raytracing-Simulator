@@ -28,6 +28,8 @@ public:
     int max_ray_reflections = 2;
     bool showRaySingleCell = false;
 
+
+    void test();
 private:
 
     QList<QList<QSharedPointer<Receiver>>> cells_matrix;

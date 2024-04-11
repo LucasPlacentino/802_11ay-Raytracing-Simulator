@@ -21,6 +21,11 @@ void Ray::addPoint(QPointF point)
     this->points.push_back(point);
 }
 
+void Ray::addInteractionPoint(InteractionPoint point)
+{
+    this->interaction_points.push_back(point);
+}
+
 QList<QPointF> Ray::getFinishedRayPoints() const
 {
     QList<QPointF> finished_ray = this->points;
