@@ -126,7 +126,7 @@ bool MainWindow::runSimulation()
         qInfo("Simulation ended successfully");
         return true;
     } catch (...) {
-        qInfo("Simulation ended unsuccessfully");
+        qInfo("Simulation failed");
         //qError(error);
         return false;
     }

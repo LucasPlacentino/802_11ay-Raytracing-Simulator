@@ -56,7 +56,11 @@ Simulation::Simulation() {
 void Simulation::run()
 {
     // TODO: compute everything
-    qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell);
+    qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
+
+    if (!this->showRaySingleCell) {
+        createCellsMatrix();
+    }
 
     if (this->lift_is_on_floor) { // Adds the lift metal walls if set as present
         qDebug() << "Lift is on this floor.";
@@ -77,7 +81,10 @@ void Simulation::run()
      * do the same with multiple transmitters and only keep the strongest transmitter for this cell,
      * compute final power for this cell
     */
-
+    if (this->cells_matrix.isEmpty()) {
+        qWarning("no cells provided (simulation.cells_matrix is empty)");
+        throw std::exception();
+    }
     QPair<int, int> matrix_size = {this->cells_matrix[0].size(), this->cells_matrix.size()};
     for (int l = 0; l < matrix_size.first; l++) {
         // loops over each line
@@ -133,6 +140,24 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
             this->rays_list.push_back(ray); // delete later if using raw pointers
         }
         return;
+    }
+}
+
+void Simulation::createCellsMatrix()
+{
+    qDebug() << "cells_matrix initial size:" << this->cells_matrix.size();
+    int max_x_count = ceil(this->max_x/this->resolution);
+    int max_y_count = ceil(-this->min_y/this->resolution);
+    for (int x_count=0; x_count < max_x_count; x_count++) {
+        qreal x = 0+(this->resolution*x_count);
+        for (int y_count=0; y_count < max_y_count; y_count++) {
+            qreal y = 0-(this->resolution*y_count);
+            this->cells_matrix[x_count].push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
+            y_count++;
+            qDebug() << "cells_matrix line"<< x_count << "size:" << this->cells_matrix.size();
+        }
+        x_count++;
+        qDebug() << "cells_matrix size:" << this->cells_matrix.size();
     }
 }
 

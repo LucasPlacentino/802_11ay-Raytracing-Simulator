@@ -7,6 +7,8 @@ qulonglong min_bitrate_Mbps = 50;
 
 Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
 {
+    // TODO: dont take power_dBm in constructor
+
     this->center_coordinates = center_coordinates;
     this->power_dBm = power_dBm;
     this->cell_color = Qt::black;

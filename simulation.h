@@ -31,6 +31,12 @@ public:
 
     void test();
 private:
+    qreal max_x = 15;
+    qreal min_x = 0;
+    qreal max_y = 0;
+    qreal min_y = -8;
+
+    qreal resolution = 0.5;
 
     QList<QList<QSharedPointer<Receiver>>> cells_matrix;
     void computeCell(QSharedPointer<Receiver> cell);
@@ -41,6 +47,8 @@ private:
     std::vector<Transmitter> baseStations;
 
     QList<QSharedPointer<Ray>> rays_list;
+
+    void createCellsMatrix();
 
 };
 
