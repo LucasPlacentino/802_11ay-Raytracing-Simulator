@@ -23,7 +23,9 @@ constexpr double epsilon_0 = 8.854187817e-12;
 constexpr double mu_0 = 4 * M_PI * 1e-7;
 constexpr double freq = 868.3e6;
 constexpr double c = 299792458;
+
 constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
+
 // il n'est pas défini en constexpr car cela provoque une erreur,
 // je ne sais pas pourquoi
 double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide
@@ -41,12 +43,38 @@ complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon))
 // positions des objets
 const QPointF RX(47, 65);
 const QPointF TX(32, 10);
+
 // TODO : incorporer les positions des murs, bien que pour l'instant
 //  ça ne serve pas directement dans le calcul
 const QPointF normal(1, 0);
 const QPointF unitary(0,1);
 
+class TransmitterTest : public QPointF {
+public:
+    TransmitterTest(qreal x, qreal y){
+        this->setX(x);
+        this->setY(y);
+        this->graphics.setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
+        this->graphics.setBrush(QBrush(Qt::black));
+        this->graphics.setPen(QPen(Qt::black));
+        this->graphics.setRect(this->x()-5,this->y()-5,10,10);
+        this->graphics.setAcceptHoverEvents(true);
+    };
+    /* // uses parent class implementation
+    qreal x() const{
+        return this->QPointF::x();
+    }
+    qreal y() const{
+        return this->QPointF::y();
+    }
+    */
+    QGraphicsEllipseItem graphics;
+};
+
+//TransmitterTest TX(32,10);
+
 // fonction qui calcule la position de \vec r_image de l'antenne
+//QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
 QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
     double dotProduct = QPointF::dotProduct(TX, normal);
     QPointF r_image = TX - 2 * dotProduct * normal;
@@ -91,6 +119,7 @@ QPointF calculateReflectionPoint(const QPointF& r_image, const QPointF& RX, cons
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
 QGraphicsScene* createGraphicsScene(const QPointF& RX, const QPointF& TX) {
+//QGraphicsScene* createGraphicsScene(const QPointF& RX) {
     auto* scene = new QGraphicsScene();
 
     // Définir les brosses et les stylos
@@ -105,7 +134,14 @@ QGraphicsScene* createGraphicsScene(const QPointF& RX, const QPointF& TX) {
 
     // Dessiner RX et TX
     scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
-    scene->addEllipse(TX.x() - 5, -TX.y() - 5, 10, 10, txPen, txBrush);
+    //create EllipseItem for the TX to put a toolTip on it
+    QGraphicsEllipseItem* TXgraphics = new QGraphicsEllipseItem(TX.x() - 5, -TX.y() - 5, 10, 10);
+    TXgraphics->setBrush(txBrush);
+    TXgraphics->setPen(txPen);
+    TXgraphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(QString::number(TX.x()),QString::number(TX.y())));
+    //scene->addEllipse(TX.x() - 5, -TX.y() - 5, 10, 10, txPen, txBrush);
+    //scene->addItem(&TX);
+    scene->addItem(TXgraphics);
 
     // Dessiner le vecteur d
     scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
@@ -152,9 +188,15 @@ int main(int argc, char *argv[]) {
     double P_RX = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_n), 2);
 
     // petit affichage graphique, syntaxe made in gpt
+
     QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    //QGraphicsScene* scene = createGraphicsScene(RX);
+
     addReflectionComponents(scene, RX, TX, r_image);
     QGraphicsView* view = new QGraphicsView(scene);
+
+    // ? :
+    view->setAttribute( Qt::WA_AlwaysShowToolTips);
 
     // calculs de paramètres pour la réflexion
     QPointF P_r = calculateReflectionPoint(r_image, RX, TX);
