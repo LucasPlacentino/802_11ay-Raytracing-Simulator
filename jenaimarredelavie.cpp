@@ -14,6 +14,8 @@
 #include <cmath>
 #include <complex>
 #include <iostream>
+// TODO: USE QVector2D
+#include <QVector2D>
 
 // pour plus de simplicité
 using namespace std;
@@ -34,22 +36,22 @@ constexpr double sigma = 0.018; // conductivité (S/m)
 constexpr double thickness = 0.15; // épaisseur des murs
 constexpr double omega = 2 * M_PI * freq;
 constexpr double lambda = c / freq;
-const complex<double> j(0, 1); // définition de j
+const complex<double> j(0, 1); // ! définition de j, useful
 
 complex<double> epsilon = epsilon_0 * epsilon_r;
 complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
 complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
 
 // positions des objets
-const QPointF RX(47, 65);
-const QPointF TX(32, 10);
+const QVector2D RX(47, 65);
+const QVector2D TX(32, 10);
 
 // TODO : incorporer les positions des murs, bien que pour l'instant
 //  ça ne serve pas directement dans le calcul
-const QPointF normal(1, 0);
-const QPointF unitary(0,1);
+const QVector2D normal(1, 0);
+const QVector2D unitary(0,1);
 
-class TransmitterTest : public QPointF {
+class TransmitterTest : public QVector2D {
 public:
     TransmitterTest(qreal x, qreal y){
         this->setX(x);
@@ -75,25 +77,25 @@ public:
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
-QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
-    double dotProduct = QPointF::dotProduct(TX, normal);
-    QPointF r_image = TX - 2 * dotProduct * normal;
+QVector2D calculateImageAntenna(const QVector2D& TX, const QVector2D& normal) {
+    double dotProduct = QVector2D::dotProduct(TX, normal);
+    QVector2D r_image = TX - 2 * dotProduct * normal;
     return r_image;
 }
 
 // calcul des composants issu d'une réflexion
-void addReflectionComponents(QGraphicsScene* scene, const QPointF& RX, const QPointF& TX, const QPointF& r_image) {
+void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const QVector2D& TX, const QVector2D& r_image) {
     // vecteur d entre l'image et la RX
-    QPointF d = RX - r_image;
+    QVector2D d = RX - r_image;
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
-    QPointF x0(0, 0);  // Origine
+    QVector2D x0(0, 0);  // Origine
     // calcul du t, forme générale
     double t = ((d.y() * (r_image.x() - x0.x())) - (d.x() * (r_image.y() - x0.y()))) / (unitary.x() * d.y() - unitary.y() * d.x());
-    QPointF P_r = x0 + t * unitary;
+    QVector2D P_r = x0 + t * unitary;
     double d_norm = sqrt(pow(d.x(), 2) + pow(d.y(), 2));
 
     // paramètres de la réflexion
-    double cos_theta_i = QPointF::dotProduct(d/d_norm, normal);
+    double cos_theta_i = QVector2D::dotProduct(d/d_norm, normal);
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
     double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
@@ -109,31 +111,39 @@ void addReflectionComponents(QGraphicsScene* scene, const QPointF& RX, const QPo
     scene->addLine(P_r.x(), -P_r.y(), RX.x(), -RX.y(), reflectionPen);
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
-QPointF calculateReflectionPoint(const QPointF& r_image, const QPointF& RX, const QPointF& TX) {
-    QPointF d = RX-r_image;
-    QPointF x0(0,0);
+QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& TX) {
+    QVector2D d = RX-r_image;
+    QVector2D x0(0,0);
     double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (unitary.x()*d.y()-unitary.y()*d.x());
-    QPointF P_r = x0 + t * unitary;
+    QVector2D P_r = x0 + t * unitary;
     return P_r;
 }
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
-QGraphicsScene* createGraphicsScene(const QPointF& RX, const QPointF& TX) {
+QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
 //QGraphicsScene* createGraphicsScene(const QPointF& RX) {
     auto* scene = new QGraphicsScene();
 
-    // Définir les brosses et les stylos
+    // Définir les QBrush et les QPen
     QBrush rxBrush(Qt::blue);
-    QPen rxPen(Qt::black);
+    QPen rxPen(Qt::darkBlue);
     QBrush txBrush(Qt::black);
-    QPen txPen(Qt::black);
+    QPen txPen(Qt::darkGray);
     QPen dVectorPen(Qt::green);
     dVectorPen.setWidth(2);
     QPen wallPen(Qt::gray);
     wallPen.setWidth(4);
 
     // Dessiner RX et TX
-    scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
+    //create RectItem for the RX to put a toolTip on it
+    QGraphicsRectItem* RXgraphics = new QGraphicsRectItem(RX.x() - 5, -RX.y() - 5, 10, 10);
+    RXgraphics->setBrush(rxBrush);
+    RXgraphics->setPen(rxPen);
+    RXgraphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(QString::number(RX.x()),QString::number(RX.y())));
+    //scene->addRect(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
+    //scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
+    scene->addItem(RXgraphics);
+
     //create EllipseItem for the TX to put a toolTip on it
     QGraphicsEllipseItem* TXgraphics = new QGraphicsEllipseItem(TX.x() - 5, -TX.y() - 5, 10, 10);
     TXgraphics->setBrush(txBrush);
@@ -158,13 +168,17 @@ QGraphicsScene* createGraphicsScene(const QPointF& RX, const QPointF& TX) {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    QPointF r_image = calculateImageAntenna(TX, normal);
+    QVector2D r_image = calculateImageAntenna(TX, normal);
     // TODO : foutre ça dans une fonction dédiée, MAIS c'est pas urgent, ça se fera
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
-    QPointF d = RX - TX;
+    QVector2D d = RX - TX;
     double cos_theta_i = d.y() / sqrt(pow(d.x(), 2) + pow(d.y(), 2));
+    // TODO: or use dot products? :
+    //double cos_theta_i = abs(QVector2D::dotProduct(QVector2D(unitary), QVector2D(d).normalized()));
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
+    // TODO: or use do products? :
+    //double sin_theta_i = abs(QVector2D::dotProduct(QVector2D(normal),QVector2D(d).normalized()));
     double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
     double s = thickness / cos_theta_t;
@@ -199,10 +213,10 @@ int main(int argc, char *argv[]) {
     view->setAttribute( Qt::WA_AlwaysShowToolTips);
 
     // calculs de paramètres pour la réflexion
-    QPointF P_r = calculateReflectionPoint(r_image, RX, TX);
-    QPointF eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX);
+    QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
-    double cos_theta_i_reflected = abs(QPointF::dotProduct(eta / eta_norm, unitary));
+    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta / eta_norm, unitary));
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
     double sin_theta_t_reflected = sin_theta_i_reflected / sqrt(epsilon_r);
     double cos_theta_t_reflected = sqrt(1 - pow(sin_theta_t_reflected, 2));
