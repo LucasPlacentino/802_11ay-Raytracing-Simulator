@@ -31,6 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         receiver.h receiver.cpp
         heatmapgradientlegend.h heatmapgradientlegend.cpp
         utils.h
+        jenaimarredelavie.cpp
 
 
 
