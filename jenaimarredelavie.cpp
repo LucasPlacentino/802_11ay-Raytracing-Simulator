@@ -23,7 +23,7 @@ using namespace std;
 // constantes
 constexpr double epsilon_0 = 8.854187817e-12;
 constexpr double mu_0 = 4 * M_PI * 1e-7;
-constexpr double freq = 868.3e6; // TODO: ??? c'est pas 60GHz ?
+constexpr double freq = 868.3e6; // EX 4.1, it is 868.3 MHz
 constexpr double c = 299792458;
 
 constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
@@ -61,7 +61,7 @@ public:
         this->setY(y);
         this->graphics.setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
         this->graphics.setBrush(QBrush(Qt::black));
-        this->graphics.setPen(QPen(Qt::black));
+        this->graphics.setPen(QPen(Qt::darkGray));
         this->graphics.setRect(this->x()-5,this->y()-5,10,10);
         this->graphics.setAcceptHoverEvents(true);
     };
@@ -75,8 +75,22 @@ public:
     */
     QGraphicsEllipseItem graphics;
 };
-
+class ReceiverTest : public QVector2D {
+public:
+    ReceiverTest(qreal x, qreal y) {
+        this->setX(x);
+        this->setY(y);
+        this->graphics.setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
+        this->graphics.setBrush(QBrush(Qt::blue));
+        this->graphics.setPen(QPen(Qt::darkBlue));
+        this->graphics.setRect(this->x()-5,this->y()-5,10,10);
+        this->graphics.setAcceptHoverEvents(true);
+    }
+    QGraphicsRectItem graphics;
+};
 //TransmitterTest TX(32,10);
+//ReceiverTest RX(47, 65);
+
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
@@ -99,14 +113,22 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
     // paramètres de la réflexion
     double cos_theta_i = QVector2D::dotProduct(d/d_norm, normal);
+    qDebug() << "cos_theta_i" << cos_theta_i;
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
+    qDebug() << "sin_theta_i" << sin_theta_i;
     double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
+    qDebug() << "sin_theta_t" << sin_theta_t;
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
+    qDebug() << "cos_theta_t" << cos_theta_t;
     double s = thickness / cos_theta_t;
+    qDebug() << "s" << s;
     complex<double> Gamma_perpendicular = (Z_m * cos_theta_i - Z_0 * cos_theta_t) / (Z_m * cos_theta_i + Z_0 * cos_theta_t);
+    qDebug() << "Gamma_perpendicular:" << QString::number(Gamma_perpendicular.real()) << "+ j" << QString::number(Gamma_perpendicular.imag());
     // TODO : valeur un petit peu différente de la valeur attendue, pourquoi ?
     complex<double> reflection_term = exp(-2.0 * real(gamma_m) * s) * exp(j * 2.0 * (gamma_m) * s * sin_theta_t * sin_theta_i);
+    qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
     complex<double> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
+    qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
     // interface graphique, rien de fou, merci gpt pour la syntaxe ici
     QPen reflectionPen(Qt::red);
     reflectionPen.setWidth(1); // 2?
@@ -178,17 +200,21 @@ int main(int argc, char *argv[]) {
     // calculs de la transmission directe
     QVector2D d = RX - TX;
     double cos_theta_i = d.y() / sqrt(pow(d.x(), 2) + pow(d.y(), 2));
+    qDebug() << "cos_theta_i" << cos_theta_i;
     // TODO: or use dot products? :
     //double cos_theta_i = abs(QVector2D::dotProduct(QVector2D(unitary), QVector2D(d).normalized()));
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
+    qDebug() << "sin_theta_i" << sin_theta_i;
     // TODO: or use do products? :
     //double sin_theta_i = abs(QVector2D::dotProduct(QVector2D(normal),QVector2D(d).normalized()));
     double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
+    qDebug() << "sin_theta_t" << sin_theta_t;
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
+    qDebug() << "cos_theta_t" << cos_theta_t;
     double s = thickness / cos_theta_t;
     complex<double> Gamma_perpendicular = (Z_m * cos_theta_i - Z_0 * cos_theta_t) / (Z_m * cos_theta_i + Z_0 * cos_theta_t);
     // découpe le calcul de T_m en numérateur et dénominateur parce qu'il est
-    //  tarpin long, sa valeur est celle attendue !
+    //  tarpin long, sa valeur est celle attendue yay !
     complex<double> numerator = (1.0 - pow(Gamma_perpendicular, 2)) * exp(-gamma_m * s);
     complex<double> denominator = 1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i);
     complex<double> T_m = numerator / denominator;
@@ -204,20 +230,21 @@ int main(int argc, char *argv[]) {
     //         j'ai pas investigué outre mesure car on peut pas le déterminer numériquement
     //         vu que E_n a déjà pas la bonne valeur
     double P_RX = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_n), 2);
+    qDebug() << "P_RX" << P_RX;
 
     // petit affichage graphique, syntaxe made in gpt
 
+    //--- on a foutu ça en dernier dans main() ---
     //QGraphicsScene* scene = createGraphicsScene(RX, TX);
     ////QGraphicsScene* scene = createGraphicsScene(RX);
-
     //addReflectionComponents(scene, RX, TX, r_image);
     //QGraphicsView* view = new QGraphicsView(scene);
-
     //// ? :
     //view->setAttribute( Qt::WA_AlwaysShowToolTips);
+    //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX);
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta / eta_norm, unitary));
@@ -229,10 +256,15 @@ int main(int argc, char *argv[]) {
                                                     (Z_m * cos_theta_i_reflected + Z_0 * cos_theta_t_reflected);
     // encore une fois un coefficient slightly pas le même pélo TODO : nsm wsh
     // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
+
+    // TODO: ici en dessous on devrait pas utiliser s_reflected plutot que s et Gamma_perpendicular_reflected plutot que Gamma_perpendicular ?
     complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-gamma_m * s)) / (1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i));
-    complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_norm) / eta_norm;
+    complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_norm) / eta_norm; // this reflection coefficient ?
     double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2); // is this in mW ?
+    qDebug() << "P_RX_reflected" << P_RX_reflected;
+
     P_RX_TOTAL = P_RX + P_RX_reflected;
+    qDebug() << "PX_RX_TOTAL" << P_RX_TOTAL;
 
     QGraphicsScene* scene = createGraphicsScene(RX, TX);
     //QGraphicsScene* scene = createGraphicsScene(RX);
@@ -240,13 +272,13 @@ int main(int argc, char *argv[]) {
     addReflectionComponents(scene, RX, TX, r_image);
     QGraphicsView* view = new QGraphicsView(scene);
 
-    // ? :
+    // necessary ? :
     view->setAttribute( Qt::WA_AlwaysShowToolTips);
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
     view->setFixedSize(600, 400);
-    view->scale(2.0, 2.0);
+    view->scale(2.0, 2.0); // TODO: not use scale?
     view->show();
     return app.exec();
 }
