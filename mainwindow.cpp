@@ -15,6 +15,7 @@
 
 #include "simulation.h"
 #include "simulationgraphicsscene.h"
+//#include "utils.h"
 
 //SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
 Simulation simulation = Simulation(); // The global simulation object, use `extern Simulation simulation;` in other files?
@@ -138,6 +139,24 @@ bool MainWindow::runSimulation()
         // TODO: show a progress bar ? or at least a
 
         simulation.run(); // TODO: the run func
+
+        /*
+        // TODO: from Salman's code
+        QGraphicsScene* scene = createGraphicsScene();// (RX, TX);
+        //QGraphicsScene* scene = createGraphicsScene(RX);
+
+        //addReflectionComponents(scene, RX, TX, r_image);
+        QGraphicsView* view = new QGraphicsView(scene);
+
+        // ? :
+        view->setAttribute( Qt::WA_AlwaysShowToolTips);
+
+        // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
+        //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
+        view->setFixedSize(600, 400);
+        view->scale(2.0, 2.0);
+        view->show();
+        */
 
         qInfo("Simulation ended successfully");
         return true;
