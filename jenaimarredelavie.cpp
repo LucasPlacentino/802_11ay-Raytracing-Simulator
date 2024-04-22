@@ -23,7 +23,7 @@ using namespace std;
 // constantes
 constexpr double epsilon_0 = 8.854187817e-12;
 constexpr double mu_0 = 4 * M_PI * 1e-7;
-constexpr double freq = 868.3e6;
+constexpr double freq = 868.3e6; // TODO: ??? c'est pas 60GHz ?
 constexpr double c = 299792458;
 
 constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
@@ -50,6 +50,9 @@ const QVector2D TX(32, 10);
 //  ça ne serve pas directement dans le calcul
 const QVector2D normal(1, 0);
 const QVector2D unitary(0,1);
+
+// Total Receiver power
+double P_RX_TOTAL = 0;
 
 class TransmitterTest : public QVector2D {
 public:
@@ -106,7 +109,7 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     complex<double> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
     // interface graphique, rien de fou, merci gpt pour la syntaxe ici
     QPen reflectionPen(Qt::red);
-    reflectionPen.setWidth(2);
+    reflectionPen.setWidth(1); // 2?
     scene->addLine(TX.x(), -TX.y(), P_r.x(), -P_r.y(), reflectionPen);
     scene->addLine(P_r.x(), -P_r.y(), RX.x(), -RX.y(), reflectionPen);
 }
@@ -130,7 +133,7 @@ QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
     QBrush txBrush(Qt::black);
     QPen txPen(Qt::darkGray);
     QPen dVectorPen(Qt::green);
-    dVectorPen.setWidth(2);
+    dVectorPen.setWidth(1); // 2?
     QPen wallPen(Qt::gray);
     wallPen.setWidth(4);
 
@@ -139,7 +142,8 @@ QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
     QGraphicsRectItem* RXgraphics = new QGraphicsRectItem(RX.x() - 5, -RX.y() - 5, 10, 10);
     RXgraphics->setBrush(rxBrush);
     RXgraphics->setPen(rxPen);
-    RXgraphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(QString::number(RX.x()),QString::number(RX.y())));
+    float rx_power_dBm = 10*std::log10(P_RX_TOTAL); // TODO: correct ?
+    RXgraphics->setToolTip(QString("Test receiver\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX.x()),QString::number(RX.y()),QString::number(P_RX_TOTAL),QString::number(rx_power_dBm,'f',2)));
     //scene->addRect(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
     //scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
     scene->addItem(RXgraphics);
@@ -148,7 +152,7 @@ QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
     QGraphicsEllipseItem* TXgraphics = new QGraphicsEllipseItem(TX.x() - 5, -TX.y() - 5, 10, 10);
     TXgraphics->setBrush(txBrush);
     TXgraphics->setPen(txPen);
-    TXgraphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(QString::number(TX.x()),QString::number(TX.y())));
+    TXgraphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX.x()),QString::number(TX.y()),QString::number(G_TXP_TX)));
     //scene->addEllipse(TX.x() - 5, -TX.y() - 5, 10, 10, txPen, txBrush);
     //scene->addItem(&TX);
     scene->addItem(TXgraphics);
@@ -203,14 +207,14 @@ int main(int argc, char *argv[]) {
 
     // petit affichage graphique, syntaxe made in gpt
 
-    QGraphicsScene* scene = createGraphicsScene(RX, TX);
-    //QGraphicsScene* scene = createGraphicsScene(RX);
+    //QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    ////QGraphicsScene* scene = createGraphicsScene(RX);
 
-    addReflectionComponents(scene, RX, TX, r_image);
-    QGraphicsView* view = new QGraphicsView(scene);
+    //addReflectionComponents(scene, RX, TX, r_image);
+    //QGraphicsView* view = new QGraphicsView(scene);
 
-    // ? :
-    view->setAttribute( Qt::WA_AlwaysShowToolTips);
+    //// ? :
+    //view->setAttribute( Qt::WA_AlwaysShowToolTips);
 
     // calculs de paramètres pour la réflexion
     QVector2D P_r = calculateReflectionPoint(r_image, RX, TX);
@@ -227,10 +231,21 @@ int main(int argc, char *argv[]) {
     // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
     complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-gamma_m * s)) / (1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i));
     complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_norm) / eta_norm;
-    double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2);
+    double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2); // is this in mW ?
+    P_RX_TOTAL = P_RX + P_RX_reflected;
+
+    QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    //QGraphicsScene* scene = createGraphicsScene(RX);
+
+    addReflectionComponents(scene, RX, TX, r_image);
+    QGraphicsView* view = new QGraphicsView(scene);
+
+    // ? :
+    view->setAttribute( Qt::WA_AlwaysShowToolTips);
+
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    view->setFixedSize(800, 600);
+    view->setFixedSize(600, 400);
     view->scale(2.0, 2.0);
     view->show();
     return app.exec();
