@@ -199,19 +199,23 @@ int main(int argc, char *argv[]) {
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
     QVector2D d = RX - TX;
-    double cos_theta_i = d.y() / sqrt(pow(d.x(), 2) + pow(d.y(), 2));
-    qDebug() << "cos_theta_i" << cos_theta_i;
+
     // TODO: or use dot products? :
     //double cos_theta_i = abs(QVector2D::dotProduct(QVector2D(unitary), QVector2D(d).normalized()));
-    double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
-    qDebug() << "sin_theta_i" << sin_theta_i;
+    double cos_theta_i = d.y() / sqrt(pow(d.x(), 2) + pow(d.y(), 2));
+    qDebug() << "cos_theta_i" << cos_theta_i;
     // TODO: or use do products? :
     //double sin_theta_i = abs(QVector2D::dotProduct(QVector2D(normal),QVector2D(d).normalized()));
+    double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
+    qDebug() << "sin_theta_i" << sin_theta_i;
+
     double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
     qDebug() << "sin_theta_t" << sin_theta_t;
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
     qDebug() << "cos_theta_t" << cos_theta_t;
+
     double s = thickness / cos_theta_t;
+
     complex<double> Gamma_perpendicular = (Z_m * cos_theta_i - Z_0 * cos_theta_t) / (Z_m * cos_theta_i + Z_0 * cos_theta_t);
     // découpe le calcul de T_m en numérateur et dénominateur parce qu'il est
     //  tarpin long, sa valeur est celle attendue yay !
@@ -235,19 +239,21 @@ int main(int argc, char *argv[]) {
     // petit affichage graphique, syntaxe made in gpt
 
     //--- on a foutu ça en dernier dans main() ---
-    //QGraphicsScene* scene = createGraphicsScene(RX, TX);
-    ////QGraphicsScene* scene = createGraphicsScene(RX);
-    //addReflectionComponents(scene, RX, TX, r_image);
-    //QGraphicsView* view = new QGraphicsView(scene);
-    //// ? :
-    //view->setAttribute( Qt::WA_AlwaysShowToolTips);
+    /*
+    QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    //QGraphicsScene* scene = createGraphicsScene(RX);
+    addReflectionComponents(scene, RX, TX, r_image);
+    QGraphicsView* view = new QGraphicsView(scene);
+    // ? :
+    view->setAttribute( Qt::WA_AlwaysShowToolTips);
+    */
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
     QVector2D P_r = calculateReflectionPoint(r_image, RX, TX); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
-    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta / eta_norm, unitary));
+    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
     double sin_theta_t_reflected = sin_theta_i_reflected / sqrt(epsilon_r);
     double cos_theta_t_reflected = sqrt(1 - pow(sin_theta_t_reflected, 2));
@@ -258,13 +264,13 @@ int main(int argc, char *argv[]) {
     // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
 
     // TODO: ici en dessous on devrait pas utiliser s_reflected plutot que s et Gamma_perpendicular_reflected plutot que Gamma_perpendicular ?
-    complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-gamma_m * s)) / (1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i));
+    complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-gamma_m * s_reflected)) / (1.0 - pow(Gamma_perpendicular_reflected, 2) * exp(-2.0 * gamma_m * s_reflected) * exp(j * 2.0 * real(gamma_m)* sin_theta_t_reflected * sin_theta_i_reflected));
     complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_norm) / eta_norm; // this reflection coefficient ?
     double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2); // is this in mW ?
     qDebug() << "P_RX_reflected" << P_RX_reflected;
 
-    P_RX_TOTAL = P_RX + P_RX_reflected;
-    qDebug() << "PX_RX_TOTAL" << P_RX_TOTAL;
+    P_RX_TOTAL = P_RX + P_RX_reflected; // TODO: correct ?
+    qDebug() << "PX_RX_TOTAL ??" << P_RX_TOTAL;
 
     QGraphicsScene* scene = createGraphicsScene(RX, TX);
     //QGraphicsScene* scene = createGraphicsScene(RX);
