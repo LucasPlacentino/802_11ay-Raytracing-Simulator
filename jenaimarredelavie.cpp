@@ -19,6 +19,7 @@
 
 // pour plus de simplicité
 using namespace std;
+//using namespace Qt; // ?
 
 // constantes
 constexpr double epsilon_0 = 8.854187817e-12;
@@ -30,30 +31,30 @@ constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa v
 
 // il n'est pas défini en constexpr car cela provoque une erreur,
 // je ne sais pas pourquoi
-double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
+const double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
 constexpr double epsilon_r = 4.8;
 constexpr double sigma = 0.018; // conductivité (S/m)
 constexpr double thickness = 0.15; // épaisseur des murs, en mètres
 constexpr double omega = 2 * M_PI * freq;
 constexpr double lambda = c / freq;
-const complex<double> j(0, 1); // ! définition de j, useful
+constexpr complex<double> j(0, 1); // ! définition de j, useful
 
-complex<double> epsilon = epsilon_0 * epsilon_r;
-complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
-complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
-const double Ra = 73; // résistance d'antenne en Ohm
+constexpr complex<double> epsilon = epsilon_0 * epsilon_r;
+const complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
+const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
+constexpr double Ra = 73; // résistance d'antenne en Ohm
 
-//// positions des objets
-//const QVector2D RX(47, 65);
-//const QVector2D TX(32, 10);
+////// positions des objets
+////const QVector2D RX(47, 65);
+////const QVector2D TX(32, 10);
 
 // TODO : incorporer les positions des murs, bien que pour l'instant
 //  ça ne serve pas directement dans le calcul
-const QVector2D normal(1, 0);
-const QVector2D unitary(0,1);
+constexpr QVector2D normal(1, 0);
+constexpr QVector2D unitary(0,1);
 
-const QVector2D normal_top(0,-1); // mur du haut
-const QVector2D unitary_top(1,0); // mur du haut
+constexpr QVector2D normal_top(0,-1); // mur du haut
+constexpr QVector2D unitary_top(1,0); // mur du haut
 
 // Total Receiver power
 double P_RX_TOTAL = 0;
@@ -110,8 +111,8 @@ public:
     QGraphicsRectItem* graphics = new QGraphicsRectItem();//(this->x()) - 5, - (this->y()) - 5, 10, 10);
     double power;
 };
-TransmitterTest TX_test(32,10);
-ReceiverTest RX_test(47, 65);
+TransmitterTest TX(32,10);
+ReceiverTest RX(47, 65);
 
 QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
 QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
@@ -170,7 +171,7 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
     //x0(0, -80);  // Nouvelle origine
     // calcul du t, forme générale
-    double t_2 = ((d.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (unitary_top.x() * d_2.y() - unitary_top.y() * d_2.x());
+    double t_2 = ((d_2.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (unitary_top.x() * d_2.y() - unitary_top.y() * d_2.x());
     QVector2D P_r_2 = x0 + t_2 * unitary_top;
     double d_norm_2 = sqrt(pow(d_2.x(), 2) + pow(d_2.y(), 2));
     // paramètres de la réflexion
@@ -279,19 +280,19 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    qDebug() << "RX_test: x" << QString::number(RX_test.x()) << " y" << QString::number(RX_test.y());
-    qDebug() << "TX_test: x" << QString::number(TX_test.x()) << " y" << QString::number(TX_test.y());
+    qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
+    qDebug() << "TX: x" << QString::number(TX.x()) << " y" << QString::number(TX.y());
     //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
     init();
 
-    QVector2D r_image = calculateImageAntenna(TX_test, normal);
+    QVector2D r_image = calculateImageAntenna(TX, normal);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
 
     // TODO : foutre ça dans une fonction dédiée, MAIS c'est pas urgent, ça se fera
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
-    QVector2D d = RX_test - TX_test;
+    QVector2D d = RX - TX;
 
     // TODO: or use dot products? :
     //double cos_theta_i = abs(QVector2D::dotProduct(QVector2D(unitary), QVector2D(d).normalized()));
@@ -345,8 +346,8 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX_test, TX_test); // reflection point P_r
-    QVector2D eta = P_r - TX_test; // vecteur de P_r à RX, notation issue du tp
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX); // reflection point P_r
+    QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
@@ -371,7 +372,7 @@ int main(int argc, char *argv[]) {
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
-    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX_test, r_image); // second reflection point P_r_2
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, r_image); // second reflection point P_r_2
     QVector2D eta_2 = P_r_2 - r_image;
     double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
     double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), unitary_top)); // or eta/eta_norm
@@ -395,12 +396,12 @@ int main(int argc, char *argv[]) {
 
     P_RX_TOTAL = P_RX + P_RX_reflected; // TODO: correct ?
     qDebug() << "PX_RX_TOTAL ??" << P_RX_TOTAL;
-    RX_test.power = P_RX_TOTAL;
+    RX.power = P_RX_TOTAL;
 
-    QGraphicsScene* scene = createGraphicsScene(RX_test, TX_test);
+    QGraphicsScene* scene = createGraphicsScene(RX, TX);
     //QGraphicsScene* scene = createGraphicsScene(RX);
 
-    addReflectionComponents(scene, RX_test, TX_test, r_image, r_image_image);
+    addReflectionComponents(scene, RX, TX, r_image, r_image_image);
     QGraphicsView* view = new QGraphicsView(scene);
 
     // necessary ? :
