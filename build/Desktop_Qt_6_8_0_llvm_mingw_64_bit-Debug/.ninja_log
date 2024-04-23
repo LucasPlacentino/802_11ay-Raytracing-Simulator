@@ -1,0 +1,17 @@
+# ninja log v5
+2	1101	7356055260818601	802_11ay-Raytracing-Simulator_autogen/timestamp	2753cded509c4c18
+2	1101	7356055260818601	802_11ay-Raytracing-Simulator_autogen/mocs_compilation.cpp	2753cded509c4c18
+2	1101	7356055260818601	C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/802_11ay-Raytracing-Simulator_autogen/timestamp	2753cded509c4c18
+2	1101	7356055260818601	C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/802_11ay-Raytracing-Simulator_autogen/mocs_compilation.cpp	2753cded509c4c18
+1127	6531	7356055315242544	CMakeFiles/802_11ay-Raytracing-Simulator.dir/simulationgraphicsscene.cpp.obj	912167dd24607a59
+1114	6613	7356055316562844	CMakeFiles/802_11ay-Raytracing-Simulator.dir/ray.cpp.obj	3034c361bf9cad19
+1118	7018	7356055319873586	CMakeFiles/802_11ay-Raytracing-Simulator.dir/transmitter.cpp.obj	9f299d48c36c554a
+1102	7030	7356055320113646	CMakeFiles/802_11ay-Raytracing-Simulator.dir/802_11ay-Raytracing-Simulator_autogen/mocs_compilation.cpp.obj	3e108d5f5eb5cc3a
+1130	7434	7356055324724684	CMakeFiles/802_11ay-Raytracing-Simulator.dir/heatmapgradientlegend.cpp.obj	7fb157fb0cce5e91
+1108	7762	7356055328150816	CMakeFiles/802_11ay-Raytracing-Simulator.dir/main.cpp.obj	dd63b365f4cf7215
+1133	7981	7356055330221521	CMakeFiles/802_11ay-Raytracing-Simulator.dir/jenaimarredelavie.cpp.obj	5e015a3c0120d9d3
+1121	8066	7356055331272001	CMakeFiles/802_11ay-Raytracing-Simulator.dir/obstacle.cpp.obj	549a4c116697b6b9
+1124	8232	7356055332942366	CMakeFiles/802_11ay-Raytracing-Simulator.dir/receiver.cpp.obj	c0f28a334dc735fd
+1105	8425	7356055334732765	CMakeFiles/802_11ay-Raytracing-Simulator.dir/simulation.cpp.obj	1e76ded49848d2e5
+1111	9584	7356055346413671	CMakeFiles/802_11ay-Raytracing-Simulator.dir/mainwindow.cpp.obj	9b08e6153ddc8845
+9585	9777	7356055348304677	802_11ay-Raytracing-Simulator.exe	41db93126a2f629b

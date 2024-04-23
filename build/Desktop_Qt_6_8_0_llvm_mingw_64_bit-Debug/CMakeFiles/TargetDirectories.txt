@@ -1,0 +1,9 @@
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/802_11ay-Raytracing-Simulator.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/list_install_components.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/install.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/install/local.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/install/strip.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/802_11ay-Raytracing-Simulator_autogen_timestamp_deps.dir
+C:/Users/Salman/Desktop/802_11ay-Raytracing-Simulator-1/build/Desktop_Qt_6_8_0_llvm_mingw_64_bit-Debug/CMakeFiles/802_11ay-Raytracing-Simulator_autogen.dir
