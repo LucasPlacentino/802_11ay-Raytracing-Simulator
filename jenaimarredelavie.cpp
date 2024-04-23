@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
     complex<double> numerator = (1.0 - pow(Gamma_perpendicular, 2)) * exp(-gamma_m * s);
     complex<double> denominator = 1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i);
     complex<double> T_m = numerator / denominator;
-    double d1 = sqrt(pow(d.x(), 2) + pow(d.y(), 2)); // TODO foutre ça
+    double d1 = sqrt(pow(d.x(), 2) + pow(d.y(), 2)); // TODO foutre ça // TODO: d1 = d.length() comme c'est un QVector2D mtn
                                                      //quelque part plus haut ptet ?
     // valeur de exp term non calculée solo dans le tp donc je sais pas quelle est sa valeur
     // mais E_n a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
