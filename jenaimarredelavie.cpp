@@ -1,3 +1,4 @@
+
 // Des imports, je ne sais pas lesquels sont nécessaires
 // et lesquels ne le sont pas, j'ai pas fait le tri
 // de toute façon quand on mergera ça dans le vrai code
@@ -41,7 +42,7 @@ const complex<double> j(0, 1); // ! définition de j, useful
 complex<double> epsilon = epsilon_0 * epsilon_r;
 complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
 complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
-
+const double Ra = 73; // résistance d'antenne en Ohm
 // positions des objets
 const QVector2D RX(47, 65);
 const QVector2D TX(32, 10);
@@ -146,7 +147,7 @@ QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
 QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
-//QGraphicsScene* createGraphicsScene(const QPointF& RX) {
+    //QGraphicsScene* createGraphicsScene(const QPointF& RX) {
     auto* scene = new QGraphicsScene();
 
     // Définir les QBrush et les QPen
@@ -223,9 +224,10 @@ int main(int argc, char *argv[]) {
     complex<double> denominator = 1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i);
     complex<double> T_m = numerator / denominator;
     double d1 = sqrt(pow(d.x(), 2) + pow(d.y(), 2)); // TODO foutre ça // TODO: d1 = d.length() comme c'est un QVector2D mtn
-                                                     //quelque part plus haut ptet ?
+        //quelque part plus haut ptet ?
     // valeur de exp term non calculée solo dans le tp donc je sais pas quelle est sa valeur
     // mais E_n a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
+    cout << T_m << "et" << imag(gamma_m) << endl;
     complex<double> exp_term = exp(-j * real(gamma_m) * d1); // pr simplifier expression en dessous
     complex<double> E_n = T_m * sqrt(60 * G_TXP_TX) * exp_term/ d1; // Convertir P_TX de dBm en Watts
     // valeur différente de celle attendue, logique car elle dépend de G_TXP_TX dont je suis
@@ -233,7 +235,7 @@ int main(int argc, char *argv[]) {
     //  TODO : malgré cela, est-ce que la fonction est bien celle ci ou y a t il une erreur ?
     //         j'ai pas investigué outre mesure car on peut pas le déterminer numériquement
     //         vu que E_n a déjà pas la bonne valeur
-    double P_RX = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_n), 2);
+    double P_RX = (60 * pow(lambda, 2)) / (8 * pow(M_PI,2)*Ra) * G_TXP_TX * pow(abs(T_m*exp_term/d1), 2);
     qDebug() << "P_RX" << P_RX;
 
     // petit affichage graphique, syntaxe made in gpt
@@ -288,4 +290,3 @@ int main(int argc, char *argv[]) {
     view->show();
     return app.exec();
 }
-
