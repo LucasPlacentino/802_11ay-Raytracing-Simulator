@@ -227,7 +227,8 @@ int main(int argc, char *argv[]) {
         //quelque part plus haut ptet ?
     // valeur de exp term non calculée solo dans le tp donc je sais pas quelle est sa valeur
     // mais E_n a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
-    cout << T_m << "et" << imag(gamma_m) << endl;
+    qDebug() << "T_m" << QString::number(T_m.real()) << "+ j" << QString::number(T_m.imag());
+    qDebug() << "gamma_m imag:" << imag(gamma_m);
     complex<double> exp_term = exp(-j * real(gamma_m) * d1); // pr simplifier expression en dessous
     complex<double> E_n = T_m * sqrt(60 * G_TXP_TX) * exp_term/ d1; // Convertir P_TX de dBm en Watts
     // valeur différente de celle attendue, logique car elle dépend de G_TXP_TX dont je suis
