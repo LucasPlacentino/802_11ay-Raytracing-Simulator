@@ -14,8 +14,7 @@
 #include <QBrush>
 #include <cmath>
 #include <complex>
-#include <iostream>
-// TODO: USE QVector2D
+//#include <iostream>
 #include <QVector2D>
 
 // pour plus de simplicité
@@ -31,10 +30,10 @@ constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa v
 
 // il n'est pas défini en constexpr car cela provoque une erreur,
 // je ne sais pas pourquoi
-double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide
+double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
 constexpr double epsilon_r = 4.8;
 constexpr double sigma = 0.018; // conductivité (S/m)
-constexpr double thickness = 0.15; // épaisseur des murs
+constexpr double thickness = 0.15; // épaisseur des murs, en mètres
 constexpr double omega = 2 * M_PI * freq;
 constexpr double lambda = c / freq;
 const complex<double> j(0, 1); // ! définition de j, useful
@@ -43,9 +42,10 @@ complex<double> epsilon = epsilon_0 * epsilon_r;
 complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
 complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
 const double Ra = 73; // résistance d'antenne en Ohm
-// positions des objets
-const QVector2D RX(47, 65);
-const QVector2D TX(32, 10);
+
+//// positions des objets
+//const QVector2D RX(47, 65);
+//const QVector2D TX(32, 10);
 
 // TODO : incorporer les positions des murs, bien que pour l'instant
 //  ça ne serve pas directement dans le calcul
@@ -55,16 +55,30 @@ const QVector2D unitary(0,1);
 // Total Receiver power
 double P_RX_TOTAL = 0;
 
+QBrush rxBrush(Qt::blue);
+QPen rxPen(Qt::darkBlue);
+QBrush txBrush(Qt::black);
+QPen txPen(Qt::darkGray);
+QPen dVectorPen(Qt::green);
+//dVectorPen.setWidth(1); // 2?
+QPen wallPen(Qt::gray);
+//wallPen.setWidth(4);
+
+void init() {
+    dVectorPen.setWidth(1); // 2?
+    wallPen.setWidth(4);
+}
+
 class TransmitterTest : public QVector2D {
 public:
     TransmitterTest(qreal x, qreal y){
         this->setX(x);
         this->setY(y);
-        this->graphics.setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
-        this->graphics.setBrush(QBrush(Qt::black));
-        this->graphics.setPen(QPen(Qt::darkGray));
-        this->graphics.setRect(this->x()-5,this->y()-5,10,10);
-        this->graphics.setAcceptHoverEvents(true);
+        this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
+        this->graphics->setBrush(QBrush(Qt::black));
+        this->graphics->setPen(QPen(Qt::darkGray));
+        this->graphics->setRect(x-5,-y-5,10,10);
+        this->graphics->setAcceptHoverEvents(true);
     };
     /* // uses parent class implementation
     qreal x() const{
@@ -74,30 +88,32 @@ public:
         return this->QPointF::y();
     }
     */
-    QGraphicsEllipseItem graphics;
+    QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
+    double power;
 };
 class ReceiverTest : public QVector2D {
 public:
     ReceiverTest(qreal x, qreal y) {
         this->setX(x);
         this->setY(y);
-        this->graphics.setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
-        this->graphics.setBrush(QBrush(Qt::blue));
-        this->graphics.setPen(QPen(Qt::darkBlue));
-        this->graphics.setRect(this->x()-5,this->y()-5,10,10);
-        this->graphics.setAcceptHoverEvents(true);
+        this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
+        this->graphics->setBrush(QBrush(Qt::blue));
+        this->graphics->setPen(QPen(Qt::darkBlue));
+        this->graphics->setRect(x-5,-y-5,10,10);
+        this->graphics->setAcceptHoverEvents(true);
     }
-    QGraphicsRectItem graphics;
+    QGraphicsRectItem* graphics = new QGraphicsRectItem();//(this->x()) - 5, - (this->y()) - 5, 10, 10);
+    double power;
 };
-//TransmitterTest TX(32,10);
-//ReceiverTest RX(47, 65);
+TransmitterTest TX_test(32,10);
+ReceiverTest RX_test(47, 65);
 
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
 QVector2D calculateImageAntenna(const QVector2D& TX, const QVector2D& normal) {
-    double dotProduct = QVector2D::dotProduct(TX, normal);
-    QVector2D r_image = TX - 2 * dotProduct * normal;
+    double _dotProduct = QVector2D::dotProduct(TX, normal);
+    QVector2D r_image = TX - 2 * _dotProduct * normal;
     return r_image;
 }
 
@@ -146,39 +162,50 @@ QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX
 }
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
-QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
+//QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
+QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     //QGraphicsScene* createGraphicsScene(const QPointF& RX) {
     auto* scene = new QGraphicsScene();
 
     // Définir les QBrush et les QPen
-    QBrush rxBrush(Qt::blue);
-    QPen rxPen(Qt::darkBlue);
-    QBrush txBrush(Qt::black);
-    QPen txPen(Qt::darkGray);
-    QPen dVectorPen(Qt::green);
-    dVectorPen.setWidth(1); // 2?
-    QPen wallPen(Qt::gray);
-    wallPen.setWidth(4);
+    //QBrush rxBrush(Qt::blue);
+    //QPen rxPen(Qt::darkBlue);
+    //QBrush txBrush(Qt::black);
+    //QPen txPen(Qt::darkGray);
+    //QPen dVectorPen(Qt::green);
+    //dVectorPen.setWidth(1); // 2?
+    //QPen wallPen(Qt::gray);
+    //wallPen.setWidth(4);
 
     // Dessiner RX et TX
     //create RectItem for the RX to put a toolTip on it
-    QGraphicsRectItem* RXgraphics = new QGraphicsRectItem(RX.x() - 5, -RX.y() - 5, 10, 10);
-    RXgraphics->setBrush(rxBrush);
-    RXgraphics->setPen(rxPen);
-    float rx_power_dBm = 10*std::log10(P_RX_TOTAL); // TODO: correct ?
-    RXgraphics->setToolTip(QString("Test receiver\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX.x()),QString::number(RX.y()),QString::number(P_RX_TOTAL),QString::number(rx_power_dBm,'f',2)));
-    //scene->addRect(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
-    //scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
-    scene->addItem(RXgraphics);
+    //QGraphicsRectItem* RXgraphics = new QGraphicsRectItem(RX.x() - 5, -RX.y() - 5, 10, 10);
+    //RXgraphics->setBrush(rxBrush);
+    //RXgraphics->setPen(rxPen);
+    //float rx_power_dBm = 10*std::log10(P_RX_TOTAL); // TODO: correct ?
+    //RXgraphics->setToolTip(QString("Test receiver\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX.x()),QString::number(RX.y()),QString::number(P_RX_TOTAL),QString::number(rx_power_dBm,'f',2)));
+    ////scene->addRect(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
+    ////scene->addEllipse(RX.x() - 5, -RX.y() - 5, 10, 10, rxPen, rxBrush);
+    //scene->addItem(RXgraphics);
+    //qDebug() << "RXgraphics:" << RXgraphics->rect();
+
+    float _rx_power_dBm = 10*std::log10(RX.power); // TODO: correct ?
+    RX.graphics->setToolTip(QString("Test receiver\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX.x()),QString::number(RX.y()),QString::number(RX.power),QString::number(_rx_power_dBm,'f',2)));
+    scene->addItem(RX.graphics);
+    qDebug() << "RX.graphics:" << RX.graphics->rect();
 
     //create EllipseItem for the TX to put a toolTip on it
-    QGraphicsEllipseItem* TXgraphics = new QGraphicsEllipseItem(TX.x() - 5, -TX.y() - 5, 10, 10);
-    TXgraphics->setBrush(txBrush);
-    TXgraphics->setPen(txPen);
-    TXgraphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX.x()),QString::number(TX.y()),QString::number(G_TXP_TX)));
-    //scene->addEllipse(TX.x() - 5, -TX.y() - 5, 10, 10, txPen, txBrush);
-    //scene->addItem(&TX);
-    scene->addItem(TXgraphics);
+    //QGraphicsEllipseItem* TXgraphics = new QGraphicsEllipseItem(TX.x() - 5, -TX.y() - 5, 10, 10);
+    //TXgraphics->setBrush(txBrush);
+    //TXgraphics->setPen(txPen);
+    //TXgraphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX.x()),QString::number(TX.y()),QString::number(G_TXP_TX)));
+    ////scene->addEllipse(TX.x() - 5, -TX.y() - 5, 10, 10, txPen, txBrush);
+    ////scene->addItem(&TX);
+    //scene->addItem(TXgraphics);
+
+    TX.graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX.x()),QString::number(TX.y()),QString::number(G_TXP_TX)));
+    scene->addItem(TX.graphics);
+    qDebug() << "TX.graphics:" << TX.graphics->rect();
 
     // Dessiner le vecteur d
     scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
@@ -195,11 +222,17 @@ QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    QVector2D r_image = calculateImageAntenna(TX, normal);
+
+    qDebug() << "RX_test: x" << QString::number(RX_test.x()) << " y" << QString::number(RX_test.y());
+    qDebug() << "TX_test: x" << QString::number(TX_test.x()) << " y" << QString::number(TX_test.y());
+    //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
+    init();
+
+    QVector2D r_image = calculateImageAntenna(TX_test, normal);
     // TODO : foutre ça dans une fonction dédiée, MAIS c'est pas urgent, ça se fera
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
-    QVector2D d = RX - TX;
+    QVector2D d = RX_test - TX_test;
 
     // TODO: or use dot products? :
     //double cos_theta_i = abs(QVector2D::dotProduct(QVector2D(unitary), QVector2D(d).normalized()));
@@ -253,8 +286,8 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX); // reflection point P_r
-    QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
+    QVector2D P_r = calculateReflectionPoint(r_image, RX_test, TX_test); // reflection point P_r
+    QVector2D eta = P_r - TX_test; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
@@ -274,11 +307,12 @@ int main(int argc, char *argv[]) {
 
     P_RX_TOTAL = P_RX + P_RX_reflected; // TODO: correct ?
     qDebug() << "PX_RX_TOTAL ??" << P_RX_TOTAL;
+    RX_test.power = P_RX_TOTAL;
 
-    QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    QGraphicsScene* scene = createGraphicsScene(RX_test, TX_test);
     //QGraphicsScene* scene = createGraphicsScene(RX);
 
-    addReflectionComponents(scene, RX, TX, r_image);
+    addReflectionComponents(scene, RX_test, TX_test, r_image);
     QGraphicsView* view = new QGraphicsView(scene);
 
     // necessary ? :
