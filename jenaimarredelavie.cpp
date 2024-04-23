@@ -52,6 +52,9 @@ const double Ra = 73; // résistance d'antenne en Ohm
 const QVector2D normal(1, 0);
 const QVector2D unitary(0,1);
 
+const QVector2D normal_top(0,-1); // mur du haut
+const QVector2D unitary_top(1,0); // mur du haut
+
 // Total Receiver power
 double P_RX_TOTAL = 0;
 
@@ -63,10 +66,12 @@ QPen dVectorPen(Qt::green);
 //dVectorPen.setWidth(1); // 2?
 QPen wallPen(Qt::gray);
 //wallPen.setWidth(4);
+QPen imagePen(Qt::PenStyle::DotLine);
 
 void init() {
     dVectorPen.setWidth(1); // 2?
     wallPen.setWidth(4);
+    imagePen.setColor(Qt::black);
 }
 
 class TransmitterTest : public QVector2D {
@@ -108,17 +113,22 @@ public:
 TransmitterTest TX_test(32,10);
 ReceiverTest RX_test(47, 65);
 
+QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
+QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
+
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
 QVector2D calculateImageAntenna(const QVector2D& TX, const QVector2D& normal) {
     double _dotProduct = QVector2D::dotProduct(TX, normal);
     QVector2D r_image = TX - 2 * _dotProduct * normal;
+    qDebug() << "r_image:" << r_image.x() << r_image.y();
+
     return r_image;
 }
 
 // calcul des composants issu d'une réflexion
-void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const QVector2D& TX, const QVector2D& r_image) {
+void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const QVector2D& TX, const QVector2D& r_image, const QVector2D& r_image_image) {
     // vecteur d entre l'image et la RX
     QVector2D d = RX - r_image;
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
@@ -151,6 +161,41 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     reflectionPen.setWidth(1); // 2?
     scene->addLine(TX.x(), -TX.y(), P_r.x(), -P_r.y(), reflectionPen);
     scene->addLine(P_r.x(), -P_r.y(), RX.x(), -RX.y(), reflectionPen);
+
+
+    // ---- TEST: deuxieme reflection ----
+
+    // vecteur d entre l'image et la RX
+    QVector2D d_2 = RX - r_image_image;
+    // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
+    //x0(0, -80);  // Nouvelle origine
+    // calcul du t, forme générale
+    double t_2 = ((d.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (unitary_top.x() * d_2.y() - unitary_top.y() * d_2.x());
+    QVector2D P_r_2 = x0 + t_2 * unitary_top;
+    double d_norm_2 = sqrt(pow(d_2.x(), 2) + pow(d_2.y(), 2));
+    // paramètres de la réflexion
+    double cos_theta_i_2 = QVector2D::dotProduct(d_2/d_norm_2, normal_top);
+    double sin_theta_i_2 = sqrt(1 - pow(cos_theta_i_2, 2));
+    double sin_theta_t_2 = sin_theta_i_2 / sqrt(epsilon_r);
+    double cos_theta_t_2 = sqrt(1 - pow(sin_theta_t_2, 2));
+    double s_2 = thickness / cos_theta_t_2;
+    complex<double> Gamma_perpendicular_2 = (Z_m * cos_theta_i_2 - Z_0 * cos_theta_t_2) / (Z_m * cos_theta_i_2 + Z_0 * cos_theta_t_2);
+    // TODO : valeur un petit peu différente de la valeur attendue, pourquoi ?
+    complex<double> reflection_term_2 = exp(-2.0 * real(gamma_m) * s_2) * exp(j * 2.0 * (gamma_m) * s_2 * sin_theta_t_2 * sin_theta_i_2);
+    complex<double> Gamma_m_2 = Gamma_perpendicular_2 - (1.0 - pow((Gamma_perpendicular_2), 2)) * Gamma_perpendicular_2 * reflection_term_2 / (1.0 - pow((Gamma_perpendicular_2), 2) * reflection_term_2);
+    // interface graphique, rien de fou, merci gpt pour la syntaxe ici
+    QPen reflectionPen_2(Qt::yellow);
+    reflectionPen_2.setWidth(1); // 2?
+    scene->addLine(TX.x(), -TX.y(), P_r_2.x(), -P_r_2.y(), reflectionPen_2);
+    scene->addLine(P_r_2.x(), -P_r_2.y(), RX.x(), -RX.y(), reflectionPen_2);
+
+    // -----------------------------------
+
+
+    // to debug:
+    scene->addLine(TX.x(), -TX.y(), r_image.x(), -r_image.y(), imagePen);
+    scene->addLine(r_image.x(), -r_image.y(), P_r.x(), -P_r.y(), imagePen);
+
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
 QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& TX) {
@@ -215,6 +260,17 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     scene->addLine(0, 0, 0, -80, wallPen);
     scene->addLine(0, -80, 130, -80, wallPen);
 
+    // test:
+    tx_image_graphics->setBrush(QBrush(Qt::darkYellow));
+    tx_image_graphics->setPen(QPen(Qt::darkYellow));
+    tx_image_graphics->setToolTip(QString("TX image\nx=%1 y=%2").arg(QString::number(tx_image_graphics->rect().x()),QString::number(-tx_image_graphics->rect().y())));
+    scene->addItem(tx_image_graphics);
+
+    tx_image_image_graphics->setBrush(QBrush(Qt::darkYellow));
+    tx_image_image_graphics->setPen(QPen(Qt::darkYellow));
+    tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
+    scene->addItem(tx_image_image_graphics);
+
     return scene;
 }
 
@@ -229,6 +285,9 @@ int main(int argc, char *argv[]) {
     init();
 
     QVector2D r_image = calculateImageAntenna(TX_test, normal);
+    // test:
+    tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
+
     // TODO : foutre ça dans une fonction dédiée, MAIS c'est pas urgent, ça se fera
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
@@ -305,6 +364,35 @@ int main(int argc, char *argv[]) {
     double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2); // is this in mW ?
     qDebug() << "P_RX_reflected" << P_RX_reflected;
 
+
+    // ---- TEST deuxieme reflection ---- // TODO: test
+
+    QVector2D r_image_image = calculateImageAntenna(r_image, normal_top);
+    // test:
+    tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
+
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX_test, r_image); // second reflection point P_r_2
+    QVector2D eta_2 = P_r_2 - r_image;
+    double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
+    double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), unitary_top)); // or eta/eta_norm
+    double sin_theta_i_reflected_2 = sqrt(1 - pow(cos_theta_i_reflected_2, 2));
+    double sin_theta_t_reflected_2 = sin_theta_i_reflected_2 / sqrt(epsilon_r);
+    double cos_theta_t_reflected_2 = sqrt(1 - pow(sin_theta_t_reflected_2, 2));
+    double s_reflected_2 = thickness / cos_theta_t_reflected_2;
+    complex<double> Gamma_perpendicular_reflected_2 = (Z_m * cos_theta_i_reflected_2 - Z_0 * cos_theta_t_reflected_2) /
+                                                    (Z_m * cos_theta_i_reflected_2 + Z_0 * cos_theta_t_reflected_2);
+    // encore une fois un coefficient slightly pas le même pélo TODO : nsm wsh
+    // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
+
+    // TODO: ici en dessous on devrait pas utiliser s_reflected plutot que s et Gamma_perpendicular_reflected plutot que Gamma_perpendicular ?
+    complex<double> T_m_r_2 = ((1.0 - pow(Gamma_perpendicular_reflected_2, 2)) * exp(-gamma_m * s_reflected_2)) / (1.0 - pow(Gamma_perpendicular_reflected_2, 2) * exp(-2.0 * gamma_m * s_reflected_2) * exp(j * 2.0 * real(gamma_m)* sin_theta_t_reflected_2 * sin_theta_i_reflected_2));
+    complex<double> E_2_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_2_norm) / eta_2_norm; // this reflection coefficient ?
+    double P_RX_reflected_2 = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2_2), 2); // is this in mW ?
+    qDebug() << "P_RX_reflected_2" << P_RX_reflected_2;
+
+    // -----------------------------
+
+
     P_RX_TOTAL = P_RX + P_RX_reflected; // TODO: correct ?
     qDebug() << "PX_RX_TOTAL ??" << P_RX_TOTAL;
     RX_test.power = P_RX_TOTAL;
@@ -312,7 +400,7 @@ int main(int argc, char *argv[]) {
     QGraphicsScene* scene = createGraphicsScene(RX_test, TX_test);
     //QGraphicsScene* scene = createGraphicsScene(RX);
 
-    addReflectionComponents(scene, RX_test, TX_test, r_image);
+    addReflectionComponents(scene, RX_test, TX_test, r_image, r_image_image);
     QGraphicsView* view = new QGraphicsView(scene);
 
     // necessary ? :
