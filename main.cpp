@@ -2,6 +2,7 @@
 
 #include <QApplication>
 
+/*
 int main(int argc, char *argv[])
 {
     //Q_INIT_RESOURCE(application);
@@ -16,5 +17,5 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
-
+*/
 
