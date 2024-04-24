@@ -3,7 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QVector2D>
-//#include "parameters.h"
+#include "parameters.h"
 
 QVector2D transpose2DVector(QVector2D *vector, bool dir)
 {

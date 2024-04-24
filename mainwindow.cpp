@@ -16,6 +16,7 @@
 #include "simulation.h"
 #include "simulationgraphicsscene.h"
 //#include "utils.h"
+//#include "parameters.h"
 
 //SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
 Simulation simulation = Simulation(); // The global simulation object, use `extern Simulation simulation;` in other files?

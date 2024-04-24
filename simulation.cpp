@@ -1,6 +1,6 @@
 #include "simulation.h"
 #include "utils.h"
-#include "parameters.h"
+//#include "parameters.h"
 
 #include <QtMath>
 
@@ -160,9 +160,9 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 void Simulation::createCellsMatrix()
 {
     qDebug() << "cells_matrix initial size:" << this->cells_matrix.size();
-    int max_x_count = ceil(this->max_x/this->resolution); // -1 ?
+    int max_x_count = ceil(max_x/this->resolution); // -1 ?
     qDebug() << "Max count of cells X:" << max_x_count;
-    int max_y_count = ceil(-this->min_y/this->resolution); // -1 ?
+    int max_y_count = ceil(-min_y/this->resolution); // -1 ?
     qDebug() << "Max count of cells Y:" << max_y_count;
     for (int x_count=0; x_count < max_x_count; x_count++) {
         qDebug() << "Creating new line of cells_matrix...";

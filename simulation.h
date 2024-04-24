@@ -6,6 +6,7 @@
 #include "receiver.h"
 #include "simulationgraphicsscene.h"
 #include "transmitter.h"
+#include "parameters.h"
 
 #include <QElapsedTimer>
 
@@ -40,10 +41,10 @@ private:
     QElapsedTimer timer;
     qint64 simulation_time;
 
-    qreal max_x = 15;
-    qreal min_x = 0;
-    qreal max_y = 0;
-    qreal min_y = -8;
+    //qreal max_x = 15;
+    //qreal min_x = 0;
+    //qreal max_y = 0;
+    //qreal min_y = -8;
     qreal resolution = 0.5;
 
     //QVector2D origin = QVector2D(0,0);

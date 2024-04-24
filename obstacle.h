@@ -4,6 +4,7 @@
 #include <QGraphicsRectItem>
 #include <QPoint> // TODO: this one?
 #include <complex>
+#include "parameters.h"
 
 
 struct WallProperties {
