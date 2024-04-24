@@ -68,9 +68,20 @@ QPen wallPen(Qt::gray);
 //wallPen.setWidth(4);
 QPen imagePen(Qt::PenStyle::DotLine);
 
+//0, -20, 130, -20
+QVector2D wall1start(0, 20);
+QVector2D wall1end(130, 20);
+//0, 0, 0, -80
+QVector2D wall2start(0,0);
+QVector2D wall2end(0, 80);
+//0, -80, 130, -80
+QVector2D wall3start(0, 80);
+QVector2D wall3end(130, 80);
+
 void init() {
+    // initialize program stuff
     dVectorPen.setWidth(1); // 2?
-    wallPen.setWidth(4);
+    wallPen.setWidth(3);
     imagePen.setColor(Qt::black);
 }
 
@@ -256,9 +267,9 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
 
     // Dessiner les murs
-    scene->addLine(0, -20, 130, -20, wallPen);
-    scene->addLine(0, 0, 0, -80, wallPen);
-    scene->addLine(0, -80, 130, -80, wallPen);
+    scene->addLine(wall1start.x(), -wall1start.y(), wall1end.x(), -wall1end.y(), wallPen);
+    scene->addLine(wall2start.x(), -wall2start.y(), wall2end.x(), -wall2end.y(), wallPen);
+    scene->addLine(wall3start.x(), -wall3start.y(), wall3end.x(), -wall3end.y(), wallPen);
 
     // test:
     tx_image_graphics->setBrush(QBrush(Qt::darkYellow));
