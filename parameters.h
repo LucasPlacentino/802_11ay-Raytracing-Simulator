@@ -20,6 +20,6 @@ constexpr qreal max_x = 15;
 constexpr qreal min_x = 0;
 constexpr qreal max_y = 0;
 constexpr qreal min_y = -8;
-
+// resolution is set in simulation->resolution
 
 #endif //PARAMETERS_H
