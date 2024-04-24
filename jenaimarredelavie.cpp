@@ -217,6 +217,7 @@ QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX
     return P_r;
 }
 
+
 // scène graphique, encore une fois merci gpt pour la syntaxe
 //QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
 QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
@@ -286,14 +287,27 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
 }
 
 
-qreal calcCoeffR() {
+qreal computeReflectionCoeff() {
 
 }
 
-qreal calcCoeffT() {
+qreal computeTransmissionCoeff() {
 
 }
 
+complex<qreal> computePerpendicularGamma() {
+
+}
+
+void computeReflections() {
+    // calls to 1reflection and 2reflection
+
+    // TODO: third reflection ?
+}
+
+void computeDirect() {
+
+}
 
 
 int main(int argc, char *argv[]) {
