@@ -1,4 +1,3 @@
-
 // Des imports, je ne sais pas lesquels sont nécessaires
 // et lesquels ne le sont pas, j'ai pas fait le tri
 // de toute façon quand on mergera ça dans le vrai code
@@ -319,16 +318,16 @@ int main(int argc, char *argv[]) {
     double d1 = sqrt(pow(d.x(), 2) + pow(d.y(), 2)); // TODO foutre ça // TODO: d1 = d.length() comme c'est un QVector2D mtn
         //quelque part plus haut ptet ?
     // valeur de exp term non calculée solo dans le tp donc je sais pas quelle est sa valeur
-    // mais E_n a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
-    qDebug() << "T_m" << QString::number(T_m.real()) << "+ j" << QString::number(T_m.imag());
+    // mais E_1 a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
+    qDebug() << "----T_m" << QString::number(T_m.real()) << "+ j" << QString::number(T_m.imag());
     qDebug() << "gamma_m imag:" << imag(gamma_m);
     complex<double> exp_term = exp(-j * real(gamma_m) * d1); // pr simplifier expression en dessous
-    complex<double> E_n = T_m * sqrt(60 * G_TXP_TX) * exp_term/ d1; // Convertir P_TX de dBm en Watts
+    complex<double> E_1 = T_m * sqrt(60 * G_TXP_TX) * exp_term/ d1; // Convertir P_TX de dBm en Watts
     // valeur différente de celle attendue, logique car elle dépend de G_TXP_TX dont je suis
-    //  pas sûr de la valeur et de E_n dont la valeur est différente de celle attendue
+    //  pas sûr de la valeur et de E_1 dont la valeur est différente de celle attendue
     //  TODO : malgré cela, est-ce que la fonction est bien celle ci ou y a t il une erreur ?
     //         j'ai pas investigué outre mesure car on peut pas le déterminer numériquement
-    //         vu que E_n a déjà pas la bonne valeur
+    //         vu que E_1 a déjà pas la bonne valeur
     double P_RX = (60 * pow(lambda, 2)) / (8 * pow(M_PI,2)*Ra) * G_TXP_TX * pow(abs(T_m*exp_term/d1), 2);
     qDebug() << "P_RX" << P_RX;
 
