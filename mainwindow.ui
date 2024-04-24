@@ -133,7 +133,7 @@
         <item>
          <widget class="QProgressBar" name="simulationProgressBar">
           <property name="value">
-           <number>25</number>
+           <number>0</number>
           </property>
           <property name="textVisible">
            <bool>false</bool>

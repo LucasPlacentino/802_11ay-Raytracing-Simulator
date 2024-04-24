@@ -290,16 +290,29 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
 qreal computeReflectionCoeff()
 {
     // TODO:
+    qreal res = 1;
+
+    qDebug() << "ReflectionCoeff=" << res;
+    return res;
 }
 
 qreal computeTransmissionCoeff()
 {
     // TODO:
+    qreal res = 1;
+
+    qDebug() << "TransmissionCoeff=" << res;
+    return res;
 }
 
 complex<qreal> computePerpendicularGamma()
 {
     // TODO:
+    complex<qreal> res(0,0);
+
+
+    qDebug() << "Gamma_perp=" << res.real() << "+j" << res.imag();
+    return res;
 }
 
 void computeReflections()
@@ -317,25 +330,38 @@ void computeDirect()
 qreal computePower()
 {
     // TODO:
+    qreal res = 0;
+
+    qDebug() << "computePower:" << res;
+    return res;
 }
 
 qreal computeCosTheta_i(const QVector2D& _unitary, const QVector2D& _d)
 {
-    return QVector2D::dotProduct(_unitary, _d.normalized());
+    qreal res = QVector2D::dotProduct(_unitary, _d.normalized());
+    qDebug() << "cos(theta_i)=" << res;
+    return res;
 }
 qreal computeSinTheta_i(const QVector2D& _normal, const QVector2D& _d)
 {
-    return QVector2D::dotProduct(_normal, _d.normalized());
+    qreal res = QVector2D::dotProduct(_normal, _d.normalized());
+    qDebug() << "sin(theta_i)=" << res;
+    return res;
 }
 qreal computeSinTheta_t(qreal _sin_theta_i, qreal _epsilon_r)
 {
-    return _sin_theta_i / sqrt(_epsilon_r);
+    qreal res = _sin_theta_i / sqrt(_epsilon_r);
+    qDebug() << "sin(theta_t)=" << res;
+    return res;
 }
 qreal computeCosTheta_t(qreal _sin_theta_t)
 {
-    return sqrt(1 - pow(_sin_theta_t, 2));
+    qreal res = sqrt(1 - pow(_sin_theta_t, 2));
+    qDebug() << "cos(theta_t)=" << res;
+    return res;
 }
 
+/*
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
@@ -396,14 +422,14 @@ int main(int argc, char *argv[]) {
     // petit affichage graphique, syntaxe made in gpt
 
     //--- on a foutu ça en dernier dans main() ---
-    /*
-    QGraphicsScene* scene = createGraphicsScene(RX, TX);
-    //QGraphicsScene* scene = createGraphicsScene(RX);
-    addReflectionComponents(scene, RX, TX, r_image);
-    QGraphicsView* view = new QGraphicsView(scene);
-    // ? :
-    view->setAttribute( Qt::WA_AlwaysShowToolTips);
-    */
+    ////
+    ////QGraphicsScene* scene = createGraphicsScene(RX, TX);
+    //////QGraphicsScene* scene = createGraphicsScene(RX);
+    ////addReflectionComponents(scene, RX, TX, r_image);
+    ////QGraphicsView* view = new QGraphicsView(scene);
+    ////// ? :
+    ////view->setAttribute( Qt::WA_AlwaysShowToolTips);
+    ////
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
@@ -475,3 +501,4 @@ int main(int argc, char *argv[]) {
     view->show();
     return app.exec();
 }
+*/
