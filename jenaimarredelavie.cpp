@@ -21,7 +21,7 @@ using namespace std;
 //using namespace Qt; // ?
 
 // constantes
-constexpr double epsilon_0 = 8.854187817e-12;
+constexpr double epsilon_0 = 8.8541878128e-12;
 constexpr double mu_0 = 4 * M_PI * 1e-7;
 constexpr double freq = 868.3e6; // EX 4.1, it is 868.3 MHz
 constexpr double c = 299792458;
@@ -40,7 +40,7 @@ constexpr complex<double> j(0, 1); // ! définition de j, useful
 
 constexpr complex<double> epsilon = epsilon_0 * epsilon_r;
 const complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
-const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon));
+const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
 constexpr double Ra = 73; // résistance d'antenne en Ohm
 
 ////// positions des objets
@@ -272,6 +272,15 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     scene->addItem(tx_image_image_graphics);
 
     return scene;
+}
+
+
+qreal calcCoeffR() {
+
+}
+
+qreal calcCoeffT() {
+
 }
 
 

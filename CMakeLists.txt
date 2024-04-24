@@ -32,6 +32,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         heatmapgradientlegend.h heatmapgradientlegend.cpp
         utils.h
         jenaimarredelavie.cpp
+        parameters.h
 
 
 

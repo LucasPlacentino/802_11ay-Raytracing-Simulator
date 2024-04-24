@@ -7,8 +7,10 @@
 
 
 struct WallProperties {
-    qreal relative_permittivity;
-    qreal conductivity;
+    qreal relative_permittivity; // epsilon_r
+    qreal conductivity; // sigma
+    double epsilon; // permittivity
+    std::complex<double> Z_m; // impedance
 };
 
 enum ObstacleType {

@@ -3,10 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QVector2D>
-
-qulonglong c = 3*1e8;
-qulonglong frequency = 60*1e9;
-qreal wavelength = c/frequency;
+//#include "parameters.h"
 
 QVector2D transpose2DVector(QVector2D *vector, bool dir)
 {

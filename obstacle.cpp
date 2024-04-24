@@ -1,6 +1,7 @@
 #include "obstacle.h"
 
 #include <QPen>
+#include "parameters.h"
 
 /*
  * The floorplan is 9m x 15m (x=0,y=0 top left to x=15,y=-9 bottom right) :
@@ -78,6 +79,9 @@ Obstacle::Obstacle(
         break;
     }
     setPen(*pen);
+
+    this->properties.epsilon = epsilon_0 * this->properties.relative_permittivity;
+    this->properties.Z_m = sqrt(mu_0 / (this->properties.epsilon - j * this->properties.conductivity / omega));
 
     //setAcceptHoverEvents(true); // really needed ?
 }
