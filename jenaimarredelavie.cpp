@@ -287,30 +287,53 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
 }
 
 
-qreal computeReflectionCoeff() {
-
+qreal computeReflectionCoeff()
+{
+    // TODO:
 }
 
-qreal computeTransmissionCoeff() {
-
+qreal computeTransmissionCoeff()
+{
+    // TODO:
 }
 
-complex<qreal> computePerpendicularGamma() {
-
+complex<qreal> computePerpendicularGamma()
+{
+    // TODO:
 }
 
-void computeReflections() {
+void computeReflections()
+{
     // calls to 1reflection and 2reflection
 
     // TODO: third reflection ?
 }
 
-void computeDirect() {
-
+void computeDirect()
+{
+    // TODO:
 }
 
-qreal computePower() {
+qreal computePower()
+{
+    // TODO:
+}
 
+qreal computeCosTheta_i(const QVector2D& _unitary, const QVector2D& _d)
+{
+    return QVector2D::dotProduct(_unitary, _d.normalized());
+}
+qreal computeSinTheta_i(const QVector2D& _normal, const QVector2D& _d)
+{
+    return QVector2D::dotProduct(_normal, _d.normalized());
+}
+qreal computeSinTheta_t(qreal _sin_theta_i, qreal _epsilon_r)
+{
+    return _sin_theta_i / sqrt(_epsilon_r);
+}
+qreal computeCosTheta_t(qreal _sin_theta_t)
+{
+    return sqrt(1 - pow(_sin_theta_t, 2));
 }
 
 int main(int argc, char *argv[]) {
@@ -366,9 +389,9 @@ int main(int argc, char *argv[]) {
     //         j'ai pas investigué outre mesure car on peut pas le déterminer numériquement
     //         vu que E_1 a déjà pas la bonne valeur
     double P_RX = (60 * pow(lambda, 2)) / (8 * pow(M_PI,2)*Ra) * G_TXP_TX * pow(abs(T_m*exp_term/d1), 2);
-    qDebug() << "P_RX" << P_RX;
-    qDebug() << "E_1" << real(E_1) << "+" << imag(E_1) <<"j";
-    qDebug() << "exp_term" << real(exp_term) << "+" << imag(exp_term) <<"j";
+    qDebug() << "       P_RX" << P_RX;
+    qDebug() << "       E_1" << real(E_1) << "+" << imag(E_1) <<"j";
+    qDebug() << "       exp_term" << real(exp_term) << "+" << imag(exp_term) <<"j";
 
     // petit affichage graphique, syntaxe made in gpt
 
