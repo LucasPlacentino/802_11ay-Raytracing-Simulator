@@ -51,7 +51,7 @@ constexpr double Ra = 73; // résistance d'antenne en Ohm
 //  ça ne serve pas directement dans le calcul
 constexpr QVector2D normal(1, 0);
 constexpr QVector2D unitary(0,1);
-
+// they should be normalized!!!
 constexpr QVector2D normal_top(0,-1); // mur du haut
 constexpr QVector2D unitary_top(1,0); // mur du haut
 
@@ -60,7 +60,7 @@ double P_RX_TOTAL = 0;
 
 QBrush rxBrush(Qt::blue);
 QPen rxPen(Qt::darkBlue);
-QBrush txBrush(Qt::black);
+QBrush txBrush(Qt::white);
 QPen txPen(Qt::darkGray);
 QPen dVectorPen(Qt::green);
 //dVectorPen.setWidth(1); // 2?
@@ -78,11 +78,28 @@ QVector2D wall2end(0, 80);
 QVector2D wall3start(0, 80);
 QVector2D wall3end(130, 80);
 
+struct Wall {
+    Wall(QVector2D start, QVector2D end, QVector2D normal, QVector2D unitary){
+        this->line.setLine(start.x(),start.y(), end.x(), end.y());
+        this->normal = normal;
+        this->unitary = unitary;
+    }
+    QLineF line;
+    QVector2D normal;
+    QVector2D unitary;
+};
+
+QList<Wall> wall_list = {
+    Wall(wall1start,wall1end,normal,unitary),
+    Wall(wall3start,wall3end,normal_top,unitary_top),
+};
+
 void init() {
     // initialize program stuff
     dVectorPen.setWidth(1); // 2?
     wallPen.setWidth(3);
-    imagePen.setColor(Qt::black);
+    imagePen.setWidth(1);
+    imagePen.setColor(Qt::darkGray);
 }
 
 class TransmitterTest : public QVector2D {
@@ -91,8 +108,8 @@ public:
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
-        this->graphics->setBrush(QBrush(Qt::black));
-        this->graphics->setPen(QPen(Qt::darkGray));
+        this->graphics->setBrush(txBrush);
+        this->graphics->setPen(txPen);
         this->graphics->setRect(x-5,-y-5,10,10);
         this->graphics->setAcceptHoverEvents(true);
     };
@@ -113,8 +130,8 @@ public:
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
-        this->graphics->setBrush(QBrush(Qt::blue));
-        this->graphics->setPen(QPen(Qt::darkBlue));
+        this->graphics->setBrush(rxBrush);
+        this->graphics->setPen(rxPen);
         this->graphics->setRect(x-5,-y-5,10,10);
         this->graphics->setAcceptHoverEvents(true);
     }
@@ -283,6 +300,7 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
     scene->addItem(tx_image_image_graphics);
 
+    scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
 }
 
@@ -315,9 +333,19 @@ complex<qreal> computePerpendicularGamma()
     return res;
 }
 
-void computeReflections()
+void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 {
     // calls to 1reflection and 2reflection
+    for (int i=0; i<wall_list.length(); i++) {
+        Wall wall = wall_list[i];
+        if (QVector2D::dotProduct(wall.normal,_RX)>0 == QVector2D::dotProduct(wall.normal,_TX)>0) {
+            //same side of this wall, can make a reflection
+            QVector2D _imageTX = computeImageTX(_TX, wall.normal);
+            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,_TX,wall.unitary);
+        }
+    }
+
+    // TODO: second reflection
 
     // TODO: third reflection ?
 }
@@ -361,7 +389,7 @@ qreal computeCosTheta_t(qreal _sin_theta_t)
     return res;
 }
 
-/*
+
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
@@ -501,4 +529,4 @@ int main(int argc, char *argv[]) {
     view->show();
     return app.exec();
 }
-*/
+
