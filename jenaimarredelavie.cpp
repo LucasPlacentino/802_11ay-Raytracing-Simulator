@@ -129,8 +129,8 @@ QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
 
 
 // fonction qui calcule la position de \vec r_image de l'antenne
-//QPointF calculateImageAntenna(const QPointF& TX, const QPointF& normal) {
-QVector2D calculateImageAntenna(const QVector2D& TX, const QVector2D& normal) {
+//QPointF computeImageTX(const QPointF& TX, const QPointF& normal) {
+QVector2D computeImageTX(const QVector2D& TX, const QVector2D& normal) {
     double _dotProduct = QVector2D::dotProduct(TX, normal);
     QVector2D r_image = TX - 2 * _dotProduct * normal;
     qDebug() << "r_image:" << r_image.x() << r_image.y();
@@ -209,11 +209,11 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
-QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& TX) {
+QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& TX, const QVector2D& _unitary) {
     QVector2D d = RX-r_image;
     QVector2D x0(0,0);
-    double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (unitary.x()*d.y()-unitary.y()*d.x());
-    QVector2D P_r = x0 + t * unitary;
+    double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (_unitary.x()*d.y()-_unitary.y()*d.x());
+    QVector2D P_r = x0 + t * _unitary;
     return P_r;
 }
 
@@ -309,6 +309,9 @@ void computeDirect() {
 
 }
 
+qreal computePower() {
+
+}
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -318,7 +321,7 @@ int main(int argc, char *argv[]) {
     //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
     init();
 
-    QVector2D r_image = calculateImageAntenna(TX, normal);
+    QVector2D r_image = computeImageTX(TX, normal);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
 
@@ -381,7 +384,7 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX); // reflection point P_r
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX, unitary); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
@@ -403,11 +406,11 @@ int main(int argc, char *argv[]) {
 
     // ---- TEST deuxieme reflection ---- // TODO: test
 
-    QVector2D r_image_image = calculateImageAntenna(r_image, normal_top);
+    QVector2D r_image_image = computeImageTX(r_image, normal_top);
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
-    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, r_image); // second reflection point P_r_2
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, r_image, unitary_top); // second reflection point P_r_2
     QVector2D eta_2 = P_r_2 - r_image;
     double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
     double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), unitary_top)); // or eta/eta_norm
