@@ -130,9 +130,9 @@ QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF computeImageTX(const QPointF& TX, const QPointF& normal) {
-QVector2D computeImageTX(const QVector2D& TX, const QVector2D& normal) {
-    double _dotProduct = QVector2D::dotProduct(TX, normal);
-    QVector2D r_image = TX - 2 * _dotProduct * normal;
+QVector2D computeImageTX(const QVector2D& TX, const QVector2D& _normal) {
+    double _dotProduct = QVector2D::dotProduct(TX, _normal);
+    QVector2D r_image = TX - 2 * _dotProduct * _normal;
     qDebug() << "r_image:" << r_image.x() << r_image.y();
 
     return r_image;
@@ -366,9 +366,9 @@ int main(int argc, char *argv[]) {
     //         j'ai pas investigué outre mesure car on peut pas le déterminer numériquement
     //         vu que E_1 a déjà pas la bonne valeur
     double P_RX = (60 * pow(lambda, 2)) / (8 * pow(M_PI,2)*Ra) * G_TXP_TX * pow(abs(T_m*exp_term/d1), 2);
-    qDebug() << "           P_RX" << P_RX;
-    qDebug() << "           E_1" << real(E_1) << "+" << imag(E_1) <<"j";
-    qDebug() << "          exp_term" << real(exp_term) << "+" << imag(exp_term) <<"j";
+    qDebug() << "P_RX" << P_RX;
+    qDebug() << "E_1" << real(E_1) << "+" << imag(E_1) <<"j";
+    qDebug() << "exp_term" << real(exp_term) << "+" << imag(exp_term) <<"j";
 
     // petit affichage graphique, syntaxe made in gpt
 
