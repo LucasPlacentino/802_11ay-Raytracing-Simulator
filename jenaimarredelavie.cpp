@@ -378,9 +378,9 @@ complex<qreal> computePerpendicularGamma()
     return res;
 }
 
-bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment& ray_segment, QPointF* intersection_point) {
+bool checkRaySegmentIntersectsWall(const Wall& wall, RaySegment* ray_segment, QPointF* intersection_point) {
     //QPointF* intersection_point = nullptr;
-    int _intersection_type = ray_segment.intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
+    int _intersection_type = ray_segment->intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
     bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
     return intersects_wall;
 }
