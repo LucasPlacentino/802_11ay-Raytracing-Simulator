@@ -94,6 +94,15 @@ QList<Wall> wall_list = {
     Wall(wall3start,wall3end,normal_top,unitary_top),
 };
 
+class RaySegment : public QLineF {
+public:
+    RaySegment(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
+        this->setLine(start_x, start_y, end_x, end_y);
+    }
+    qreal total_distance=0;
+    QColor color=Qt::red;
+};
+
 void init() {
     // initialize program stuff
     dVectorPen.setWidth(1); // 2?
@@ -337,11 +346,29 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 {
     // calls to 1reflection and 2reflection
     for (int i=0; i<wall_list.length(); i++) {
+        QList<QPointF> reflection_points_list;
         Wall wall = wall_list[i];
         if (QVector2D::dotProduct(wall.normal,_RX)>0 == QVector2D::dotProduct(wall.normal,_TX)>0) {
             //same side of this wall, can make a reflection
             QVector2D _imageTX = computeImageTX(_TX, wall.normal);
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,_TX,wall.unitary);
+
+            reflection_points_list.append(_P_r.toPointF());
+            // TODO: create ray segments between points
+            QList<RaySegment> ray_segments;
+            ray_segments.append(RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
+            //for (int i=1; i<reflection_points_list.length()-1;i++) {
+            //    // TODO
+            //}
+            ray_segments.append(RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
+            // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
+            for (int i=0; i<ray_segments.length(); i++) {
+                //for (int p=0; p<wall_list.length(); p++) {
+                //  if (wall_list[p] != wall) { // is NOT reflection wall
+                //    if (checkRaySegmentIntersectWall()) {
+                //
+                //    }
+            }
         }
     }
 
@@ -350,9 +377,28 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
     // TODO: third reflection ?
 }
 
-void computeDirect()
+bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment& ray_segment, QPointF* intersection_point) {
+    //QPointF* intersection_point = nullptr;
+    int _intersection_type = ray_segment.intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
+    bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
+    return intersects_wall;
+}
+
+void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
 {
     // TODO:
+    RaySegment _direct_line(_RX.x(), _RX.y(), _TX.x(), _TX.y());
+    for (int i=0; i<wall_list.length(); i++) {
+        Wall wall = wall_list[i];
+        QPointF* intersection_point = nullptr;
+        if (checkRaySegmentIntersectsWall(wall, _direct_line, intersection_point)) {
+            //transmission through this wall
+            // TODO: compute Transmission coefficient
+            qreal T_coeff = computeTransmissionCoeff();
+            // TODO: add coeff to power computing
+            //addCoeff(T_coeff);
+        } // else: ignore
+    }
 }
 
 qreal computePower()
