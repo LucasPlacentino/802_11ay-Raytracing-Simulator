@@ -100,15 +100,21 @@ public:
         this->setLine(start_x, start_y, end_x, end_y);
     }
     qreal total_distance=0;
-    QGraphicsLineItem graphics;
+    QGraphicsLineItem* graphics;
 };
 
 class Ray {
 public:
-    QList<RaySegment> segments;
+    Ray(QPointF start, QPointF end) {
+        this->start=start;
+        this->end=end;
+    }
+    QList<RaySegment*> segments;
     int num_reflections = 0;
+    QPointF start;
+    QPointF end;
 
-    QGraphicsLineItem* getGraphics(){
+    QList<QGraphicsLineItem*>* getSegmentsGraphics(){
         QPen ray_pen;
         // set ray graphics color depending on number of reflections
         switch (this->num_reflections){
@@ -122,11 +128,15 @@ public:
             ray_pen.setColor(Qt::yellow);
             break;
         }
+        QList<QGraphicsLineItem*>* ray_graphics;
         for (int i=0; i<this->segments.length(); i++) {
-            this->segments[i].graphics.setPen(ray_pen);
+            this->segments[i]->graphics->setPen(ray_pen);
+            ray_graphics->append(this->segments[i]->graphics);
         }
+        return ray_graphics;
     }
 };
+QList<Ray*> all_rays;
 
 void init() {
     // initialize program stuff
@@ -175,6 +185,7 @@ public:
 TransmitterTest TX(32,10);
 ReceiverTest RX(47, 65);
 
+// for debug:
 QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
 QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
 
@@ -377,6 +388,8 @@ bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment& ray_segme
 void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 {
     // calls to 1reflection and 2reflection
+
+    // 1st reflection
     for (int i=0; i<wall_list.length(); i++) {
         QList<QPointF> reflection_points_list;
         Wall wall = wall_list[i];
@@ -409,12 +422,13 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 
     // TODO: second reflection
 
-    // TODO: third reflection ?
+    // (TODO: third reflection ?)
 }
 
 void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
 {
     // TODO:
+    Ray* direct_ray = new Ray(_TX.toPointF(), _RX.toPointF());
     RaySegment _direct_line(_RX.x(), _RX.y(), _TX.x(), _TX.y());
     for (int i=0; i<wall_list.length(); i++) {
         Wall wall = wall_list[i];
@@ -426,6 +440,19 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
             // TODO: add coeff to power computing
             //addCoeff(T_coeff);
         } // else: ignore
+    }
+
+    all_rays.append(direct_ray);
+}
+
+void drawAllRays(QGraphicsScene* scene) {
+    // Adds all rays in all_rays QList to the scene
+    for (int i=0; i<all_rays.length(); i++) {
+        QList<QGraphicsLineItem*>* segments_graphics = all_rays.at(i)->getSegmentsGraphics();
+        for (int p=0; p<segments_graphics->length(); p++) {
+            QGraphicsLineItem* line = segments_graphics->at(p);
+            scene->addItem(line);
+        }
     }
 }
 
