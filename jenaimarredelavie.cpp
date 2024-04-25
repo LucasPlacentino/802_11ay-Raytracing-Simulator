@@ -391,32 +391,35 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 
     // 1st reflection
     for (int i=0; i<wall_list.length(); i++) {
-        QList<QPointF> reflection_points_list;
         Wall wall = wall_list[i];
         if (QVector2D::dotProduct(wall.normal,_RX)>0 == QVector2D::dotProduct(wall.normal,_TX)>0) {
+            Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
+            QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
             QVector2D _imageTX = computeImageTX(_TX, wall.normal);
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,_TX,wall.unitary);
 
             reflection_points_list.append(_P_r.toPointF());
             // TODO: create ray segments between points
-            QList<RaySegment> ray_segments;
-            ray_segments.append(RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
+            QList<RaySegment*> ray_segments;
+            ray_segments.append(new RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
             //for (int i=1; i<reflection_points_list.length()-1;i++) {
-            //    // TODO
+            //    // TODO: for more than one reflection
             //}
-            ray_segments.append(RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
+            ray_segments.append(new RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
             // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
             for (int i=0; i<ray_segments.length(); i++) {
                 for (int p=0; p<wall_list.length(); p++) {
                     //if (wall_list[p] != wall) { // is NOT reflection wall
-                        if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments[i],nullptr)) {
+                    if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments.at(i),nullptr)) {
                             qreal T_coeff = computeTransmissionCoeff();
                             //addCoeff(T_coeff);
                         }
                     //}
                 }
             }
+            ray_1_reflection->segments = ray_segments;
+
         }
     }
 
