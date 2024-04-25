@@ -342,6 +342,13 @@ complex<qreal> computePerpendicularGamma()
     return res;
 }
 
+bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment& ray_segment, QPointF* intersection_point) {
+    //QPointF* intersection_point = nullptr;
+    int _intersection_type = ray_segment.intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
+    bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
+    return intersects_wall;
+}
+
 void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 {
     // calls to 1reflection and 2reflection
@@ -363,11 +370,14 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             ray_segments.append(RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
             // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
             for (int i=0; i<ray_segments.length(); i++) {
-                //for (int p=0; p<wall_list.length(); p++) {
-                //  if (wall_list[p] != wall) { // is NOT reflection wall
-                //    if (checkRaySegmentIntersectWall()) {
-                //
-                //    }
+                for (int p=0; p<wall_list.length(); p++) {
+                    //if (wall_list[p] != wall) { // is NOT reflection wall
+                        if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments[i],nullptr)) {
+                            qreal T_coeff = computeTransmissionCoeff();
+                            //addCoeff(T_coeff);
+                        }
+                    //}
+                }
             }
         }
     }
@@ -375,13 +385,6 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
     // TODO: second reflection
 
     // TODO: third reflection ?
-}
-
-bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment& ray_segment, QPointF* intersection_point) {
-    //QPointF* intersection_point = nullptr;
-    int _intersection_type = ray_segment.intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
-    bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
-    return intersects_wall;
 }
 
 void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
