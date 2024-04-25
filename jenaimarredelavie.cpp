@@ -100,7 +100,32 @@ public:
         this->setLine(start_x, start_y, end_x, end_y);
     }
     qreal total_distance=0;
-    QColor color=Qt::red;
+    QGraphicsLineItem graphics;
+};
+
+class Ray {
+public:
+    QList<RaySegment> segments;
+    int num_reflections = 0;
+
+    QGraphicsLineItem* getGraphics(){
+        QPen ray_pen;
+        // set ray graphics color depending on number of reflections
+        switch (this->num_reflections){
+        case 0:
+            ray_pen.setColor(Qt::green);
+            break;
+        case 1:
+            ray_pen.setColor(Qt::red);
+            break;
+        case 2:
+            ray_pen.setColor(Qt::yellow);
+            break;
+        }
+        for (int i=0; i<this->segments.length(); i++) {
+            this->segments[i].graphics.setPen(ray_pen);
+        }
+    }
 };
 
 void init() {
