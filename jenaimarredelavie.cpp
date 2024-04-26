@@ -92,9 +92,9 @@ struct Wall {
     QVector2D unitary;
 };
 
-QList<Wall> wall_list = {
-    Wall(wall1start,wall1end),
-    Wall(wall3start,wall3end),
+QList<Wall*> wall_list = {
+    new Wall(wall1start,wall1end),
+    new Wall(wall3start,wall3end),
 };
 
 class RaySegment : public QLineF {
@@ -274,7 +274,7 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
-QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& TX, const QVector2D& _unitary) {
+QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& _unitary) {
     QVector2D d = RX-r_image;
     QVector2D x0(0,0); // TODO: always this ?
     double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (_unitary.x()*d.y()-_unitary.y()*d.x());
@@ -381,11 +381,31 @@ complex<qreal> computePerpendicularGamma()
     return res;
 }
 
-bool checkRaySegmentIntersectsWall(const Wall& wall, const RaySegment* ray_segment, QPointF* intersection_point) {
+bool checkSameSideOfWall(const QVector2D& _normal, const QVector2D& _TX, const QVector2D& _RX) {
+    // must be same sign to be true:
+    bool res = (QVector2D::dotProduct(_normal,_RX)>0 == QVector2D::dotProduct(_normal,_TX)>0);
+    return res;
+}
+
+bool checkRaySegmentIntersectsWall(const Wall* wall, const RaySegment* ray_segment, QPointF* intersection_point) {
     //QPointF* intersection_point = nullptr;
-    int _intersection_type = ray_segment->intersects(wall.line, intersection_point); // also writes to intersection pointer the QPointF
+    int _intersection_type = ray_segment->intersects(wall->line, intersection_point); // also writes to intersection pointer the QPointF
     bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
     return intersects_wall;
+}
+
+void checkTransmissions(QList<RaySegment*> _ray_segments, QList<Wall*> _reflection_walls) {
+    for (RaySegment* ray_segment : _ray_segments) {
+        for (Wall* wall : wall_list) {
+            if (_reflection_walls.contains(wall)) { // is NOT reflection wall
+            if (checkRaySegmentIntersectsWall(wall, ray_segment,nullptr)) {
+                    // TODO:
+                    qreal T_coeff = computeTransmissionCoeff();
+                    //addCoeff(T_coeff);
+                }
+            }
+        }
+    }
 }
 
 QVector2D secondReflection(const QVector2D& previous_image, const QVector2D& normal)
@@ -399,19 +419,24 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
     // calls to 1reflection and 2reflection
 
     // 1st reflection
+    //for (Wall* wall: wall_list) { // ouuh on sait faire ça aussi en C++, plus facile que int i < list.length()
     for (int i=0; i<wall_list.length(); i++) {
-        Wall wall = wall_list[i];
-        if (QVector2D::dotProduct(wall.normal,_RX)>0 == QVector2D::dotProduct(wall.normal,_TX)>0) {
+        Wall* wall = wall_list[i];
+        // check if same side of wall, if false, then no reflection only transmission
+        if (checkSameSideOfWall(wall->normal,_TX,_RX)) {
             Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
-            QList<QPointF> reflection_points_list;
+            //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
-            QVector2D _imageTX = computeImageTX(_TX, wall.normal);
-            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,_TX,wall.unitary);
+            QVector2D _imageTX = computeImageTX(_TX, wall->normal);
+            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall->unitary);
 
-            //give this point to second reflection computing:
-            //secondReflection(_imageTX, wall.normal);
+            // TODO: call computeCoeffReflection()
 
-            reflection_points_list.append(_P_r.toPointF());
+
+            ////give this point to second reflection computing:
+            ////secondReflection(_imageTX, wall.normal);
+
+            //reflection_points_list.append(_P_r.toPointF());
             // TODO: create ray segments between points
             QList<RaySegment*> ray_segments;
             ray_segments.append(new RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
@@ -419,25 +444,48 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             //    // TODO: for more than one reflection
             //}
             ray_segments.append(new RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
+
             // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
-            for (int i=0; i<ray_segments.length(); i++) {
-                for (int p=0; p<wall_list.length(); p++) {
-                    //if (wall_list[p] != wall) { // is NOT reflection wall
-                    if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments.at(i),nullptr)) {
-                            qreal T_coeff = computeTransmissionCoeff();
-                            //addCoeff(T_coeff);
-                        }
-                    //}
+            //QList<Wall*> reflection_walls_1 = {&wall};
+            //checkTransmission(ray_segments, reflection_walls_1);
+            //for (int i=0; i<ray_segments.length(); i++) {
+            //    for (int p=0; p<wall_list.length(); p++) {
+            //        //if (wall_list[p] != wall) { // is NOT reflection wall
+            //        if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments.at(i),nullptr)) {
+            //                qreal T_coeff = computeTransmissionCoeff();
+            //                //addCoeff(T_coeff);
+            //            }
+            //        //}
+            //    }
+            //}
+
+            ray_1_reflection->segments = ray_segments;
+            all_rays.append(ray_1_reflection);
+
+            // 2nd reflection
+            for (Wall* wall_2 : wall_list) {
+                if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
+                    Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
+                    QList<QPointF> reflections_points_list_2;
+                    QVector2D _image_imageTX = computeImageTX(_P_r,wall_2->normal);
+                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2->unitary);
+                    QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall->unitary);
+                    QList<RaySegment*> ray_segments_2;
+                    ray_segments_2.append(new RaySegment(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
+                    // for...
+                    ray_segments_2.append(new RaySegment(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
+                    ray_segments_2.append(new RaySegment(_P_r_2_last.x(),_P_r_2_last.y(),_RX.x(),_RX.y()));
+
+                    // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
+                    //QList<Wall*> reflection_walls_2 = {&wall, &wall_2};
+                    //checkTransmissions(ray_segments_2,reflection_walls_2);
+
+                    ray_2_reflection->segments = ray_segments_2;
+                    all_rays.append(ray_2_reflection);
                 }
             }
-            ray_1_reflection->segments = ray_segments;
-
         }
     }
-
-    // TODO: second reflection
-
-
     // (TODO: third reflection ?)
 }
 
@@ -446,8 +494,9 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
     // TODO:
     Ray* direct_ray = new Ray(_TX.toPointF(), _RX.toPointF());
     RaySegment _direct_line(_RX.x(), _RX.y(), _TX.x(), _TX.y());
+    // for (Wall* wall : walls_list) {
     for (int i=0; i<wall_list.length(); i++) {
-        Wall wall = wall_list[i];
+        Wall* wall = wall_list[i];
         QPointF* intersection_point = nullptr;
         if (checkRaySegmentIntersectsWall(wall, &_direct_line, intersection_point)) {
             //transmission through this wall
@@ -463,6 +512,7 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
 
 void drawAllRays(QGraphicsScene* scene) {
     // Adds all rays in all_rays QList to the scene
+    // for (Ray* ray : all_rays) {
     for (int i=0; i<all_rays.length(); i++) {
         QList<QGraphicsLineItem*>* segments_graphics = all_rays.at(i)->getSegmentsGraphics();
         for (int p=0; p<segments_graphics->length(); p++) {
