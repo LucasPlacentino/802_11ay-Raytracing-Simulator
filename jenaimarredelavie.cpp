@@ -628,7 +628,7 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, TX, unitary); // reflection point P_r
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, unitary); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
@@ -654,7 +654,7 @@ int main(int argc, char *argv[]) {
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
-    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, r_image, unitary_top); // second reflection point P_r_2
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, unitary_top); // second reflection point P_r_2
     QVector2D eta_2 = P_r_2 - r_image;
     double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
     double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), unitary_top)); // or eta/eta_norm
