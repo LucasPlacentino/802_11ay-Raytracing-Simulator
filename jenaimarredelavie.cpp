@@ -13,8 +13,8 @@
 #include <QBrush>
 #include <cmath>
 #include <complex>
-//#include <iostream>
 #include <QVector2D>
+#include <iostream> // for cout
 
 // pour plus de simplicité
 using namespace std;
@@ -49,11 +49,11 @@ constexpr double Ra = 73; // résistance d'antenne en Ohm
 
 // TODO : incorporer les positions des murs, bien que pour l'instant
 //  ça ne serve pas directement dans le calcul
-constexpr QVector2D normal(1, 0);
-constexpr QVector2D unitary(0,1);
-// they should be normalized!!!
-constexpr QVector2D normal_top(0,-1); // mur du haut
-constexpr QVector2D unitary_top(1,0); // mur du haut
+//constexpr QVector2D normal(1, 0);
+//constexpr QVector2D unitary(0,1);
+//// they should be normalized!!!
+//constexpr QVector2D normal_top(0,-1); // mur du haut
+//constexpr QVector2D unitary_top(1,0); // mur du haut
 
 // Total Receiver power
 double P_RX_TOTAL = 0;
@@ -79,22 +79,30 @@ QVector2D wall3start(0, 80);
 QVector2D wall3end(130, 80);
 
 struct Wall {
-    Wall(QVector2D start, QVector2D end){
+    Wall(QVector2D start, QVector2D end, int id){
+        this->id = id;
         QLineF line(start.x(),start.y(), end.x(), end.y());
         this->line = line;
-        QLineF normal_line = line.normalVector();
+        qDebug() << "Wall" << id << "line:" << this->line ;
+        QLineF normal_line = this->line.normalVector();
+        qDebug() << "Line" << id << "normal:" << normal_line;
         this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized();
+        qDebug() << "Wall" << id << "normal:" << this->normal;
         QLineF unit_line = line.unitVector();
+        qDebug() << "Line" << id << "unitary:" << unit_line;
         this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized();
+        qDebug() << "Wall" << id << "unitary:" << this->unitary;
     }
     QLineF line;
     QVector2D normal;
     QVector2D unitary;
+    int id;
 };
 
 QList<Wall*> wall_list = {
-    new Wall(wall1start,wall1end),
-    new Wall(wall3start,wall3end),
+    new Wall(wall1start,wall1end, 1),
+    new Wall(wall2start,wall2end, 2),
+    new Wall(wall3start,wall3end, 3),
 };
 
 class RaySegment : public QLineF {
@@ -119,7 +127,9 @@ public:
 
     QList<QGraphicsLineItem*>* getSegmentsGraphics(){
         QPen ray_pen;
+        ray_pen.setWidth(1);
         // set ray graphics color depending on number of reflections
+        this->num_reflections=this->segments.length()-1;
         switch (this->num_reflections){
         case 0:
             ray_pen.setColor(Qt::green);
@@ -132,6 +142,7 @@ public:
             break;
         }
         QList<QGraphicsLineItem*>* ray_graphics;
+        //for (RaySegment* ray_segment: this->segments) {
         for (int i=0; i<this->segments.length(); i++) {
             this->segments[i]->graphics->setPen(ray_pen);
             ray_graphics->append(this->segments[i]->graphics);
@@ -210,12 +221,12 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
     QVector2D x0(0, 0);  // Origine
     // calcul du t, forme générale
-    double t = ((d.y() * (r_image.x() - x0.x())) - (d.x() * (r_image.y() - x0.y()))) / (unitary.x() * d.y() - unitary.y() * d.x());
-    QVector2D P_r = x0 + t * unitary;
+    double t = ((d.y() * (r_image.x() - x0.x())) - (d.x() * (r_image.y() - x0.y()))) / (wall_list[1]->unitary.x() * d.y() - wall_list[1]->unitary.y() * d.x());
+    QVector2D P_r = x0 + t * wall_list[1]->unitary;
     double d_norm = sqrt(pow(d.x(), 2) + pow(d.y(), 2));
 
     // paramètres de la réflexion
-    double cos_theta_i = QVector2D::dotProduct(d/d_norm, normal);
+    double cos_theta_i = QVector2D::dotProduct(d/d_norm, wall_list[1]->normal);
     qDebug() << "cos_theta_i" << cos_theta_i;
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
     qDebug() << "sin_theta_i" << sin_theta_i;
@@ -246,11 +257,11 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
     //x0(0, -80);  // Nouvelle origine
     // calcul du t, forme générale
-    double t_2 = ((d_2.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (unitary_top.x() * d_2.y() - unitary_top.y() * d_2.x());
-    QVector2D P_r_2 = x0 + t_2 * unitary_top;
+    double t_2 = ((d_2.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (wall_list[2]->unitary.x() * d_2.y() - wall_list[2]->unitary.y() * d_2.x());
+    QVector2D P_r_2 = x0 + t_2 * wall_list[2]->unitary;
     double d_norm_2 = sqrt(pow(d_2.x(), 2) + pow(d_2.y(), 2));
     // paramètres de la réflexion
-    double cos_theta_i_2 = QVector2D::dotProduct(d_2/d_norm_2, normal_top);
+    double cos_theta_i_2 = QVector2D::dotProduct(d_2/d_norm_2, wall_list[2]->normal);
     double sin_theta_i_2 = sqrt(1 - pow(cos_theta_i_2, 2));
     double sin_theta_t_2 = sin_theta_i_2 / sqrt(epsilon_r);
     double cos_theta_t_2 = sqrt(1 - pow(sin_theta_t_2, 2));
@@ -329,7 +340,7 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     scene->addItem(TX.graphics);
     qDebug() << "TX.graphics:" << TX.graphics->rect();
 
-    // Dessiner le vecteur d
+    // Dessiner le vecteur d // TODO: remove, as it is in the all_rays list and will be painted below
     scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
 
     // Dessiner les murs
@@ -347,6 +358,19 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     tx_image_image_graphics->setPen(QPen(Qt::darkYellow));
     tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
     scene->addItem(tx_image_image_graphics);
+
+
+    ////QPen ray_pen;
+    ////ray_pen.setWidth(1);
+    // Draw all rays (their segment):
+    for (Ray* ray: all_rays) {
+        QList<QGraphicsLineItem*>* ray_graphics = ray->getSegmentsGraphics();
+        for (QGraphicsLineItem* segment_graphics : *ray_graphics){
+            scene->addItem(segment_graphics);
+        }
+    }
+
+
 
     scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
@@ -565,7 +589,7 @@ int main(int argc, char *argv[]) {
     //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
     init();
 
-    QVector2D r_image = computeImageTX(TX, normal);
+    QVector2D r_image = computeImageTX(TX, wall_list[1]->normal);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
 
@@ -628,10 +652,10 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, unitary); // reflection point P_r
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, wall_list[1]->unitary); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
-    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), unitary)); // or eta/eta_norm
+    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), wall_list[1]->unitary)); // or eta/eta_norm
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
     double sin_theta_t_reflected = sin_theta_i_reflected / sqrt(epsilon_r);
     double cos_theta_t_reflected = sqrt(1 - pow(sin_theta_t_reflected, 2));
@@ -650,14 +674,14 @@ int main(int argc, char *argv[]) {
 
     // ---- TEST deuxieme reflection ---- // TODO: test
 
-    QVector2D r_image_image = computeImageTX(r_image, normal_top);
+    QVector2D r_image_image = computeImageTX(r_image, wall_list[2]->normal);
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
-    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, unitary_top); // second reflection point P_r_2
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, wall_list[2]->unitary); // second reflection point P_r_2
     QVector2D eta_2 = P_r_2 - r_image;
     double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
-    double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), unitary_top)); // or eta/eta_norm
+    double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), wall_list[2]->unitary)); // or eta/eta_norm
     double sin_theta_i_reflected_2 = sqrt(1 - pow(cos_theta_i_reflected_2, 2));
     double sin_theta_t_reflected_2 = sin_theta_i_reflected_2 / sqrt(epsilon_r);
     double cos_theta_t_reflected_2 = sqrt(1 - pow(sin_theta_t_reflected_2, 2));
