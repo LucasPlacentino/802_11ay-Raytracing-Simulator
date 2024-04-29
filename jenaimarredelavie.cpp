@@ -14,7 +14,7 @@
 #include <cmath>
 #include <complex>
 #include <QVector2D>
-#include <iostream> // for cout
+//#include <iostream> // for cout
 
 // pour plus de simplicité
 using namespace std;
@@ -31,16 +31,16 @@ constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa v
 // il n'est pas défini en constexpr car cela provoque une erreur,
 // je ne sais pas pourquoi
 const double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
-constexpr double epsilon_r = 4.8;
-constexpr double sigma = 0.018; // conductivité (S/m)
-constexpr double thickness = 0.15; // épaisseur des murs, en mètres
+//constexpr double epsilon_r = 4.8;
+//constexpr double sigma = 0.018; // conductivité (S/m)
+//constexpr double thickness = 0.15; // épaisseur des murs, en mètres
 constexpr double omega = 2 * M_PI * freq;
 constexpr double lambda = c / freq;
 constexpr complex<double> j(0, 1); // ! définition de j, useful
 
-constexpr complex<double> epsilon = epsilon_0 * epsilon_r;
-const complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
-const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
+//constexpr complex<double> epsilon = epsilon_0 * epsilon_r;
+//const complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
+//const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
 constexpr double Ra = 73; // résistance d'antenne en Ohm
 
 ////// positions des objets
@@ -79,8 +79,9 @@ QVector2D wall3start(0, 80);
 QVector2D wall3end(130, 80);
 
 struct Wall {
-    Wall(QVector2D start, QVector2D end, int id){
+    Wall(QVector2D start, QVector2D end, qreal thickness, int id){
         this->id = id;
+        this->thickness = thickness;
         QLineF line(start.x(),start.y(), end.x(), end.y());
         this->line = line;
         qDebug() << "Wall" << id << "line:" << this->line ;
@@ -92,25 +93,36 @@ struct Wall {
         qDebug() << "Line" << id << "unitary:" << unit_line;
         this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized();
         qDebug() << "Wall" << id << "unitary:" << this->unitary;
+        this->graphics->setLine(start.x(), start.y(), end.x(), end.y());
     }
+    QGraphicsLineItem* graphics;
     QLineF line;
     QVector2D normal;
     QVector2D unitary;
     int id;
+    qreal thickness; // in m
+    qreal sigma = 0.018; // conductivité (S/m)
+    qreal epsilon_r = 4.8;
+    complex<qreal> epsilon = epsilon_0 * epsilon_r;
+    complex<qreal> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
+    complex<qreal> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
+    qreal beta_m = gamma_m.imag();
+    qreal alpha_m = gamma_m.real();
 };
 
 QList<Wall*> wall_list = {
-    new Wall(wall1start,wall1end, 1),
-    new Wall(wall2start,wall2end, 2),
-    new Wall(wall3start,wall3end, 3),
+    new Wall(wall1start,wall1end, 0.15, 1),
+    new Wall(wall2start,wall2end, 0.15, 2),
+    new Wall(wall3start,wall3end, 0.15, 3),
 };
 
 class RaySegment : public QLineF {
 public:
     RaySegment(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
         this->setLine(start_x, start_y, end_x, end_y);
+        this->distance = this->length();
     }
-    qreal total_distance=0;
+    qreal distance;
     QGraphicsLineItem* graphics;
 };
 
@@ -126,8 +138,12 @@ public:
     QPointF end;
     qreal totalCoeffs=1;
 
+    void addCoeff(qreal coeff_Real) {
+        totalCoeffs*=pow(coeff_Real,2);
+    }
+
     qreal getTotalCoeffs(){
-        return totalCoeffs;
+        return this->totalCoeffs;
     }
 
     QList<QGraphicsLineItem*>* getSegmentsGraphics(){
@@ -147,12 +163,20 @@ public:
             break;
         }
         QList<QGraphicsLineItem*>* ray_graphics;
-        //for (RaySegment* ray_segment: this->segments) {
-        for (int i=0; i<this->segments.length(); i++) {
-            this->segments[i]->graphics->setPen(ray_pen);
-            ray_graphics->append(this->segments[i]->graphics);
+        for (RaySegment* ray_segment: this->segments) {
+        //for (int i=0; i<this->segments.length(); i++) {
+            ray_segment->graphics->setPen(ray_pen);
+            ray_graphics->append(ray_segment->graphics);
         }
         return ray_graphics;
+    }
+
+    qreal getTotalDistance() const {
+        qreal d = 0;
+        for (RaySegment* segment : this->segments) {
+            d += segment->distance;
+        }
+        return d;
     }
 };
 QList<Ray*> all_rays;
@@ -221,30 +245,32 @@ QVector2D computeImage(const QVector2D& _point, const QVector2D& _normal) {
 
 // calcul des composants issu d'une réflexion
 void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const QVector2D& TX, const QVector2D& r_image, const QVector2D& r_image_image) {
+
+    Wall* wall = wall_list[1];
     // vecteur d entre l'image et la RX
     QVector2D d = RX - r_image;
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
     QVector2D x0(0, 0);  // Origine
     // calcul du t, forme générale
-    double t = ((d.y() * (r_image.x() - x0.x())) - (d.x() * (r_image.y() - x0.y()))) / (wall_list[1]->unitary.x() * d.y() - wall_list[1]->unitary.y() * d.x());
-    QVector2D P_r = x0 + t * wall_list[1]->unitary;
+    double t = ((d.y() * (r_image.x() - x0.x())) - (d.x() * (r_image.y() - x0.y()))) / (wall->unitary.x() * d.y() - wall->unitary.y() * d.x());
+    QVector2D P_r = x0 + t * wall->unitary;
     double d_norm = sqrt(pow(d.x(), 2) + pow(d.y(), 2));
 
     // paramètres de la réflexion
-    double cos_theta_i = QVector2D::dotProduct(d/d_norm, wall_list[1]->normal);
+    double cos_theta_i = QVector2D::dotProduct(d/d_norm, wall->normal);
     qDebug() << "cos_theta_i" << cos_theta_i;
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
     qDebug() << "sin_theta_i" << sin_theta_i;
-    double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
+    double sin_theta_t = sin_theta_i / sqrt(wall->epsilon_r);
     qDebug() << "sin_theta_t" << sin_theta_t;
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
     qDebug() << "cos_theta_t" << cos_theta_t;
-    double s = thickness / cos_theta_t;
+    double s = wall->thickness / cos_theta_t;
     qDebug() << "s" << s;
-    complex<double> Gamma_perpendicular = (Z_m * cos_theta_i - Z_0 * cos_theta_t) / (Z_m * cos_theta_i + Z_0 * cos_theta_t);
+    complex<double> Gamma_perpendicular = (wall->Z_m * cos_theta_i - Z_0 * cos_theta_t) / (wall->Z_m * cos_theta_i + Z_0 * cos_theta_t);
     qDebug() << "Gamma_perpendicular:" << QString::number(Gamma_perpendicular.real()) << "+ j" << QString::number(Gamma_perpendicular.imag());
     // TODO : valeur un petit peu différente de la valeur attendue, pourquoi ?
-    complex<double> reflection_term = exp(-2.0 * real(gamma_m) * s) * exp(j * 2.0 * (gamma_m) * s * sin_theta_t * sin_theta_i);
+    complex<double> reflection_term = exp(-2.0 * real(wall->gamma_m) * s) * exp(j * 2.0 * (wall->gamma_m) * s * sin_theta_t * sin_theta_i);
     qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
     complex<double> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
     qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
@@ -257,23 +283,24 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
     // ---- TEST: deuxieme reflection ----
 
+    Wall* wall_2 = wall_list[2];
     // vecteur d entre l'image et la RX
     QVector2D d_2 = RX - r_image_image;
     // vecteur origine TODO : est-ce qu'il est tjr à (0,0) ?
     //x0(0, -80);  // Nouvelle origine
     // calcul du t, forme générale
-    double t_2 = ((d_2.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (wall_list[2]->unitary.x() * d_2.y() - wall_list[2]->unitary.y() * d_2.x());
-    QVector2D P_r_2 = x0 + t_2 * wall_list[2]->unitary;
+    double t_2 = ((d_2.y() * (r_image_image.x() - x0.x())) - (d_2.x() * (r_image_image.y() - x0.y()))) / (wall_2->unitary.x() * d_2.y() - wall_2->unitary.y() * d_2.x());
+    QVector2D P_r_2 = x0 + t_2 * wall_2->unitary;
     double d_norm_2 = sqrt(pow(d_2.x(), 2) + pow(d_2.y(), 2));
     // paramètres de la réflexion
-    double cos_theta_i_2 = QVector2D::dotProduct(d_2/d_norm_2, wall_list[2]->normal);
+    double cos_theta_i_2 = QVector2D::dotProduct(d_2/d_norm_2, wall_2->normal);
     double sin_theta_i_2 = sqrt(1 - pow(cos_theta_i_2, 2));
-    double sin_theta_t_2 = sin_theta_i_2 / sqrt(epsilon_r);
+    double sin_theta_t_2 = sin_theta_i_2 / sqrt(wall_2->epsilon_r);
     double cos_theta_t_2 = sqrt(1 - pow(sin_theta_t_2, 2));
-    double s_2 = thickness / cos_theta_t_2;
-    complex<double> Gamma_perpendicular_2 = (Z_m * cos_theta_i_2 - Z_0 * cos_theta_t_2) / (Z_m * cos_theta_i_2 + Z_0 * cos_theta_t_2);
+    double s_2 = wall_2->thickness / cos_theta_t_2;
+    complex<double> Gamma_perpendicular_2 = (wall_2->Z_m * cos_theta_i_2 - Z_0 * cos_theta_t_2) / (wall_2->Z_m * cos_theta_i_2 + Z_0 * cos_theta_t_2);
     // TODO : valeur un petit peu différente de la valeur attendue, pourquoi ?
-    complex<double> reflection_term_2 = exp(-2.0 * real(gamma_m) * s_2) * exp(j * 2.0 * (gamma_m) * s_2 * sin_theta_t_2 * sin_theta_i_2);
+    complex<double> reflection_term_2 = exp(-2.0 * real(wall_2->gamma_m) * s_2) * exp(j * 2.0 * (wall_2->gamma_m) * s_2 * sin_theta_t_2 * sin_theta_i_2);
     complex<double> Gamma_m_2 = Gamma_perpendicular_2 - (1.0 - pow((Gamma_perpendicular_2), 2)) * Gamma_perpendicular_2 * reflection_term_2 / (1.0 - pow((Gamma_perpendicular_2), 2) * reflection_term_2);
     // interface graphique, rien de fou, merci gpt pour la syntaxe ici
     QPen reflectionPen_2(Qt::yellow);
@@ -298,6 +325,17 @@ QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX
     return P_r;
 }
 
+void drawAllRays(QGraphicsScene* scene) {
+    // Adds all rays in all_rays QList to the scene
+    // for (Ray* ray : all_rays) {
+    for (int i=0; i<all_rays.length(); i++) {
+        QList<QGraphicsLineItem*>* segments_graphics = all_rays.at(i)->getSegmentsGraphics();
+        for (int p=0; p<segments_graphics->length(); p++) {
+            QGraphicsLineItem* line = segments_graphics->at(p);
+            scene->addItem(line);
+        }
+    }
+}
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
 //QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
@@ -349,9 +387,12 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
 
     // Dessiner les murs
-    scene->addLine(wall1start.x(), -wall1start.y(), wall1end.x(), -wall1end.y(), wallPen);
-    scene->addLine(wall2start.x(), -wall2start.y(), wall2end.x(), -wall2end.y(), wallPen);
-    scene->addLine(wall3start.x(), -wall3start.y(), wall3end.x(), -wall3end.y(), wallPen);
+    for (Wall* wall : wall_list){
+        scene->addItem(wall->graphics);
+    }
+    //scene->addLine(wall1start.x(), -wall1start.y(), wall1end.x(), -wall1end.y(), wallPen);
+    //scene->addLine(wall2start.x(), -wall2start.y(), wall2end.x(), -wall2end.y(), wallPen);
+    //scene->addLine(wall3start.x(), -wall3start.y(), wall3end.x(), -wall3end.y(), wallPen);
 
     // test:
     tx_image_graphics->setBrush(QBrush(Qt::darkYellow));
@@ -364,50 +405,53 @@ QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
     tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
     scene->addItem(tx_image_image_graphics);
 
-
+    // Draw all rays (their segment):
     ////QPen ray_pen;
     ////ray_pen.setWidth(1);
-    // Draw all rays (their segment):
-    for (Ray* ray: all_rays) {
-        QList<QGraphicsLineItem*>* ray_graphics = ray->getSegmentsGraphics();
-        for (QGraphicsLineItem* segment_graphics : *ray_graphics){
-            scene->addItem(segment_graphics);
-        }
-    }
-
-
+    ////for (Ray* ray: all_rays) {
+    ////    QList<QGraphicsLineItem*>* ray_graphics = ray->getSegmentsGraphics();
+    ////    for (int i=0; i<ray_graphics->length(); i++){
+    ////        scene->addItem(ray_graphics->at(i));
+    ////    }
+    ////}
+    drawAllRays(scene);
 
     scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
 }
 
-
-qreal computeReflectionCoeff()
+complex<qreal> computePerpendicularGamma(qreal _cos_theta_i, qreal _cos_theta_t, Wall* wall)
 {
     // TODO:
-    qreal res = 1;
+    complex<qreal> Gamma_perp = (wall->Z_m*_cos_theta_i-Z_0*_cos_theta_t)/(wall->Z_m*_cos_theta_i+Z_0*_cos_theta_t);
 
-    qDebug() << "ReflectionCoeff=" << res;
-    return res;
+    qDebug() << "Gamma_perp=" << QString::number(Gamma_perp.real()) << "+j" << QString::number(Gamma_perp.imag());
+    return Gamma_perp;
 }
 
-qreal computeTransmissionCoeff()
+complex<qreal> computeReflectionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Wall* wall)
 {
     // TODO:
-    qreal res = 1;
+    qreal s = wall->thickness/_cos_theta_t;
+    complex<qreal> Gamma_perpendicular = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
+    complex<qreal> reflection_term = exp(-2.0 * real(wall->gamma_m) * s) * exp(j * 2.0 * (wall->gamma_m) * s * _sin_theta_t * _sin_theta_i);
+    qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
+    complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
+    qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
 
-    qDebug() << "TransmissionCoeff=" << res;
-    return res;
+    return Gamma_m;
 }
 
-complex<qreal> computePerpendicularGamma()
+complex<qreal> computeTransmissionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Wall* wall)
 {
     // TODO:
-    complex<qreal> res(0,0);
+    qreal s = wall->thickness/_cos_theta_t;
+    //complex<qreal> res =0;
+    complex<qreal> perpGamma = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
+    complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->gamma_m)*s)*exp(j*(beta)*2.0*s*_sin_theta_t*_sin_theta_i)));
 
-
-    qDebug() << "Gamma_perp=" << res.real() << "+j" << res.imag();
-    return res;
+    qDebug() << "TransmissionCoeff=" << QString::number(T_m.real()) << "+j" << QString::number(T_m.imag());
+    return T_m;
 }
 
 bool checkSameSideOfWall(const QVector2D& _normal, const QVector2D& _TX, const QVector2D& _RX) {
@@ -416,25 +460,42 @@ bool checkSameSideOfWall(const QVector2D& _normal, const QVector2D& _TX, const Q
     return res;
 }
 
-bool checkRaySegmentIntersectsWall(const Wall* wall, const RaySegment* ray_segment, QPointF* intersection_point) {
+bool checkRaySegmentIntersectsWall(const Wall* wall, RaySegment* ray_segment, QPointF* intersection_point) {
     //QPointF* intersection_point = nullptr;
     int _intersection_type = ray_segment->intersects(wall->line, intersection_point); // also writes to intersection pointer the QPointF
     bool intersects_wall = _intersection_type==1 ? true: false; //0: no intersection (parallel), 1: intersects directly the line segment, 2: intersects the infinite extension of the line
     return intersects_wall;
 }
 
-void checkTransmissions(QList<RaySegment*> _ray_segments, QList<Wall*> _reflection_walls) {
-    for (RaySegment* ray_segment : _ray_segments) {
+void checkTransmissions(Ray* _ray, QList<Wall*> _reflection_walls) {
+    for (RaySegment* ray_segment : _ray->segments) {
         for (Wall* wall : wall_list) {
-            if (_reflection_walls.contains(wall)) { // is NOT reflection wall
-            if (checkRaySegmentIntersectsWall(wall, ray_segment,nullptr)) {
+            qDebug() << "pwall" << &wall;
+            if (!_reflection_walls.contains(wall)) { // is NOT reflection wall
+                if (checkRaySegmentIntersectsWall(wall, ray_segment,nullptr)) {
                     // TODO:
-                    qreal T_coeff = computeTransmissionCoeff();
-                    //addCoeff(T_coeff);
+                    QVector2D _eta = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
+                    qreal _cos_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->unitary));
+                    qreal _sin_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->normal));
+                    qreal _sin_theta_t = _sin_theta_i / sqrt(wall->epsilon_r);
+                    qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
+                    qreal s = wall->thickness/_cos_theta_t;
+                    qreal T_coeff = real(computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall));
+                    _ray->addCoeff(T_coeff);
                 }
             }
         }
     }
+}
+
+void addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D& _p2, Wall* wall){
+    QVector2D _d = _p2-_p1;
+    qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
+    qreal _sin_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary)); // sqrt(1 - pow(_cos_theta_i,2))
+    qreal _sin_theta_t = _sin_theta_i / sqrt(wall->epsilon_r);
+    qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
+    qreal Gamma_coeff = real(computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall));
+    _ray->addCoeff(Gamma_coeff);
 }
 
 QVector2D secondReflection(const QVector2D& previous_image, const QVector2D& normal)
@@ -459,36 +520,36 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             QVector2D _imageTX = computeImage(_TX, wall->normal);
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall->unitary);
 
-            // TODO: call computeCoeffReflection()
-
 
             ////give this point to second reflection computing:
             ////secondReflection(_imageTX, wall.normal);
 
-            //reflection_points_list.append(_P_r.toPointF());
-            // TODO: create ray segments between points
+            ////reflection_points_list.append(_P_r.toPointF());
+            // create ray segments between points
             QList<RaySegment*> ray_segments;
             ray_segments.append(new RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
-            //for (int i=1; i<reflection_points_list.length()-1;i++) {
-            //    // TODO: for more than one reflection
-            //}
+            ////for (int i=1; i<reflection_points_list.length()-1;i++) {
+            ////    // TODO: for more than one reflection
+            ////}
             ray_segments.append(new RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
 
-            // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
-            //QList<Wall*> reflection_walls_1 = {&wall};
-            //checkTransmission(ray_segments, reflection_walls_1);
-            //for (int i=0; i<ray_segments.length(); i++) {
-            //    for (int p=0; p<wall_list.length(); p++) {
-            //        //if (wall_list[p] != wall) { // is NOT reflection wall
-            //        if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments.at(i),nullptr)) {
-            //                qreal T_coeff = computeTransmissionCoeff();
-            //                //addCoeff(T_coeff);
-            //            }
-            //        //}
-            //    }
-            //}
+            //// check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
+            ////QList<Wall*> reflection_walls_1 = {&wall};
+            ////checkTransmission(ray_segments, reflection_walls_1);
+            ////for (int i=0; i<ray_segments.length(); i++) {
+            ////    for (int p=0; p<wall_list.length(); p++) {
+            ////        //if (wall_list[p] != wall) { // is NOT reflection wall
+            ////        if (checkRaySegmentIntersectsWall(wall_list[p], ray_segments.at(i),nullptr)) {
+            ////                qreal T_coeff = computeTransmissionCoeff();
+            ////                //addCoeff(T_coeff);
+            ////            }
+            ////        //}
+            ////    }
+            ////}
 
             ray_1_reflection->segments = ray_segments;
+            addReflection(ray_1_reflection,_imageTX,_RX,wall);
+            checkTransmissions(ray_1_reflection,{wall});
             all_rays.append(ray_1_reflection);
 
             // 2nd reflection
@@ -505,11 +566,15 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     ray_segments_2.append(new RaySegment(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
                     ray_segments_2.append(new RaySegment(_P_r_2_last.x(),_P_r_2_last.y(),_RX.x(),_RX.y()));
 
-                    // TODO: check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
-                    //QList<Wall*> reflection_walls_2 = {&wall, &wall_2};
-                    //checkTransmissions(ray_segments_2,reflection_walls_2);
+                    //// check for each segment if intersects with a wall // ! (CHECK IF THIS WALL CONTAINS THAT REFLECTION POINT, IF TRUE THEN IGNORE)
+                    ////QList<Wall*> reflection_walls_2 = {&wall, &wall_2};
+                    ////checkTransmissions(ray_segments_2,reflection_walls_2);
 
                     ray_2_reflection->segments = ray_segments_2;
+                    //TODO:
+                    addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
+                    addReflection(ray_2_reflection,_image_imageTX,_RX,wall_2);
+                    checkTransmissions(ray_2_reflection,{wall,wall_2});
                     all_rays.append(ray_2_reflection);
                 }
             }
@@ -530,7 +595,7 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
         if (checkRaySegmentIntersectsWall(wall, &_direct_line, intersection_point)) {
             //transmission through this wall
             // TODO: compute Transmission coefficient
-            qreal T_coeff = computeTransmissionCoeff();
+            //qreal T_coeff = computeTransmissionCoeff();
             // TODO: add coeff to power computing
             //addCoeff(T_coeff);
         } // else: ignore
@@ -539,19 +604,7 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
     all_rays.append(direct_ray);
 }
 
-void drawAllRays(QGraphicsScene* scene) {
-    // Adds all rays in all_rays QList to the scene
-    // for (Ray* ray : all_rays) {
-    for (int i=0; i<all_rays.length(); i++) {
-        QList<QGraphicsLineItem*>* segments_graphics = all_rays.at(i)->getSegmentsGraphics();
-        for (int p=0; p<segments_graphics->length(); p++) {
-            QGraphicsLineItem* line = segments_graphics->at(p);
-            scene->addItem(line);
-        }
-    }
-}
-
-qreal computeAllCoeffs(QList<complex<qreal>> _coeff_list)
+qreal computeAllCoeffs(QList<complex<qreal>> _coeff_list, qreal d)
 {
     // TODO:
     qreal res = 0;
@@ -616,6 +669,7 @@ int main(int argc, char *argv[]) {
     // TODO : foutre ça dans une fonction dédiée, MAIS c'est pas urgent, ça se fera
     // naturellement quand on mettre ça dans l'interface
     // calculs de la transmission directe
+    Wall* wall_d = wall_list[0];
     QVector2D d = RX - TX;
 
     // TODO: or use dot products? :
@@ -627,26 +681,26 @@ int main(int argc, char *argv[]) {
     double sin_theta_i = sqrt(1 - pow(cos_theta_i, 2));
     qDebug() << "sin_theta_i" << sin_theta_i;
 
-    double sin_theta_t = sin_theta_i / sqrt(epsilon_r);
+    double sin_theta_t = sin_theta_i / sqrt(wall_d->epsilon_r);
     qDebug() << "sin_theta_t" << sin_theta_t;
     double cos_theta_t = sqrt(1 - pow(sin_theta_t, 2));
     qDebug() << "cos_theta_t" << cos_theta_t;
 
-    double s = thickness / cos_theta_t;
+    double s = wall_d->thickness / cos_theta_t;
 
-    complex<double> Gamma_perpendicular = (Z_m * cos_theta_i - Z_0 * cos_theta_t) / (Z_m * cos_theta_i + Z_0 * cos_theta_t);
+    complex<double> Gamma_perpendicular = (wall_d->Z_m * cos_theta_i - Z_0 * cos_theta_t) / (wall_d->Z_m * cos_theta_i + Z_0 * cos_theta_t);
     // découpe le calcul de T_m en numérateur et dénominateur parce qu'il est
     //  tarpin long, sa valeur est celle attendue yay !
-    complex<double> numerator = (1.0 - pow(Gamma_perpendicular, 2)) * exp(-gamma_m * s);
-    complex<double> denominator = 1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * gamma_m * s) * exp(j * 2.0 * real(gamma_m)* sin_theta_t * sin_theta_i);
+    complex<double> numerator = (1.0 - pow(Gamma_perpendicular, 2)) * exp(-wall_d->gamma_m * s);
+    complex<double> denominator = 1.0 - pow(Gamma_perpendicular, 2) * exp(-2.0 * wall_d->gamma_m * s) * exp(j * 2.0 * real(wall_d->gamma_m)* sin_theta_t * sin_theta_i);
     complex<double> T_m = numerator / denominator;
     double d1 = sqrt(pow(d.x(), 2) + pow(d.y(), 2)); // TODO foutre ça // TODO: d1 = d.length() comme c'est un QVector2D mtn
         //quelque part plus haut ptet ?
     // valeur de exp term non calculée solo dans le tp donc je sais pas quelle est sa valeur
     // mais E_1 a une valeur un peu différente d'attendu TODO : découvrir pourquoi et corriger
     qDebug() << "----T_m" << QString::number(T_m.real()) << "+ j" << QString::number(T_m.imag());
-    qDebug() << "gamma_m imag:" << imag(gamma_m);
-    complex<double> exp_term = exp(-j * imag(gamma_m) * d1); // pr simplifier expression en dessous
+    qDebug() << "gamma_m imag:" << imag(wall_d->gamma_m);
+    complex<double> exp_term = exp(-j * imag(wall_d->gamma_m) * d1); // pr simplifier expression en dessous
     complex<double> E_1 = T_m * sqrt(60 * G_TXP_TX) * exp_term/ d1; // Convertir P_TX de dBm en Watts
     // valeur différente de celle attendue, logique car elle dépend de G_TXP_TX dont je suis
     //  pas sûr de la valeur et de E_1 dont la valeur est différente de celle attendue
@@ -672,48 +726,49 @@ int main(int argc, char *argv[]) {
     //--------------------------------------------
 
     // calculs de paramètres pour la réflexion
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, wall_list[1]->unitary); // reflection point P_r
+    Wall* wall_r = wall_list[1];
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, wall_r->unitary); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
-    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), wall_list[1]->unitary)); // or eta/eta_norm
+    double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), wall_r->unitary)); // or eta/eta_norm
     double sin_theta_i_reflected = sqrt(1 - pow(cos_theta_i_reflected, 2));
-    double sin_theta_t_reflected = sin_theta_i_reflected / sqrt(epsilon_r);
+    double sin_theta_t_reflected = sin_theta_i_reflected / sqrt(wall_r->epsilon_r);
     double cos_theta_t_reflected = sqrt(1 - pow(sin_theta_t_reflected, 2));
-    double s_reflected = thickness / cos_theta_t_reflected;
-    complex<double> Gamma_perpendicular_reflected = (Z_m * cos_theta_i_reflected - Z_0 * cos_theta_t_reflected) /
-                                                    (Z_m * cos_theta_i_reflected + Z_0 * cos_theta_t_reflected);
+    double s_reflected = wall_r->thickness / cos_theta_t_reflected;
+    complex<double> Gamma_perpendicular_reflected = (wall_r->Z_m * cos_theta_i_reflected - Z_0 * cos_theta_t_reflected) /
+                                                    (wall_r->Z_m * cos_theta_i_reflected + Z_0 * cos_theta_t_reflected);
     // encore une fois un coefficient slightly pas le même pélo TODO : nsm wsh
     // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
 
     // TODO: ici en dessous on devrait pas utiliser s_reflected plutot que s et Gamma_perpendicular_reflected plutot que Gamma_perpendicular ?
-    complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-gamma_m * s_reflected)) / (1.0 - pow(Gamma_perpendicular_reflected, 2) * exp(-2.0 * gamma_m * s_reflected) * exp(j * 2.0 * real(gamma_m)* sin_theta_t_reflected * sin_theta_i_reflected));
-    complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_norm) / eta_norm; // this reflection coefficient ?
+    complex<double> T_m_r = ((1.0 - pow(Gamma_perpendicular_reflected, 2)) * exp(-wall_r->gamma_m * s_reflected)) / (1.0 - pow(Gamma_perpendicular_reflected, 2) * exp(-2.0 * wall_r->gamma_m * s_reflected) * exp(j * 2.0 * real(wall_r->gamma_m)* sin_theta_t_reflected * sin_theta_i_reflected));
+    complex<double> E_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(wall_r->gamma_m) * eta_norm) / eta_norm; // this reflection coefficient ?
     double P_RX_reflected = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2), 2); // is this in mW ?
     qDebug() << "P_RX_reflected" << P_RX_reflected;
 
 
     // ---- TEST deuxieme reflection ---- // TODO: test
-
-    QVector2D r_image_image = computeImage(r_image, wall_list[2]->normal);
+    Wall* wall_rr = wall_list[2];
+    QVector2D r_image_image = computeImage(r_image, wall_rr->normal);
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
-    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, wall_list[2]->unitary); // second reflection point P_r_2
+    QVector2D P_r_2 = calculateReflectionPoint(r_image_image, RX, wall_rr->unitary); // second reflection point P_r_2
     QVector2D eta_2 = P_r_2 - r_image;
     double eta_2_norm = sqrt(pow(eta_2.x(),2) + pow(eta_2.y(),2));
-    double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), wall_list[2]->unitary)); // or eta/eta_norm
+    double cos_theta_i_reflected_2 = abs(QVector2D::dotProduct(eta_2.normalized(), wall_rr->unitary)); // or eta/eta_norm
     double sin_theta_i_reflected_2 = sqrt(1 - pow(cos_theta_i_reflected_2, 2));
-    double sin_theta_t_reflected_2 = sin_theta_i_reflected_2 / sqrt(epsilon_r);
+    double sin_theta_t_reflected_2 = sin_theta_i_reflected_2 / sqrt(wall_rr->epsilon_r);
     double cos_theta_t_reflected_2 = sqrt(1 - pow(sin_theta_t_reflected_2, 2));
-    double s_reflected_2 = thickness / cos_theta_t_reflected_2;
-    complex<double> Gamma_perpendicular_reflected_2 = (Z_m * cos_theta_i_reflected_2 - Z_0 * cos_theta_t_reflected_2) /
-                                                    (Z_m * cos_theta_i_reflected_2 + Z_0 * cos_theta_t_reflected_2);
+    double s_reflected_2 = wall_rr->thickness / cos_theta_t_reflected_2;
+    complex<double> Gamma_perpendicular_reflected_2 = (wall_rr->Z_m * cos_theta_i_reflected_2 - Z_0 * cos_theta_t_reflected_2) /
+                                                      (wall_rr->Z_m * cos_theta_i_reflected_2 + Z_0 * cos_theta_t_reflected_2);
     // encore une fois un coefficient slightly pas le même pélo TODO : nsm wsh
     // en tout cas la discussion est la même que pour le cas à transmission, voir le todo plus haut
 
     // TODO: ici en dessous on devrait pas utiliser s_reflected plutot que s et Gamma_perpendicular_reflected plutot que Gamma_perpendicular ?
-    complex<double> T_m_r_2 = ((1.0 - pow(Gamma_perpendicular_reflected_2, 2)) * exp(-gamma_m * s_reflected_2)) / (1.0 - pow(Gamma_perpendicular_reflected_2, 2) * exp(-2.0 * gamma_m * s_reflected_2) * exp(j * 2.0 * real(gamma_m)* sin_theta_t_reflected_2 * sin_theta_i_reflected_2));
-    complex<double> E_2_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(gamma_m) * eta_2_norm) / eta_2_norm; // this reflection coefficient ?
+    complex<double> T_m_r_2 = ((1.0 - pow(Gamma_perpendicular_reflected_2, 2)) * exp(-wall_rr->gamma_m * s_reflected_2)) / (1.0 - pow(Gamma_perpendicular_reflected_2, 2) * exp(-2.0 * wall_rr->gamma_m * s_reflected_2) * exp(j * 2.0 * real(wall_rr->gamma_m)* sin_theta_t_reflected_2 * sin_theta_i_reflected_2));
+    complex<double> E_2_2 = T_m_r * sqrt(60 * G_TXP_TX) * exp(-j * imag(wall_rr->gamma_m) * eta_2_norm) / eta_2_norm; // this reflection coefficient ?
     double P_RX_reflected_2 = (60 * pow(lambda, 2)) / (8 * M_PI) * G_TXP_TX * pow(abs(E_2_2), 2); // is this in mW ?
     qDebug() << "P_RX_reflected_2" << P_RX_reflected_2;
 
