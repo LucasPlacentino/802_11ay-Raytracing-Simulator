@@ -78,28 +78,30 @@ QVector2D wall3start(0, 80);
 QVector2D wall3end(130, 80);
 
 struct Wall {
-    Wall(QVector2D start, QVector2D end, qreal thickness, int id){
-        this->id = id;
-        this->thickness = thickness;
-        QLineF line(start.x(),start.y(), end.x(), end.y());
-        this->line = line;
-        qDebug() << "Wall" << id << "line:" << this->line ;
-        QLineF normal_line = this->line.normalVector();
-        qDebug() << "Line" << id << "normal:" << normal_line;
-        this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized(); // ! normalized !
-        qDebug() << "Wall" << id << "normal:" << this->normal;
-        QLineF unit_line = line.unitVector();
-        qDebug() << "Line" << id << "unitary:" << unit_line;
-        this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized(); // ! normalized !
-        qDebug() << "Wall" << id << "unitary:" << this->unitary;
-        this->graphics->setLine(start.x(), start.y(), end.x(), end.y());
-    }
     QGraphicsLineItem* graphics;
     QLineF line;
     QVector2D normal; // ! normalized !
     QVector2D unitary; // ! normalized !
     int id;
     qreal thickness; // in m
+
+    Wall(QVector2D start, QVector2D end, qreal thickness, int id){
+        this->id = id;
+        this->thickness = thickness;
+        this->line = QLineF(start.x(),start.y(), end.x(), end.y());
+        qDebug() << "Wall" << id << "line:" << this->line ;
+        QLineF normal_line = this->line.normalVector();
+        qDebug() << "Line" << id << "normal:" << normal_line;
+        this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized(); // ! normalized !
+        qDebug() << "Wall" << id << "normal:" << this->normal;
+        QLineF unit_line = this->line.unitVector();
+        qDebug() << "Line" << id << "unitary:" << unit_line;
+        this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized(); // ! normalized !
+        qDebug() << "Wall" << id << "unitary:" << this->unitary;
+        this->graphics->setLine(this->line);
+        //delete line;
+    }
+
     qreal sigma = 0.018; // conductivité (S/m)
     qreal epsilon_r = 4.8;
     complex<qreal> epsilon = epsilon_0 * epsilon_r;
