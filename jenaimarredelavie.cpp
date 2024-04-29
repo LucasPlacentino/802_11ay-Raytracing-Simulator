@@ -124,6 +124,11 @@ public:
     int num_reflections = 0;
     QPointF start;
     QPointF end;
+    qreal totalCoeffs=1;
+
+    qreal getTotalCoeffs(){
+        return totalCoeffs;
+    }
 
     QList<QGraphicsLineItem*>* getSegmentsGraphics(){
         QPen ray_pen;
@@ -206,12 +211,12 @@ QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem();
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF computeImageTX(const QPointF& TX, const QPointF& normal) {
-QVector2D computeImageTX(const QVector2D& TX, const QVector2D& _normal) {
-    double _dotProduct = QVector2D::dotProduct(TX, _normal);
-    QVector2D r_image = TX - 2 * _dotProduct * _normal;
-    qDebug() << "r_image:" << r_image.x() << r_image.y();
+QVector2D computeImage(const QVector2D& _point, const QVector2D& _normal) {
+    double _dotProduct = QVector2D::dotProduct(_point, _normal);
+    QVector2D _image = _point - 2 * _dotProduct * _normal;
+    qDebug() << "_image:" << _image.x() << _image.y();
 
-    return r_image;
+    return _image;
 }
 
 // calcul des composants issu d'une réflexion
@@ -434,7 +439,7 @@ void checkTransmissions(QList<RaySegment*> _ray_segments, QList<Wall*> _reflecti
 
 QVector2D secondReflection(const QVector2D& previous_image, const QVector2D& normal)
 {
-    QVector2D _second_image = computeImageTX(previous_image,normal);
+    QVector2D _second_image = computeImage(previous_image,normal);
     return _second_image;
 }
 
@@ -451,7 +456,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
             //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
-            QVector2D _imageTX = computeImageTX(_TX, wall->normal);
+            QVector2D _imageTX = computeImage(_TX, wall->normal);
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall->unitary);
 
             // TODO: call computeCoeffReflection()
@@ -491,7 +496,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                 if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     QList<QPointF> reflections_points_list_2;
-                    QVector2D _image_imageTX = computeImageTX(_P_r,wall_2->normal);
+                    QVector2D _image_imageTX = computeImage(_P_r,wall_2->normal);
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2->unitary);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall->unitary);
                     QList<RaySegment*> ray_segments_2;
@@ -546,12 +551,27 @@ void drawAllRays(QGraphicsScene* scene) {
     }
 }
 
-qreal computePower()
+qreal computeAllCoeffs(QList<complex<qreal>> _coeff_list)
 {
     // TODO:
     qreal res = 0;
+    for (complex<qreal> coeff : _coeff_list){
+        res*=pow(coeff.real(),2);
+    }
+    res*=1; // TODO: pow((e^(-j*beta*d)/d).real(),2)
+    qDebug() << "computeAllCoeffs:" << res;
+    return res;
+}
 
-    qDebug() << "computePower:" << res;
+qreal computeTotalPower()
+{
+    qreal res = 0;
+    for (Ray* ray : all_rays) {
+        res+=ray->getTotalCoeffs();
+    }
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
+
+    qDebug() << "computeTotalPower:" << res;
     return res;
 }
 
@@ -589,7 +609,7 @@ int main(int argc, char *argv[]) {
     //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
     init();
 
-    QVector2D r_image = computeImageTX(TX, wall_list[1]->normal);
+    QVector2D r_image = computeImage(TX, wall_list[1]->normal);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
 
@@ -674,7 +694,7 @@ int main(int argc, char *argv[]) {
 
     // ---- TEST deuxieme reflection ---- // TODO: test
 
-    QVector2D r_image_image = computeImageTX(r_image, wall_list[2]->normal);
+    QVector2D r_image_image = computeImage(r_image, wall_list[2]->normal);
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
