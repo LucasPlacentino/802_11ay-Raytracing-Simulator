@@ -21,34 +21,33 @@ using namespace std;
 //using namespace Qt; // ?
 
 // constantes
-constexpr double epsilon_0 = 8.8541878128e-12;
-constexpr double mu_0 = 4 * M_PI * 1e-7;
-constexpr double freq = 868.3e6; // EX 4.1, it is 868.3 MHz
-constexpr double c = 299792458;
+constexpr qreal epsilon_0 = 8.8541878128e-12;
+constexpr qreal mu_0 = 4 * M_PI * 1e-7;
+constexpr qreal freq = 868.3e6; // EX 4.1, it is 868.3 MHz
+constexpr qreal c = 299792458;
 
-constexpr double G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
+constexpr qreal G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
+constexpr qreal beta_0 =  2*M_PI*freq/c;// beta
 
 // il n'est pas défini en constexpr car cela provoque une erreur,
 // je ne sais pas pourquoi
-const double Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
+const qreal Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
 //constexpr double epsilon_r = 4.8;
 //constexpr double sigma = 0.018; // conductivité (S/m)
 //constexpr double thickness = 0.15; // épaisseur des murs, en mètres
-constexpr double omega = 2 * M_PI * freq;
-constexpr double lambda = c / freq;
-constexpr complex<double> j(0, 1); // ! définition de j, useful
+constexpr qreal omega = 2 * M_PI * freq;
+constexpr qreal lambda = c / freq;
+constexpr complex<qreal> j(0, 1); // ! définition de j, useful
 
 //constexpr complex<double> epsilon = epsilon_0 * epsilon_r;
 //const complex<double> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega));
 //const complex<double> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
-constexpr double Ra = 73; // résistance d'antenne en Ohm
+constexpr qreal Ra = 73; // résistance d'antenne en Ohm
 
 ////// positions des objets
 ////const QVector2D RX(47, 65);
 ////const QVector2D TX(32, 10);
 
-// TODO : incorporer les positions des murs, bien que pour l'instant
-//  ça ne serve pas directement dans le calcul
 //constexpr QVector2D normal(1, 0);
 //constexpr QVector2D unitary(0,1);
 //// they should be normalized!!!
@@ -56,7 +55,7 @@ constexpr double Ra = 73; // résistance d'antenne en Ohm
 //constexpr QVector2D unitary_top(1,0); // mur du haut
 
 // Total Receiver power
-double P_RX_TOTAL = 0;
+qreal P_RX_TOTAL = 0;
 
 QBrush rxBrush(Qt::blue);
 QPen rxPen(Qt::darkBlue);
@@ -87,18 +86,18 @@ struct Wall {
         qDebug() << "Wall" << id << "line:" << this->line ;
         QLineF normal_line = this->line.normalVector();
         qDebug() << "Line" << id << "normal:" << normal_line;
-        this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized();
+        this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized(); // ! normalized !
         qDebug() << "Wall" << id << "normal:" << this->normal;
         QLineF unit_line = line.unitVector();
         qDebug() << "Line" << id << "unitary:" << unit_line;
-        this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized();
+        this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized(); // ! normalized !
         qDebug() << "Wall" << id << "unitary:" << this->unitary;
         this->graphics->setLine(start.x(), start.y(), end.x(), end.y());
     }
     QGraphicsLineItem* graphics;
     QLineF line;
-    QVector2D normal;
-    QVector2D unitary;
+    QVector2D normal; // ! normalized !
+    QVector2D unitary; // ! normalized !
     int id;
     qreal thickness; // in m
     qreal sigma = 0.018; // conductivité (S/m)
@@ -137,6 +136,7 @@ public:
     QPointF start;
     QPointF end;
     qreal totalCoeffs=1;
+    qreal distance=0;
 
     void addCoeff(qreal coeff_Real) {
         totalCoeffs*=pow(coeff_Real,2);
@@ -172,11 +172,14 @@ public:
     }
 
     qreal getTotalDistance() const {
-        qreal d = 0;
-        for (RaySegment* segment : this->segments) {
-            d += segment->distance;
-        }
-        return d;
+        // TODO: ?
+        //qreal d = 0;
+        //for (RaySegment* segment : this->segments) {
+        //    d += segment->distance;
+        //}
+        //return d;
+
+        return this->distance;
     }
 };
 QList<Ray*> all_rays;
@@ -189,9 +192,9 @@ void init() {
     imagePen.setColor(Qt::darkGray);
 }
 
-class TransmitterTest : public QVector2D {
+class Transmitter : public QVector2D {
 public:
-    TransmitterTest(qreal x, qreal y){
+    Transmitter(qreal x, qreal y){
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
@@ -211,9 +214,9 @@ public:
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
     double power;
 };
-class ReceiverTest : public QVector2D {
+class Receiver : public QVector2D {
 public:
-    ReceiverTest(qreal x, qreal y) {
+    Receiver(qreal x, qreal y) {
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
@@ -225,8 +228,8 @@ public:
     QGraphicsRectItem* graphics = new QGraphicsRectItem();//(this->x()) - 5, - (this->y()) - 5, 10, 10);
     double power;
 };
-TransmitterTest TX(32,10);
-ReceiverTest RX(47, 65);
+Transmitter TX(32,10);
+Receiver RX(47, 65);
 
 // for debug:
 QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
@@ -339,7 +342,7 @@ void drawAllRays(QGraphicsScene* scene) {
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
 //QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
-QGraphicsScene* createGraphicsScene(ReceiverTest& RX, TransmitterTest& TX) {
+QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     //QGraphicsScene* createGraphicsScene(const QPointF& RX) {
     auto* scene = new QGraphicsScene();
 
@@ -447,7 +450,7 @@ complex<qreal> computeTransmissionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, 
     // TODO: check
     qreal s = wall->thickness/_cos_theta_t;
     complex<qreal> perpGamma = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
-    complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->gamma_m)*s)*exp(j*(beta)*2.0*s*_sin_theta_t*_sin_theta_i)));
+    complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->gamma_m)*s)*exp(j*beta_0*2.0*s*_sin_theta_t*_sin_theta_i)));
 
     qDebug() << "TransmissionCoeff=" << QString::number(T_m.real()) << "+j" << QString::number(T_m.imag());
     return T_m;
@@ -593,6 +596,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
                     addReflection(ray_2_reflection,_image_imageTX,_RX,wall_2);
                     checkTransmissions(ray_2_reflection,{wall,wall_2});
+
+                    ray_2_reflection->distance = QVector2D(_RX-_image_imageTX).length();
                     all_rays.append(ray_2_reflection);
                 }
             }
@@ -629,7 +634,7 @@ qreal computeAllCoeffs(QList<complex<qreal>> _coeff_list, qreal d)
     for (complex<qreal> coeff : _coeff_list){
         res*=pow(coeff.real(),2);
     }
-    res*=1; // TODO: pow((e^(-j*beta*d)/d).real(),2)
+    res*=1; // TODO: pow((e^(-j*beta_0*d)/d).real(),2)
     qDebug() << "computeAllCoeffs:" << res;
     return res;
 }
@@ -640,7 +645,7 @@ qreal computeTotalPower()
     for (Ray* ray : all_rays) {
         res+=ray->getTotalCoeffs();
     }
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
     qDebug() << "computeTotalPower:" << res;
     return res;
