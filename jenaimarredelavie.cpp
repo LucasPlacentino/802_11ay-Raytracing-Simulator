@@ -67,6 +67,14 @@ QPen wallPen(Qt::gray);
 //wallPen.setWidth(4);
 QPen imagePen(Qt::PenStyle::DotLine);
 
+void init() {
+    // initialize program stuff
+    dVectorPen.setWidth(1); // 2?
+    wallPen.setWidth(3);
+    imagePen.setWidth(1);
+    imagePen.setColor(Qt::darkGray);
+}
+
 //0, -20, 130, -20
 QVector2D wall1start(0, 20);
 QVector2D wall1end(130, 20);
@@ -78,7 +86,7 @@ QVector2D wall3start(0, 80);
 QVector2D wall3end(130, 80);
 
 struct Wall {
-    QGraphicsLineItem* graphics;
+    QGraphicsLineItem* graphics = new QGraphicsLineItem();
     QLineF line;
     QVector2D normal; // ! normalized !
     QVector2D unitary; // ! normalized !
@@ -86,9 +94,11 @@ struct Wall {
     qreal thickness; // in m
 
     Wall(QVector2D start, QVector2D end, qreal thickness, int id){
+        qDebug("Creating wall...");
         this->id = id;
         this->thickness = thickness;
         this->line = QLineF(start.x(),start.y(), end.x(), end.y());
+        QLineF graphics_line = QLineF(start.x(),-start.y(), end.x(), -end.y());
         qDebug() << "Wall" << id << "line:" << this->line ;
         QLineF normal_line = this->line.normalVector();
         qDebug() << "Line" << id << "normal:" << normal_line;
@@ -98,7 +108,11 @@ struct Wall {
         qDebug() << "Line" << id << "unitary:" << unit_line;
         this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized(); // ! normalized !
         qDebug() << "Wall" << id << "unitary:" << this->unitary;
-        this->graphics->setLine(this->line);
+        qDebug("Setting Wall graphics line...");
+        this->graphics->setLine(graphics_line);
+        wallPen.setWidth(3);
+        this->graphics->setPen(wallPen);
+        qDebug("Wall created.");
         //delete line;
     }
 
@@ -119,12 +133,12 @@ QList<Wall*> wall_list = {
 
 class RaySegment : public QLineF {
 public:
+    qreal distance;
+    QGraphicsLineItem* graphics;
     RaySegment(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
         this->setLine(start_x, start_y, end_x, end_y);
         this->distance = this->length();
     }
-    qreal distance;
-    QGraphicsLineItem* graphics;
 };
 
 class Ray {
@@ -185,14 +199,6 @@ public:
     }
 };
 QList<Ray*> all_rays;
-
-void init() {
-    // initialize program stuff
-    dVectorPen.setWidth(1); // 2?
-    wallPen.setWidth(3);
-    imagePen.setWidth(1);
-    imagePen.setColor(Qt::darkGray);
-}
 
 class Transmitter : public QVector2D {
 public:
