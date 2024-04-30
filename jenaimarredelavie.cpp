@@ -508,12 +508,6 @@ void addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D& _p2, Wall* 
     _ray->addCoeff(Gamma_coeff);
 }
 
-QVector2D secondReflection(const QVector2D& previous_image, const QVector2D& normal)
-{
-    QVector2D _second_image = computeImage(previous_image,normal);
-    return _second_image;
-}
-
 void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 {
     // calls to 1reflection and 2reflection
@@ -530,18 +524,14 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             QVector2D _imageTX = computeImage(_TX, wall->normal);
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall->unitary);
 
-
-            ////give this point to second reflection computing:
-            ////secondReflection(_imageTX, wall.normal);
-
             ////reflection_points_list.append(_P_r.toPointF());
 
-            // TODO: CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
+            // CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
             RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX.x(),_RX.y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                 delete test_segment;
-                break; // break out of this forloop instance for this wall
+                continue; // break out of this forloop instance for this wall
             }
             delete test_segment;
             // create ray segments between points
@@ -575,7 +565,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             for (Wall* wall_2 : wall_list) {
                 if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
-                    QList<QPointF> reflections_points_list_2;
+                    //QList<QPointF> reflections_points_list_2;
                     QVector2D _image_imageTX = computeImage(_P_r,wall_2->normal);
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2->unitary);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall->unitary);
@@ -585,7 +575,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                         delete test_segment_1;
                         delete test_segment_2;
-                        break; // break out of this forloop instance for this wall
+                        continue; // break out of this forloop instance for this wall
                     }
                     delete test_segment_1;
                     delete test_segment_2;
