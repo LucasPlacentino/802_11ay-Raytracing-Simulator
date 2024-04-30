@@ -135,9 +135,10 @@ QList<Wall*> wall_list = {
 class RaySegment : public QLineF {
 public:
     qreal distance;
-    QGraphicsLineItem* graphics;
+    QGraphicsLineItem* graphics = new QGraphicsLineItem();
     RaySegment(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
         this->setLine(start_x, start_y, end_x, end_y);
+        this->graphics->setLine(start_x, -start_y, end_x, -end_y);
         this->distance = this->length();
     }
 };
@@ -197,7 +198,9 @@ public:
         //for (int i=0; i<this->segments.length(); i++) {
             qDebug() << "Adding this segment to list ray_graphics";
             ray_segment->graphics->setPen(ray_pen);
+            qDebug() << "before" << ray_segment->graphics;
             ray_graphics.append(ray_segment->graphics);
+            qDebug() << "after:" << ray_graphics;
         }
         return ray_graphics;
     }
@@ -223,7 +226,7 @@ public:
         this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
         this->graphics->setBrush(txBrush);
         this->graphics->setPen(txPen);
-        this->graphics->setRect(x-2,-y-2,4,4);
+        this->graphics->setRect(x-3,-y-3,6,6);
         this->graphics->setAcceptHoverEvents(true);
     };
     /* // uses parent class implementation
@@ -245,7 +248,7 @@ public:
         this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
         this->graphics->setBrush(rxBrush);
         this->graphics->setPen(rxPen);
-        this->graphics->setRect(x-2,-y-2,4,4);
+        this->graphics->setRect(x-3,-y-3,6,6);
         this->graphics->setAcceptHoverEvents(true);
     }
     QGraphicsRectItem* graphics = new QGraphicsRectItem();//(this->x()) - 5, - (this->y()) - 5, 10, 10);
@@ -253,6 +256,8 @@ public:
 };
 Transmitter TX(32,10);
 Receiver RX(47, 65);
+
+QList<QGraphicsEllipseItem*> tx_images;
 
 // for debug:
 QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
@@ -343,11 +348,12 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
-QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, const QVector2D& _unitary) {
+QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, Wall* wall) {
     QVector2D d = RX-r_image;
-    QVector2D x0(0,0); // TODO: always this ?
-    double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (_unitary.x()*d.y()-_unitary.y()*d.x());
-    QVector2D P_r = x0 + t * _unitary;
+    //QVector2D x0(0,0); // TODO: always this ?
+    QVector2D x0(wall->line.p1().x(),wall->line.p1().y());
+    double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (wall->unitary.x()*d.y()-wall->unitary.y()*d.x());
+    QVector2D P_r = x0 + t * wall->unitary;
     return P_r;
 }
 
@@ -447,6 +453,13 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     ////}
     drawAllRays(scene);
 
+    for (QGraphicsEllipseItem* image_graphics : tx_images) {
+        image_graphics->setPen(QPen(Qt::darkYellow));
+        image_graphics->setBrush(QBrush(Qt::darkYellow));
+        image_graphics->setToolTip(QString("image\nx=%1 y=%2").arg(QString::number(image_graphics->rect().x()),QString::number(-image_graphics->rect().y())));
+        scene->addItem(image_graphics);
+    }
+
     scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
 }
@@ -542,7 +555,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
             QVector2D _imageTX = computeImage(_TX, wall->normal);
-            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall->unitary);
+            tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
+            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
 
             ////reflection_points_list.append(_P_r.toPointF());
 
@@ -589,8 +603,9 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
                     QVector2D _image_imageTX = computeImage(_P_r,wall_2->normal);
-                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2->unitary);
-                    QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall->unitary);
+                    tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
+                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
+                    QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
                     if (!checkRaySegmentIntersectsWall(wall, test_segment_1) && !checkRaySegmentIntersectsWall(wall_2,test_segment_2)) {
@@ -752,7 +767,7 @@ void runTestOui1(QGraphicsScene* scene) {
 
     // calculs de paramètres pour la réflexion
     Wall* wall_r = wall_list[1];
-    QVector2D P_r = calculateReflectionPoint(r_image, RX, wall_r->unitary); // reflection point P_r
+    QVector2D P_r = calculateReflectionPoint(r_image, RX, wall_r); // reflection point P_r
     QVector2D eta = P_r - TX; // vecteur de P_r à RX, notation issue du tp
     double eta_norm = sqrt(pow(eta.x(), 2) + pow(eta.y(), 2));
     double cos_theta_i_reflected = abs(QVector2D::dotProduct(eta.normalized(), wall_r->unitary)); // or eta/eta_norm
@@ -833,8 +848,8 @@ int main(int argc, char *argv[]) {
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    view->setFixedSize(600, 400);
-    view->scale(2.0, 2.0); // TODO: not use scale?
+    view->setFixedSize(800, 600);
+    view->scale(3.0, 3.0); // TODO: not use scale?
     view->show();
     qDebug() << "Time:" << timer.elapsed() << "ms";
     return app.exec();
