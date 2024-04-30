@@ -9,6 +9,7 @@
 #include "parameters.h"
 
 #include <QElapsedTimer>
+#include <QGraphicsView>
 
 class Simulation
 {
@@ -28,8 +29,8 @@ public:
     int getNumberOfBaseStations();
     qint64 getSimulationTime() const;
 
-    SimulationGraphicsScene* scene=nullptr;
-    QGraphicsView* view=nullptr;
+    QGraphicsScene* scene = nullptr;//new QGraphicsScene();//this->createGraphicsScene(&this->baseStations);
+    QGraphicsView* view = nullptr;//new QGraphicsView(this->scene);
 
     bool lift_is_on_floor = false;
     int max_ray_reflections = 2;
@@ -48,6 +49,8 @@ private:
     qreal resolution = 0.5;
 
     //QVector2D origin = QVector2D(0,0);
+
+    QGraphicsScene* createGraphicsScene(std::vector<Transmitter>* TX_list);
 
     QList<QList<QSharedPointer<Receiver>>> cells_matrix;
     void computeCell(QSharedPointer<Receiver> cell);

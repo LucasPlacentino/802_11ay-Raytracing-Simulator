@@ -14,6 +14,7 @@
 #include <cmath>
 #include <complex>
 #include <QVector2D>
+#include <QElapsedTimer>
 //#include <iostream> // for cout
 
 // pour plus de simplicité
@@ -151,38 +152,52 @@ public:
     int num_reflections = 0;
     QPointF start;
     QPointF end;
+    QList<complex<qreal>> coeffsList;
     qreal totalCoeffs=1;
     qreal distance=0;
 
     void addCoeff(qreal coeff_Real) {
-        totalCoeffs*=pow(coeff_Real,2);
+        this->totalCoeffs*=pow(coeff_Real,2);
     }
 
-    qreal getTotalCoeffs(){
-        return this->totalCoeffs;
+    qreal getTotalCoeffs() {
+        qreal res = 0;
+        for (complex<qreal> coeff : this->coeffsList) {
+            res*=pow(abs(coeff),2);
+        }
+        res*=pow(abs(exp(-j*beta_0*this->distance)/this->distance),2);
+        qDebug() << "computeAllCoeffs:" << res;
+        return res;
+
     }
 
-    QList<QGraphicsLineItem*>* getSegmentsGraphics(){
+    QList<QGraphicsLineItem*> getSegmentsGraphics(){
+        qDebug() << "Getting ray segments graphics";
         QPen ray_pen;
         ray_pen.setWidth(1);
         // set ray graphics color depending on number of reflections
+        qDebug() << "This ray has" << this->segments.length() << "segments, so" << this->segments.length()-1 << "reflections";
         this->num_reflections=this->segments.length()-1;
         switch (this->num_reflections){
         case 0:
+            qDebug() << "This ray is direct";
             ray_pen.setColor(Qt::green);
             break;
         case 1:
+            qDebug() << "This ray has 1 reflection";
             ray_pen.setColor(Qt::red);
             break;
         case 2:
+            qDebug() << "This ray has 2 reflections";
             ray_pen.setColor(Qt::yellow);
             break;
         }
-        QList<QGraphicsLineItem*>* ray_graphics;
+        QList<QGraphicsLineItem*> ray_graphics;
         for (RaySegment* ray_segment: this->segments) {
         //for (int i=0; i<this->segments.length(); i++) {
+            qDebug() << "Adding this segment to list ray_graphics";
             ray_segment->graphics->setPen(ray_pen);
-            ray_graphics->append(ray_segment->graphics);
+            ray_graphics.append(ray_segment->graphics);
         }
         return ray_graphics;
     }
@@ -208,7 +223,7 @@ public:
         this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
         this->graphics->setBrush(txBrush);
         this->graphics->setPen(txPen);
-        this->graphics->setRect(x-5,-y-5,10,10);
+        this->graphics->setRect(x-2,-y-2,4,4);
         this->graphics->setAcceptHoverEvents(true);
     };
     /* // uses parent class implementation
@@ -230,7 +245,7 @@ public:
         this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
         this->graphics->setBrush(rxBrush);
         this->graphics->setPen(rxPen);
-        this->graphics->setRect(x-5,-y-5,10,10);
+        this->graphics->setRect(x-2,-y-2,4,4);
         this->graphics->setAcceptHoverEvents(true);
     }
     QGraphicsRectItem* graphics = new QGraphicsRectItem();//(this->x()) - 5, - (this->y()) - 5, 10, 10);
@@ -338,11 +353,14 @@ QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX
 
 void drawAllRays(QGraphicsScene* scene) {
     // Adds all rays in all_rays QList to the scene
-    // for (Ray* ray : all_rays) {
-    for (int i=0; i<all_rays.length(); i++) {
-        QList<QGraphicsLineItem*>* segments_graphics = all_rays.at(i)->getSegmentsGraphics();
-        for (int p=0; p<segments_graphics->length(); p++) {
-            QGraphicsLineItem* line = segments_graphics->at(p);
+    for (Ray* ray : all_rays) {
+    //for (int i=0; i<all_rays.length(); i++) {
+        qDebug() << "Adding ray to scene";
+        //QList<QGraphicsLineItem*> segments_graphics = all_rays.at(i)->getSegmentsGraphics();
+        for (QGraphicsLineItem* segment_graphics : ray->getSegmentsGraphics()) {
+        //for (int p=0; p<segments_graphics.length(); p++) {
+            qDebug() << "->Adding ray segment to scene...";
+            QGraphicsLineItem* line = segment_graphics;
             scene->addItem(line);
         }
     }
@@ -395,26 +413,28 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     qDebug() << "TX.graphics:" << TX.graphics->rect();
 
     // Dessiner le vecteur d // TODO: remove, as it is in the all_rays list and will be painted below
-    scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
+    //scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
 
     // Dessiner les murs
     for (Wall* wall : wall_list){
+        qDebug() << "Adding wall to scene...";
         scene->addItem(wall->graphics);
     }
-    //scene->addLine(wall1start.x(), -wall1start.y(), wall1end.x(), -wall1end.y(), wallPen);
-    //scene->addLine(wall2start.x(), -wall2start.y(), wall2end.x(), -wall2end.y(), wallPen);
-    //scene->addLine(wall3start.x(), -wall3start.y(), wall3end.x(), -wall3end.y(), wallPen);
+    qDebug() << "All walls added to scene.";
+    ////scene->addLine(wall1start.x(), -wall1start.y(), wall1end.x(), -wall1end.y(), wallPen);
+    ////scene->addLine(wall2start.x(), -wall2start.y(), wall2end.x(), -wall2end.y(), wallPen);
+    ////scene->addLine(wall3start.x(), -wall3start.y(), wall3end.x(), -wall3end.y(), wallPen);
 
     // test:
-    tx_image_graphics->setBrush(QBrush(Qt::darkYellow));
-    tx_image_graphics->setPen(QPen(Qt::darkYellow));
-    tx_image_graphics->setToolTip(QString("TX image\nx=%1 y=%2").arg(QString::number(tx_image_graphics->rect().x()),QString::number(-tx_image_graphics->rect().y())));
-    scene->addItem(tx_image_graphics);
+    //tx_image_graphics->setBrush(QBrush(Qt::darkYellow));
+    //tx_image_graphics->setPen(QPen(Qt::darkYellow));
+    //tx_image_graphics->setToolTip(QString("TX image\nx=%1 y=%2").arg(QString::number(tx_image_graphics->rect().x()),QString::number(-tx_image_graphics->rect().y())));
+    //scene->addItem(tx_image_graphics);
 
-    tx_image_image_graphics->setBrush(QBrush(Qt::darkYellow));
-    tx_image_image_graphics->setPen(QPen(Qt::darkYellow));
-    tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
-    scene->addItem(tx_image_image_graphics);
+    //tx_image_image_graphics->setBrush(QBrush(Qt::darkYellow));
+    //tx_image_image_graphics->setPen(QPen(Qt::darkYellow));
+    //tx_image_image_graphics->setToolTip(QString("TX image image\nx=%1 y=%2").arg(QString::number(tx_image_image_graphics->rect().x()),QString::number(-tx_image_image_graphics->rect().y())));
+    //scene->addItem(tx_image_image_graphics);
 
     // Draw all rays (their segment):
     ////QPen ray_pen;
@@ -445,7 +465,7 @@ complex<qreal> computeReflectionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qr
     // TODO: check
     qreal s = wall->thickness/_cos_theta_t;
     complex<qreal> Gamma_perpendicular = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
-    complex<qreal> reflection_term = exp(-2.0 * real(wall->gamma_m) * s) * exp(j * 2.0 * (wall->gamma_m) * s * _sin_theta_t * _sin_theta_i);
+    complex<qreal> reflection_term = exp(-2.0 * real(wall->gamma_m) * s) * exp(j * 2.0 * beta_0 * s * _sin_theta_t * _sin_theta_i);
     qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
     complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
     qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
@@ -559,6 +579,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             ray_1_reflection->segments = ray_segments;
             addReflection(ray_1_reflection,_imageTX,_RX,wall);
             checkTransmissions(ray_1_reflection,{wall});
+
+            ray_1_reflection->distance = QVector2D(_RX-_imageTX).length();
             all_rays.append(ray_1_reflection);
 
             // 2nd reflection
@@ -625,18 +647,6 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
     all_rays.append(direct_ray);
 }
 
-qreal computeAllCoeffs(QList<complex<qreal>> _coeff_list, qreal d)
-{
-    // TODO:
-    qreal res = 0;
-    for (complex<qreal> coeff : _coeff_list){
-        res*=pow(coeff.real(),2);
-    }
-    res*=1; // TODO: pow((e^(-j*beta_0*d)/d).real(),2)
-    qDebug() << "computeAllCoeffs:" << res;
-    return res;
-}
-
 qreal computeTotalPower()
 {
     qreal res = 0;
@@ -674,15 +684,7 @@ qreal computeCosTheta_t(qreal _sin_theta_t)
     return res;
 }
 
-
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-
-    qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
-    qDebug() << "TX: x" << QString::number(TX.x()) << " y" << QString::number(TX.y());
-    //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
-    init();
-
+void runTestOui1(QGraphicsScene* scene) {
     QVector2D r_image = computeImage(TX, wall_list[1]->normal);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
@@ -802,10 +804,28 @@ int main(int argc, char *argv[]) {
     qDebug() << "PX_RX_TOTAL ??" << P_RX_TOTAL;
     RX.power = P_RX_TOTAL;
 
+    addReflectionComponents(scene, RX, TX, r_image, r_image_image);
+}
+
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    QElapsedTimer timer;
+    timer.start();
+
+    qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
+    qDebug() << "TX: x" << QString::number(TX.x()) << " y" << QString::number(TX.y());
+    //qDebug() << "RX: x" << QString::number(RX.x()) << " y" << QString::number(RX.y());
+    init();
+
+    computeReflections(RX, TX);
+
     QGraphicsScene* scene = createGraphicsScene(RX, TX);
     //QGraphicsScene* scene = createGraphicsScene(RX);
 
-    addReflectionComponents(scene, RX, TX, r_image, r_image_image);
+    //runTestOui1(scene); // old code from Salman
+
     QGraphicsView* view = new QGraphicsView(scene);
 
     // necessary ? :
@@ -816,6 +836,7 @@ int main(int argc, char *argv[]) {
     view->setFixedSize(600, 400);
     view->scale(2.0, 2.0); // TODO: not use scale?
     view->show();
+    qDebug() << "Time:" << timer.elapsed() << "ms";
     return app.exec();
 
     // In real app:

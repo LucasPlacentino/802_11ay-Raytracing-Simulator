@@ -23,7 +23,7 @@ public:
 
     QVector2D get2DVector() const;
 
-    QGraphicsEllipseItem* graphicsIcon = new QGraphicsEllipseItem();
+    QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
 private:
     int selector_index;
     QString name;

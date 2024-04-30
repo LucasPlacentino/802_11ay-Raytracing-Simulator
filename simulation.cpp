@@ -290,3 +290,8 @@ void Simulation::test()
     // we need to check if the new wall can in fact reflect from the new tx
     // => check if sign(dotProduct(n, rx))==sign(dotProduct(n, tx))
 }
+
+QGraphicsScene *Simulation::createGraphicsScene(std::vector<Transmitter>* TX)
+{
+    return new QGraphicsScene;
+}

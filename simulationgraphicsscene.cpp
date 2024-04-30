@@ -21,7 +21,7 @@ void SimulationGraphicsScene::drawTransmitters()
     {
         qDebug() << "Drawing base station " << i;
         Transmitter* base_station = simulation.getBaseStation(i);
-        this->addItem(base_station->graphicsIcon);
+        this->addItem(base_station->graphics);
     }
 }
 

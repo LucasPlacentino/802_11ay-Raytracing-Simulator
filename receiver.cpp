@@ -32,7 +32,7 @@ Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
         this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
     }
 
-    this->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or in a ::hoverMoveEvent() ?
+    this->graphics->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or in a ::hoverMoveEvent() ?
     //setAcceptHoverEvents(true); // trigger function below on mouse hover events (i.e show a tooltip)
 }
 
