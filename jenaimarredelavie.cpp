@@ -293,14 +293,14 @@ qreal computeTotalPower()
 QVector2D computeImage(const QVector2D& _point, Wall* wall) {
     // FIXME: problem is here ? change origin ?
     // fixed with new_coords ?
-    QVector2D new_origin = QVector2D(wall->line.p1());
+    QVector2D new_origin = QVector2D(wall->line.p1()); // set origin to point1 of wall
     qDebug() << "new coords" << wall->line.p1();
-    QVector2D _normal = wall->normal;
+    QVector2D _normal = wall->normal; // normal to the wall (is normalized so it is relative to any origin)
     qDebug() << "normal" << wall->normal;
-    QVector2D new_point_coords = _point - new_origin;
+    QVector2D new_point_coords = _point - new_origin; // initial point in new coordinates relative to point1 of wall
     double _dotProduct = QVector2D::dotProduct(new_point_coords, _normal);
-    QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal;
-    QVector2D _image = new_origin + _image_new_coords;
+    QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal; // image point in new coordinates relative to point1 of wall
+    QVector2D _image = new_origin + _image_new_coords; // image point in absolute coordinates
     qDebug() << "_image:" << _image.x() << _image.y();
 
     return _image;
@@ -905,7 +905,7 @@ int main(int argc, char *argv[]) {
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    view->setFixedSize(800, 600);
+    //view->setFixedSize(800, 600);
     view->scale(3.0, 3.0); // TODO: not use scale?
     view->show();
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
