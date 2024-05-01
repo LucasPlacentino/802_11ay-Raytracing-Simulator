@@ -290,9 +290,17 @@ qreal computeTotalPower()
 
 // fonction qui calcule la position de \vec r_image de l'antenne
 //QPointF computeImageTX(const QPointF& TX, const QPointF& normal) {
-QVector2D computeImage(const QVector2D& _point, const QVector2D& _normal) {
-    double _dotProduct = QVector2D::dotProduct(_point, _normal);
-    QVector2D _image = _point - 2 * _dotProduct * _normal;
+QVector2D computeImage(const QVector2D& _point, Wall* wall) {
+    // FIXME: problem is here ? change origin ?
+    // fixed with new_coords ?
+    QVector2D new_origin = QVector2D(wall->line.p1());
+    qDebug() << "new coords" << wall->line.p1();
+    QVector2D _normal = wall->normal;
+    qDebug() << "normal" << wall->normal;
+    QVector2D new_point_coords = _point - new_origin;
+    double _dotProduct = QVector2D::dotProduct(new_point_coords, _normal);
+    QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal;
+    QVector2D _image = new_origin + _image_new_coords;
     qDebug() << "_image:" << _image.x() << _image.y();
 
     return _image;
@@ -599,7 +607,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
             //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
-            QVector2D _imageTX = computeImage(_TX, wall->normal);
+            QVector2D _imageTX = computeImage(_TX, wall);
             tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
 
@@ -649,7 +657,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                 if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
-                    QVector2D _image_imageTX = computeImage(_P_r,wall_2->normal);
+                    QVector2D _image_imageTX = computeImage(_P_r,wall_2);
                     tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
@@ -748,7 +756,7 @@ qreal computeCosTheta_t(qreal _sin_theta_t)
 */
 
 void runTestOui1(QGraphicsScene* scene) {
-    QVector2D r_image = computeImage(TX, wall_list[1]->normal);
+    QVector2D r_image = computeImage(TX, wall_list[1]);
     // test:
     tx_image_graphics->setRect(r_image.x()-3,-r_image.y()-3,6,6);
 
@@ -837,7 +845,7 @@ void runTestOui1(QGraphicsScene* scene) {
 
     // ---- TEST deuxieme reflection ---- // TODO: test
     Wall* wall_rr = wall_list[2];
-    QVector2D r_image_image = computeImage(r_image, wall_rr->normal);
+    QVector2D r_image_image = computeImage(r_image, wall_rr);
     // test:
     tx_image_image_graphics->setRect(r_image_image.x()-3,-r_image_image.y()-3,6,6);
 
