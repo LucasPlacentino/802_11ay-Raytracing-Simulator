@@ -36,7 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
     toggleCoverageParametersLayout(true);
     toggleCellParametersLayout(false);
 
-    SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
+    //SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
+    QGraphicsScene* simulation_scene = new QGraphicsScene(this);
     simulation.scene = simulation_scene;
     //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
     qDebug() << "scene pointer (&simulation_scene): " << simulation_scene;

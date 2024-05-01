@@ -17,23 +17,24 @@
 #include <QElapsedTimer>
 //#include <iostream> // for cout
 
-//#define DRAW_RAYS 1
+// Defines for debugging:
+#define DRAW_RAYS 1
+#define DRAW_IMAGES 1
 
 // pour plus de simplicité
 using namespace std;
 //using namespace Qt; // ?
 
-// constantes
+// constants
 constexpr qreal epsilon_0 = 8.8541878128e-12;
 constexpr qreal mu_0 = 4 * M_PI * 1e-7;
-constexpr qreal freq = 868.3e6; // EX 4.1, it is 868.3 MHz
+constexpr qreal freq = 868.3e6; // 868.3 MHz
 constexpr qreal c = 299792458;
 
 constexpr qreal G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
-constexpr qreal beta_0 =  2*M_PI*freq/c;// beta
+constexpr qreal beta_0 =  2*M_PI*freq/c; // beta
 
-// il n'est pas défini en constexpr car cela provoque une erreur,
-// je ne sais pas pourquoi
+// il n'est pas défini en constexpr car cela provoque une erreur, sans doute parce qu'il utilise une fonction sqrt()
 const qreal Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
 //constexpr double epsilon_r = 4.8;
 //constexpr double sigma = 0.018; // conductivité (S/m)
@@ -482,12 +483,14 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     // Dessiner le vecteur d // TODO: remove, as it is in the all_rays list and will be painted below
     //scene->addLine(TX.x(), -TX.y(), RX.x(), -RX.y(), dVectorPen);
 
+#ifdef DRAW_IMAGES
     for (QGraphicsEllipseItem* image_graphics : tx_images) {
         image_graphics->setPen(QPen(Qt::darkYellow));
         image_graphics->setBrush(QBrush(Qt::darkYellow));
         image_graphics->setToolTip(QString("image\nx=%1 y=%2").arg(QString::number(image_graphics->rect().x()),QString::number(-image_graphics->rect().y())));
         scene->addItem(image_graphics);
     }
+#endif
 
     scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
