@@ -920,8 +920,8 @@ int main(int argc, char *argv[]) {
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    view->setFixedSize(800, 700);
-    view->scale(3.0, 3.0); // TODO: not use scale?
+    view->setFixedSize(900, 700);
+    view->scale(2.6, 2.6); // TODO: not use scale?
     view->show();
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
     qDebug() << "Total number of rays:" << QString::number(all_rays.length()) << "(should be 5).";
