@@ -497,7 +497,7 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     for (QGraphicsEllipseItem* image_graphics : tx_images) {
         image_graphics->setPen(QPen(Qt::darkYellow));
         image_graphics->setBrush(QBrush(Qt::darkYellow));
-        image_graphics->setToolTip(QString("image\nx=%1 y=%2").arg(QString::number(image_graphics->rect().x()),QString::number(-image_graphics->rect().y())));
+        image_graphics->setToolTip(QString("image\nx=%1 y=%2").arg(QString::number(image_graphics->rect().x()+image_graphics->rect().width()/2),QString::number(-image_graphics->rect().y()-image_graphics->rect().height()/2)));
         scene->addItem(image_graphics);
     }
 #endif
@@ -506,7 +506,7 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     for (QGraphicsEllipseItem* reflection_graphics : reflection_points) {
         reflection_graphics->setPen(QPen(Qt::darkGreen));
         reflection_graphics->setBrush(QBrush(Qt::darkGreen));
-        reflection_graphics->setToolTip(QString("reflection\nx=%1 y=%2").arg(QString::number(reflection_graphics->rect().x()),QString::number(-reflection_graphics->rect().y())));
+        reflection_graphics->setToolTip(QString("reflection\nx=%1 y=%2").arg(QString::number(reflection_graphics->rect().x()+reflection_graphics->rect().width()/2),QString::number(-reflection_graphics->rect().y()-reflection_graphics->rect().height()/2)));
         scene->addItem(reflection_graphics);
     }
 #endif
@@ -616,13 +616,13 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
         Wall* wall = wall_list[i];
         // check if same side of wall, if false, then no reflection only transmission
         if (checkSameSideOfWall(wall->normal,_TX,_RX)) {
+            qDebug() << "Same side of wall TX and RX:" << wall << _TX.toPointF() << _RX.toPointF() ;
             Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
             //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
             QVector2D _imageTX = computeImage(_TX, wall);
-            tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
+
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
-            reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
 
             ////reflection_points_list.append(_P_r.toPointF());
 
@@ -630,10 +630,15 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX.x(),_RX.y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
+                qDebug() << "ignore";
                 delete test_segment;
                 continue; // break out of this forloop instance for this wall
             }
             delete test_segment;
+
+            tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
+            reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
+
             // create ray segments between points
             QList<RaySegment*> ray_segments;
             ray_segments.append(new RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
@@ -668,17 +673,18 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             // 2nd reflection
             for (Wall* wall_2 : wall_list) {
                 if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
+                    qDebug() << "Same side of wall P_r and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", P_r:" << _P_r.toPointF() << ", RX:" << _RX.toPointF() ;
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
-                    tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
+
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
-                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
-                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
+
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
-                    if (!checkRaySegmentIntersectsWall(wall, test_segment_1) && !checkRaySegmentIntersectsWall(wall_2,test_segment_2)) {
+                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) && !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
+                        qDebug() << "ignore";
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                         delete test_segment_1;
                         delete test_segment_2;
@@ -686,6 +692,11 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     }
                     delete test_segment_1;
                     delete test_segment_2;
+
+                    tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
+                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
+                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
+
                     QList<RaySegment*> ray_segments_2;
                     ray_segments_2.append(new RaySegment(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
                     // for...
@@ -905,8 +916,8 @@ int main(int argc, char *argv[]) {
 
     init();
 
-    computeDirect(RX, TX);
     computeReflections(RX, TX);
+    computeDirect(RX, TX);
 
     QGraphicsScene* scene = createGraphicsScene(RX, TX);
     //QGraphicsScene* scene = createGraphicsScene(RX);
