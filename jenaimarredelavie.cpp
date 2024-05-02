@@ -636,6 +636,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             }
             delete test_segment;
 
+            qDebug() << "P_r" << _P_r;
             tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
             reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
 
@@ -672,8 +673,9 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 
             // 2nd reflection
             for (Wall* wall_2 : wall_list) {
-                if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
-                    qDebug() << "Same side of wall P_r and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", P_r:" << _P_r.toPointF() << ", RX:" << _RX.toPointF() ;
+                //if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
+                if (checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
+                    qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX.toPointF() ;
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
@@ -693,6 +695,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     delete test_segment_1;
                     delete test_segment_2;
 
+                    qDebug() << "P_r_2_first" << _P_r_2_first;
+                    qDebug() << "P_r_2_last" << _P_r_2_last;
                     tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
                     reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
                     reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
