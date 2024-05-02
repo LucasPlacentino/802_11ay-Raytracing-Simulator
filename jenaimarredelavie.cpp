@@ -670,7 +670,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                 if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
-                    QVector2D _image_imageTX = computeImage(_P_r,wall_2);
+                    QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
                     tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
@@ -920,7 +920,7 @@ int main(int argc, char *argv[]) {
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    //view->setFixedSize(800, 600);
+    view->setFixedSize(800, 700);
     view->scale(3.0, 3.0); // TODO: not use scale?
     view->show();
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
