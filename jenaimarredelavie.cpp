@@ -20,6 +20,7 @@
 // Defines for debugging:
 #define DRAW_RAYS 1
 #define DRAW_IMAGES 1
+#define DRAW_REFLECTION_POINTS 1
 
 // pour plus de simplicité
 using namespace std;
@@ -271,6 +272,7 @@ Transmitter TX(32,10);
 Receiver RX(47, 65);
 
 QList<QGraphicsEllipseItem*> tx_images;
+QList<QGraphicsEllipseItem*> reflection_points;
 
 // for debug:
 QGraphicsEllipseItem* tx_image_graphics = new QGraphicsEllipseItem();
@@ -380,11 +382,11 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
 
 }
 // calculer le point de réflexion sur un mur, même chose que dans le tp
-QVector2D calculateReflectionPoint(const QVector2D& r_image, const QVector2D& RX, Wall* wall) {
-    QVector2D d = RX-r_image;
+QVector2D calculateReflectionPoint(const QVector2D& _start, const QVector2D& _end, Wall* wall) {
+    QVector2D d = _end-_start;
     //QVector2D x0(0,0); // TODO: always this ?
-    QVector2D x0(wall->line.p1().x(),wall->line.p1().y()); // TODO: FIXME: correct ?
-    double t = ((d.y()*(r_image.x()-x0.x()))-(d.x()*(r_image.y()-x0.y()))) / (wall->unitary.x()*d.y()-wall->unitary.y()*d.x());
+    QVector2D x0 = QVector2D(wall->line.p1()); // TODO: FIXME: correct ?
+    qreal t = ((d.y()*(_start.x()-x0.x()))-(d.x()*(_start.y()-x0.y()))) / (wall->unitary.x()*d.y()-wall->unitary.y()*d.x());
     QVector2D P_r = x0 + t * wall->unitary;
     return P_r;
 }
@@ -500,6 +502,16 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     }
 #endif
 
+#ifdef DRAW_REFLECTION_POINTS
+    for (QGraphicsEllipseItem* reflection_graphics : reflection_points) {
+        reflection_graphics->setPen(QPen(Qt::darkGreen));
+        reflection_graphics->setBrush(QBrush(Qt::darkGreen));
+        reflection_graphics->setToolTip(QString("reflection\nx=%1 y=%2").arg(QString::number(reflection_graphics->rect().x()),QString::number(-reflection_graphics->rect().y())));
+        scene->addItem(reflection_graphics);
+    }
+#endif
+
+
     scene->setBackgroundBrush(QBrush(Qt::black));
     return scene;
 }
@@ -610,6 +622,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             QVector2D _imageTX = computeImage(_TX, wall);
             tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
+            reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
 
             ////reflection_points_list.append(_P_r.toPointF());
 
@@ -661,6 +674,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
+                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
+                    reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
                     if (!checkRaySegmentIntersectsWall(wall, test_segment_1) && !checkRaySegmentIntersectsWall(wall_2,test_segment_2)) {
