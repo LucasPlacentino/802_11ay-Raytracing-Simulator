@@ -303,7 +303,7 @@ QVector2D computeImage(const QVector2D& _point, Wall* wall) {
     double _dotProduct = QVector2D::dotProduct(new_point_coords, _normal);
     QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal; // image point in new coordinates relative to point1 of wall
     QVector2D _image = new_origin + _image_new_coords; // image point in absolute coordinates
-    qDebug() << "_image:" << _image.x() << _image.y();
+    //qDebug() << "image:" << _image.x() << _image.y();
 
     return _image;
 }
@@ -621,6 +621,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             //QList<QPointF> reflection_points_list;
             //same side of this wall, can make a reflection
             QVector2D _imageTX = computeImage(_TX, wall);
+            qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
 
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
 
@@ -674,14 +675,18 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             // 2nd reflection
             for (Wall* wall_2 : wall_list) {
                 //if (checkSameSideOfWall(wall_2->normal,_P_r,_RX)) {
-                if (checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
+                if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
                     qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX.toPointF() ;
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
                     //QList<QPointF> reflections_points_list_2;
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
+                    qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
 
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
+                    if (_P_r_2_last.x()==_P_r_2_first.x() && _P_r_2_last.y()==_P_r_2_first.y()) {
+                        qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
+                    }
 
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
@@ -935,13 +940,20 @@ int main(int argc, char *argv[]) {
 
     // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
     //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-    view->setFixedSize(900, 700);
+    view->setFixedSize(1000, 900);
     view->scale(2.6, 2.6); // TODO: not use scale?
     view->show();
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
     qDebug() << "Total number of rays:" << QString::number(all_rays.length()) << "(should be 5).";
     qDebug() << "The receiver threshold is at -65 dBm";
     qDebug() << QString((10*std::log10(RX.power) >= -65) ? "-> Enough power:" : "-> Not enough power:") << 10*std::log10(RX.power) << "dBm";
+
+
+    for (Ray* ray : all_rays) {
+        qreal coeffs = ray->getTotalCoeffs();
+        qreal power = coeffs*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
+        qDebug() << "Ray" << ray->num_reflections << "reflections, power:" << power << "mW " << 10*std::log10(power) << "dBm.";
+    }
 
     return app.exec();
 
