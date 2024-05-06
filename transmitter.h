@@ -39,6 +39,9 @@ public:
     */
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
     qreal power; // ! in Watts
+    // TODO:
+    qreal G_TX = 1;
+    qreal P_TX = 1;
 
 private:
     /*

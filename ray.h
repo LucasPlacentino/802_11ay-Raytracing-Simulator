@@ -2,7 +2,7 @@
 #define RAY_H
 
 #include "raysegment.h"
-#include "receiver.h"
+//#include "receiver.h"
 #include "parameters.h"
 
 #include <QGraphicsLineItem>
@@ -57,11 +57,12 @@ public:
 
 
 private:
+    /*
     QList<InteractionPoint> interaction_points;
     QList<QPointF> points; // TODO: change to QVector2D ?
-    QSharedPointer<Receiver> target_cell;
+    //QSharedPointer<Receiver> target_cell;
     QPointF end_point;
-
+    */
 };
 
 #endif // RAY_H

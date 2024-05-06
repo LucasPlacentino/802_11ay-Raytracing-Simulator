@@ -2,7 +2,7 @@
 #define RECEIVER_H
 
 #include "ray.h"
-#include "simulation.h"
+#include "transmitter.h"
 
 #include <QGraphicsRectItem>
 #include <QVector2D>
@@ -24,22 +24,27 @@ public:
     */
 
     Receiver(qreal x, qreal y);
+
     QGraphicsRectItem* graphics = new QGraphicsRectItem(); // RX's QGraphicsItem
-    qreal power; // ! in Watts
+    qulonglong power; // ! in Watts
+    qulonglong bitrate_Mbps; // bitrate in Mbps
+    qreal Ra = 73; // antenna resistance
+    QColor cell_color = QColor(Qt::transparent); // receiver cell color, based on power/bitrate
 
-    qreal Ra = 73;
+    QList<Ray*> all_rays; // list of all rays that go to this receiver
 
-    QList<Ray*> all_rays;
+    qulonglong computeTotalPower(Transmitter* transmitter); // returns final total power computation for this RX
 
-    qreal computeTotalPower(Simulation* simulation); // returns final total power computation for this RX
-
+    void updateBitrateAndColor(); // update this receiver's bitrate and cell color
 protected:
     //void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 private:
+    /*
     double power_dBm;
     qulonglong bitrate_Mbps;
     QColor cell_color;
     QPointF center_coordinates; // TODO: change to QVector2D ?
+    */
 };
 
 #endif // RECEIVER_H

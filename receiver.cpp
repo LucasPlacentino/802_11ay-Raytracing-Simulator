@@ -3,8 +3,8 @@
 #include <QBrush>
 #include <QPen>
 
-double max_power_dBm = -40.0;
-double min_power_dBm = -90.0;
+qreal max_power_dBm = -40.0;
+qreal min_power_dBm = -90.0;
 qulonglong max_bitrate_Mbps = 40*1e3;
 qulonglong min_bitrate_Mbps = 50;
 
@@ -85,15 +85,39 @@ Receiver::Receiver(qreal x, qreal y) {
     this->graphics->setRect(x-3,-y-3,6,6);
     this->graphics->setAcceptHoverEvents(true);
 }
+void Receiver::updateBitrateAndColor()
+{
+    //TODO: check if correct
+    qulonglong bitrate;
+    if (10*std::log10(this->power*1000) > max_power_dBm) {
+        bitrate = max_bitrate_Mbps; //in Mbps, 40 Gbps max from -40 dBm
+        this->cell_color = Qt::red;
+    } else if (10*std::log10(this->power*1000) < min_power_dBm) { // 50 Mbps at -90 dBm
+        bitrate = 0; //in Mbps, no connection (0 Mbps)
+        this->cell_color = Qt::black;
+    } else {
+        // TODO: conversion to bitrate (beware log scale)
+        qreal max_power_mW = std::pow(10.0, max_power_dBm / 10.0);
+        qreal min_power_mW = std::pow(10.0, min_power_dBm / 10.0);
+        //qreal power_mW = std::pow(10.0, power_dBm / 10.0);
+        bitrate = ((10*std::log10(this->power*1000) - min_power_mW) / (max_power_mW - min_power_mW)) * (max_bitrate_Mbps - min_bitrate_Mbps) + min_bitrate_Mbps;
 
-qreal Receiver::computeTotalPower() // returns final total power computation for this RX
+        // Color gradient heatmap scale:
+        // normalize power_dBm (or bitrate) to [0,360[ or more like [0,240] so that we have between red and dark blue
+        int h = static_cast<int>((10*std::log10(this->power*1000) - -90) * (0 - 240) / (-40 - -90) + 240); // ? modulo 360 because QColor::fromHsl() h is in [0,359]
+        this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
+    }
+}
+
+
+qulonglong Receiver::computeTotalPower(Transmitter* transmitter) // returns final total power computation for this RX
 {
     qreal res = 0;
     for (Ray* ray : this->all_rays) {
         res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
     }
     // multiply by the term before the sum:
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TX*transmitter->P_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
     qDebug() << "computeTotalPower:" << res;
     return res;
