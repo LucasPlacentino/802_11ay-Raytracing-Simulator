@@ -159,6 +159,7 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 
 void Simulation::createCellsMatrix()
 {
+    //TODO:
     qDebug() << "cells_matrix initial size:" << this->cells_matrix.size();
     int max_x_count = ceil(max_x/this->resolution); // -1 ?
     qDebug() << "Max count of cells X:" << max_x_count;
@@ -170,7 +171,8 @@ void Simulation::createCellsMatrix()
         QList<QSharedPointer<Receiver>> temp_list;
         for (int y_count=0; y_count < max_y_count; y_count++) {
             qreal y = 0-(this->resolution*y_count);
-            temp_list.push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
+            //temp_list.push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
+            temp_list.push_back(QSharedPointer<Receiver>(new Receiver(x,y)));
             qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
         }
         this->cells_matrix.push_back(temp_list);
@@ -187,23 +189,25 @@ void Simulation::resetAll()
 
 Transmitter* Simulation::getBaseStation(int index)
 {
-    if (index < 0 || index >= baseStations.size()) {
+    if (index < 0 || index >= this->baseStations.length()) {
         qWarning("baseStations index out of range");
         throw std::out_of_range("baseStations index out of range");
     }
-    return &this->baseStations.at(index);
+    //return &this->baseStations.at(index);
+    return this->baseStations.at(index);
 }
 
 void Simulation::createBaseStation(Transmitter transmitter)
 {
+    //TODO: needed ?
     this->baseStations.push_back(transmitter);
 }
 
 void Simulation::deleteBaseStation(int index)
 {
-    if (index > 0 || index < baseStations.size())
+    if (index > 0 || index < this->baseStations.size())
     {
-        this->baseStations.erase(baseStations.begin()+index);
+        this->baseStations.erase(this->baseStations.begin()+index);
     } else if (index == 0)
     {
         qDebug("Cannot delete Base Station 1");
@@ -213,6 +217,7 @@ void Simulation::deleteBaseStation(int index)
     }
 }
 
+// TODO:
 std::vector<Obstacle*>* Simulation::getObstacles()
 {
     return &this->obstacles;
@@ -229,6 +234,7 @@ int Simulation::getNumberOfBaseStations()
     return this->baseStations.size();
 }
 
+// TODO: use new
 void Simulation::computeCell(QSharedPointer<Receiver> cell)
 {
     // TODO: recursive function for each ray bounce from the transmitter

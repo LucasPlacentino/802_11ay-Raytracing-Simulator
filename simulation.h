@@ -36,7 +36,15 @@ public:
     int max_ray_reflections = 2;
     bool showRaySingleCell = false;
 
+    // --- NEW : ---
+    QList<Transmitter*> baseStations; // TX list // TODO:
+    QList<QList<Receiver*>> cells; // RX matrix // TODO:
 
+    QGraphicsScene* createGraphicsScene();
+    // -------------
+
+
+    // test:
     void test();
 private:
     QElapsedTimer timer;
@@ -58,7 +66,7 @@ private:
     void traceRay(QSharedPointer<Ray> ray, int reflections);
 
     std::vector<Obstacle*> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
-    std::vector<Transmitter> baseStations;
+    //std::vector<Transmitter> baseStations;
 
     QList<QSharedPointer<Ray>> rays_list;
 
