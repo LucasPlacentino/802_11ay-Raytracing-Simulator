@@ -1,10 +1,14 @@
 #include "receiver.h"
 
+#include <QBrush>
+#include <QPen>
+
 double max_power_dBm = -40.0;
 double min_power_dBm = -90.0;
 qulonglong max_bitrate_Mbps = 40*1e3;
 qulonglong min_bitrate_Mbps = 50;
 
+/*
 Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
 {
     // TODO: dont take power_dBm in constructor
@@ -36,12 +40,12 @@ Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
     //setAcceptHoverEvents(true); // trigger function below on mouse hover events (i.e show a tooltip)
 }
 
-/*
-void Receiver::hoverMoveEvent(QGraphicsSceneHoverEvent* event) // ?
-{
-    this->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or just in constructor ?
-}
-*/
+
+//void Receiver::hoverMoveEvent(QGraphicsSceneHoverEvent* event) // ?
+//{
+//    this->setToolTip(QString("Signal: %1 dBm\nBitrate: %2 Mbps").arg(this->power_dBm, this->bitrate_Mbps)); // here ? or just in constructor ?
+//}
+
 
 double Receiver::getPower_dBm() const
 {
@@ -67,4 +71,30 @@ QVector2D Receiver::get2DVector() const
 {
     return QVector2D(this->center_coordinates); // but we use the mean power of the local zone (50cm x 50cm)
 }
+*/
 
+Receiver::Receiver(qreal x, qreal y) {
+    // Receiver object constructor
+    QBrush rxBrush(Qt::blue);
+    QPen rxPen(Qt::darkBlue);
+    this->setX(x);
+    this->setY(y);
+    this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
+    this->graphics->setBrush(rxBrush);
+    this->graphics->setPen(rxPen);
+    this->graphics->setRect(x-3,-y-3,6,6);
+    this->graphics->setAcceptHoverEvents(true);
+}
+
+qreal Receiver::computeTotalPower() // returns final total power computation for this RX
+{
+    qreal res = 0;
+    for (Ray* ray : this->all_rays) {
+        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
+    }
+    // multiply by the term before the sum:
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+
+    qDebug() << "computeTotalPower:" << res;
+    return res;
+}

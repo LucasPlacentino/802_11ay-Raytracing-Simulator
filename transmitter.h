@@ -3,11 +3,13 @@
 
 #include <QGraphicsEllipseItem>
 #include <QVector2D>
+#include <QPen>
+#include <QBrush>
 
-
-class Transmitter// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
+class Transmitter : public QVector2D// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
 {
 public:
+    /*
     Transmitter(
         int selector_index,
         QString name,
@@ -24,7 +26,22 @@ public:
     QVector2D get2DVector() const;
 
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
+*/
+
+    Transmitter(qreal x, qreal y);
+    /* // uses parent class implementation
+    qreal x() const{
+        return this->QPointF::x();
+    }
+    qreal y() const{
+        return this->QPointF::y();
+    }
+    */
+    QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
+    qreal power; // ! in Watts
+
 private:
+    /*
     int selector_index;
     QString name;
     int power_dBm;
@@ -34,6 +51,7 @@ private:
     qulonglong* f = &frequency;
     // qreal beta_0 = ...;
     // qreal h_e = ...;
+    */
 };
 
 #endif // TRANSMITTER_H

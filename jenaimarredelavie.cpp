@@ -123,11 +123,12 @@ struct Wall {
 
     qreal sigma = 0.018; // wall's conductivity (S/m)
     qreal epsilon_r = 4.8; // wall's relative permittivity
-    complex<qreal> epsilon = epsilon_0 * epsilon_r; // wall's permittivity
+    qreal epsilon = epsilon_0 * epsilon_r; // wall's permittivity
     complex<qreal> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
     complex<qreal> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega)); // wall's impedance
-    qreal beta_m = gamma_m.imag(); //? not used ?
-    qreal alpha_m = gamma_m.real(); //? not used ?
+    qreal beta_m = omega*sqrt((mu_0*this->epsilon)/2)*pow(sqrt(1+pow((this->sigma/(omega*this->epsilon)),2))+1,1/2);
+    qreal alpha_m = omega*sqrt((mu_0*this->epsilon)/2)*pow(sqrt(1+pow((this->sigma/(omega*this->epsilon)),2))-1,1/2);
+    //complex<qreal> gamma_m = this->alpha_m + j*this->beta_m;
 };
 
 QList<Wall*> wall_list = { // list containing all the created walls

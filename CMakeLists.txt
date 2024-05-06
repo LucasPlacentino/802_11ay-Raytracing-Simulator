@@ -23,6 +23,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(802_11ay-Raytracing-Simulator
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        jenaimarredelavie.cpp # remove later ?
         simulation.h simulation.cpp
         ray.h ray.cpp
         obstacle.h obstacle.cpp
@@ -31,8 +32,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         receiver.h receiver.cpp
         heatmapgradientlegend.h heatmapgradientlegend.cpp
         utils.h
-        jenaimarredelavie.cpp
         parameters.h
+        raysegment.h raysegment.cpp
 
 
 
