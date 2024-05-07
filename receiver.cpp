@@ -117,7 +117,7 @@ qulonglong Receiver::computeTotalPower(Transmitter* transmitter) // returns fina
         res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
     }
     // multiply by the term before the sum:
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TX*transmitter->P_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
     qDebug() << "computeTotalPower:" << res;
     return res;

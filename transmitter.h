@@ -9,7 +9,7 @@
 class Transmitter : public QVector2D// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
 {
 public:
-    /*
+
     Transmitter(
         int selector_index,
         QString name,
@@ -18,15 +18,15 @@ public:
         );
     int getPower_dBm() const;
     qreal getPower() const;
-    qreal getGain() const;
+    qreal getG_TXP_TX() const;
     void setPower_dBm(int power_dBm);
     QPointF getCoordinates() const;
     void changeCoordinates(QPointF new_coordinates);
 
     QVector2D get2DVector() const;
 
-    QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
-*/
+    //QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
+
 
     Transmitter(qreal x, qreal y);
     /* // uses parent class implementation
@@ -40,8 +40,9 @@ public:
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
     qreal power; // ! in Watts
     // TODO:
-    qreal G_TX = 1;
-    qreal P_TX = 1;
+    qreal G_TXP_TX = 1.64; // vertical dipole lamda/2 antenna
+    //qreal G_TX; // ?
+    //qreal gain = G_TX;
 
 private:
     /*

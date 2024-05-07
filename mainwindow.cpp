@@ -36,59 +36,54 @@ MainWindow::MainWindow(QWidget *parent)
     toggleCoverageParametersLayout(true);
     toggleCellParametersLayout(false);
 
-    //SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
-    QGraphicsScene* simulation_scene = new QGraphicsScene(this);
-    simulation.scene = simulation_scene;
-    //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
-    qDebug() << "scene pointer (&simulation_scene): " << simulation_scene;
-    qDebug() << "scene pointer (simulation.scene): " << simulation.scene;
+    // //SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
+    // //QGraphicsScene* simulation_scene = new QGraphicsScene(this);
+    // //simulation.scene = simulation_scene;
+    // //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
+    // //qDebug() << "scene pointer (&simulation_scene): " << simulation_scene;
+    // //qDebug() << "scene pointer (simulation.scene): " << simulation.scene;
+    // // TESTING :
+    // //simulation_scene->addRect(20, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::green)); simulation_scene->addEllipse(120, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::yellow)); simulation_scene->addPolygon(QPolygonF() << QPointF(220, 80) << QPointF(280, 80) << QPointF(250, 20), QPen(Qt::blue, 3), QBrush(Qt::magenta));
+    // //?????????????? :
+    // //simulation.scene->setBackgroundBrush(Qt::black);
+    // //simulation_scene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    // //simulation.scene->setForegroundBrush(Qt::white);
+    // //simulation.scene->addText("Hello World!");
 
+    // //simulation.scene->drawScene();
 
-    // TESTING :
-    simulation_scene->addRect(20, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::green)); simulation_scene->addEllipse(120, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::yellow)); simulation_scene->addPolygon(QPolygonF() << QPointF(220, 80) << QPointF(280, 80) << QPointF(250, 20), QPen(Qt::blue, 3), QBrush(Qt::magenta));
+    // //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // needed ?
+    // //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); // needed ?
 
+    // //simulation.view = ui->simulationGraphicsView;
+    // //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView);
+    // //qDebug() << "view pointer (simulation.view): " << &simulation.view;
+    // //ui->simulationGraphicsView->setScene(simulation.scene);
+    //ui->simulationGraphicsView->setScene(simulation_scene);
+    // //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene();
+    // //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene();
 
+    // //ui->simulationGraphicsView->scene()->setSceneRect(ui->simulationGraphicsView->frameRect());
+    //ui->simulationGraphicsView->fitInView(simulation_scene->itemsBoundingRect());
 
-    //?????????????? :
-    simulation.scene->setBackgroundBrush(Qt::black);
-    simulation_scene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    simulation.scene->setForegroundBrush(Qt::white);
-    simulation.scene->addText("Hello World!");
+    // //simulation.view->setBackgroundBrush(Qt::black);
+    // //simulation.view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    // //simulation.view->setForegroundBrush(Qt::white);
+    //ui->simulationGraphicsView->setBackgroundBrush(Qt::black);
+    //ui->simulationGraphicsView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    //ui->simulationGraphicsView->setForegroundBrush(Qt::white);
+    // //simulation.view->scene()->setBackgroundBrush(Qt::black);
+    // //simulation.view->scene()->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    // //simulation.view->scene()->setForegroundBrush(Qt::white);
 
-    //simulation.scene->drawScene();
+    //ui->simulationGraphicsView->setRenderHints(QPainter::Antialiasing); // ?
 
-    //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // needed ?
-    //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); // needed ?
-
-    //simulation.view = ui->simulationGraphicsView;
-    //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView);
-    //qDebug() << "view pointer (simulation.view): " << &simulation.view;
-    //ui->simulationGraphicsView->setScene(simulation.scene);
-    ui->simulationGraphicsView->setScene(simulation_scene);
-    //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene();
-    //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene();
-
-    //ui->simulationGraphicsView->scene()->setSceneRect(ui->simulationGraphicsView->frameRect());
-    ui->simulationGraphicsView->fitInView(simulation_scene->itemsBoundingRect());
-
-    //simulation.view->setBackgroundBrush(Qt::black);
-    //simulation.view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    //simulation.view->setForegroundBrush(Qt::white);
-    ui->simulationGraphicsView->setBackgroundBrush(Qt::black);
-    ui->simulationGraphicsView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    ui->simulationGraphicsView->setForegroundBrush(Qt::white);
-    //simulation.view->scene()->setBackgroundBrush(Qt::black);
-    //simulation.view->scene()->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    //simulation.view->scene()->setForegroundBrush(Qt::white);
-
-    ui->simulationGraphicsView->setRenderHints(QPainter::Antialiasing); // ?
-
-    //simulation.view->scene()->update();
-    ui->simulationGraphicsView->scene()->update();
-    ////simulation.view->viewport()->update();
-    ////ui->simulationGraphicsView->viewport()->update();
-    //simulation.view->show();
-    ui->simulationGraphicsView->show();
+    // //simulation.view->scene()->update();
+    //ui->simulationGraphicsView->scene()->update();
+    // ////simulation.view->viewport()->update();
+    // ////ui->simulationGraphicsView->viewport()->update();
+    // //simulation.view->show();
+    //ui->simulationGraphicsView->show();
 }
 
 MainWindow::~MainWindow()

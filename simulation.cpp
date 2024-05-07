@@ -159,15 +159,15 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
         Obstacle* wall = this->obstacles[i];
 
         // check if same side of wall, if false, then no reflection only transmission
-        if (checkSameSideOfWall(wall->normal,_TX,_RX)) {
+        if (checkSameSideOfWall(wall->normal,_TX,*_RX)) {
             //same side of this wall, can make a reflection
             qDebug() << "Same side of wall TX and RX:" << wall << _TX.toPointF() << _RX->toPointF() ;
-            Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
+            Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX->toPointF());
 
             QVector2D _imageTX = computeImage(_TX, wall);
             qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
 
-            QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
+            QVector2D _P_r = calculateReflectionPoint(_imageTX,*_RX,wall);
 
             // CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
             RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX->x(),_RX->y());
@@ -201,14 +201,14 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             // 2nd reflection
             for (Obstacle* wall_2 : this->obstacles) {
                 // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
-                if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
+                if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,*_RX)) {
                     qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX->toPointF() ;
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX->toPointF());
 
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
                     qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
 
-                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,_RX,wall_2);
+                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,*_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
                     if (_P_r_2_last.x()==_P_r_2_first.x() && _P_r_2_last.y()==_P_r_2_first.y()) {
                         qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
@@ -659,6 +659,9 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     //    scene->addItem(TX->graphics);
     //    qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
+    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->G_TXP_TX)));
+    qDebug() << "TX.graphics:" << TX->graphics->rect();
+    scene->addItem(TX->graphics);
 
     for (QList<Receiver*> cells_line : this->cells) {
         for (Receiver* RX : cells_line) {

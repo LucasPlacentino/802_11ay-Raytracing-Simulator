@@ -9,42 +9,6 @@ Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPoint
     this->power_dBm = power_dBm;
     this->coordinates = coordinates;
 }
-
-int Transmitter::getPower_dBm() const
-{
-    return this->power_dBm;
-}
-
-double Transmitter::getPower() const
-{
-    return pow(10, this->power_dBm / 10);
-}
-
-qreal Transmitter::getGain() const
-{
-    return this->gain;
-}
-
-void Transmitter::setPower_dBm(int power_dBm)
-{
-    this->power_dBm = power_dBm;
-}
-
-QPointF Transmitter::getCoordinates() const
-{
-    return this->coordinates;
-}
-
-void Transmitter::changeCoordinates(QPointF new_coordinates)
-{
-    this->coordinates = new_coordinates;
-    // TODO: update the GraphicsScene to show base station at new coordinates.
-}
-
-QVector2D Transmitter::get2DVector() const
-{
-    return QVector2D(this->coordinates);
-}
 */
 
 Transmitter::Transmitter(qreal x, qreal y){
@@ -60,4 +24,40 @@ Transmitter::Transmitter(qreal x, qreal y){
     this->graphics->setRect(x-3,-y-3,6,6);
     this->graphics->setAcceptHoverEvents(true);
 };
+
+int Transmitter::getPower_dBm() const
+{
+    return 10*std::log10(this->power*1000);
+}
+
+double Transmitter::getPower() const
+{
+    return this->power;
+}
+
+qreal Transmitter::getG_TXP_TX() const
+{
+    return this->G_TXP_TX;
+}
+
+void Transmitter::setPower_dBm(int power_dBm)
+{
+    // TODO:
+    this->power = (10^(power_dBm/10))/1000; // dBm to Watts
+}
+
+/*
+QPointF Transmitter::getCoordinates() const
+{
+    return this->coordinates;
+}
+*/
+
+void Transmitter::changeCoordinates(QPointF new_coordinates)
+{
+    this->setX(new_coordinates.x());
+    this->setY(new_coordinates.y());
+    //this->coordinates = new_coordinates;
+    // TODO: update the GraphicsScene to show base station at new coordinates ?
+}
 

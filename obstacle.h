@@ -65,7 +65,7 @@ public:
     QLineF line; // wall's QLineF, for intersects()
     QVector2D normal; // wall's normal vector ! normalized !
     QVector2D unitary; // wall's unitary vector ! normalized !
-    int id=NULL; // only used for debugging
+    int id=0; // only used for debugging
     qreal thickness; // in meters
     //QPen wallPen;
 

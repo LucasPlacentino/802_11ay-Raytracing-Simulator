@@ -162,6 +162,7 @@ ObstacleType Obstacle::getMaterial()
     return this->material;
 }
 
+/*
 QPointF Obstacle::getStartCoordinates() const
 {
     return this->start_coordinates;
@@ -181,4 +182,4 @@ qreal Obstacle::getConductivity() const
 {
     return this->properties.conductivity;
 }
-
+*/
