@@ -84,6 +84,12 @@ private:
     complex<qreal> computeTransmissionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Obstacle* wall);
     bool checkSameSideOfWall(const QVector2D& _normal, const QVector2D& _TX, const QVector2D& _RX);
     bool checkRaySegmentIntersectsWall(const Obstacle* wall, RaySegment* ray_segment, QPointF* intersection_point=nullptr);
+    QVector2D computeImage(const QVector2D& _point, Obstacle* wall);
+    QVector2D calculateReflectionPoint(const QVector2D& _start, const QVector2D& _end, Obstacle* wall);
+
+#ifdef DRAW_RAYS
+    void drawAllRays(QGraphicsScene* scene, Receiver* _RX)
+#endif
 
     void showView();
 };

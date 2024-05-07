@@ -253,6 +253,34 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
     }
 }
 
+// fonction qui calcule la position de \vec r_image de l'antenne
+//QPointF computeImageTX(const QPointF& TX, const QPointF& normal) {
+QVector2D Simulation::computeImage(const QVector2D& _point, Obstacle* wall) {
+    // returns the coordinates of _point's image with wall
+    QVector2D new_origin = QVector2D(wall->line.p1()); // set origin to point1 of wall
+    qDebug() << "new coords" << wall->line.p1();
+    QVector2D _normal = wall->normal; // normal to the wall (is normalized so it is relative to any origin)
+    qDebug() << "normal" << wall->normal;
+    QVector2D new_point_coords = _point - new_origin; // initial point in new coordinates relative to point1 of wall
+    double _dotProduct = QVector2D::dotProduct(new_point_coords, _normal);
+    QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal; // image point in new coordinates relative to point1 of wall
+    QVector2D _image = new_origin + _image_new_coords; // image point in absolute coordinates
+    //qDebug() << "image:" << _image.x() << _image.y();
+
+    return _image;
+}
+
+// calculer le point de réflexion sur un mur, même chose que dans le tp
+QVector2D Simulation::calculateReflectionPoint(const QVector2D& _start, const QVector2D& _end, Obstacle* wall) {
+    // returns the intersection bewteen the line from _start to _end and the wall
+    QVector2D d = _end-_start;
+    //QVector2D x0(0,0); // TODO: always this ?
+    QVector2D x0 = QVector2D(wall->line.p1()); // TODO: FIXME: correct ?
+    qreal t = ((d.y()*(_start.x()-x0.x()))-(d.x()*(_start.y()-x0.y()))) / (wall->unitary.x()*d.y()-wall->unitary.y()*d.x());
+    QVector2D P_r = x0 + t * wall->unitary;
+    return P_r;
+}
+
 void Simulation::addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D& _p2, Obstacle* wall){
     // computes the final |Gamma| coeff for the ray_segment's reflection with this wall, and adds it to this ray's coeffs list
     QVector2D _d = _p2-_p1;
@@ -586,6 +614,23 @@ void Simulation::test()
     // => check if sign(dotProduct(n, rx))==sign(dotProduct(n, tx))
 }
 */
+
+#ifdef DRAW_RAYS
+void Simulation::drawAllRays(QGraphicsScene* scene, Receiver* _RX) {
+    // Adds all rays in all_rays QList to the scene
+    for (Ray* ray : _RX->all_rays) {
+        //for (int i=0; i<all_rays.length(); i++) {
+        qDebug() << "Adding ray to scene";
+        //QList<QGraphicsLineItem*> segments_graphics = all_rays.at(i)->getSegmentsGraphics();
+        for (QGraphicsLineItem* segment_graphics : ray->getSegmentsGraphics()) {
+            //for (int p=0; p<segments_graphics.length(); p++) {
+            qDebug() << "->Adding ray segment to scene...";
+            QGraphicsLineItem* line = segment_graphics;
+            scene->addItem(line);
+        }
+    }
+}
+#endif
 
 QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
 {
