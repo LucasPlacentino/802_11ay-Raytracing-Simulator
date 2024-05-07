@@ -90,12 +90,12 @@ Obstacle::Obstacle(
 }
 */
 
-Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal thickness, int id)
+Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal thickness)//, int id)
 {
     // Wall object cosntructor
     qDebug("Creating wall...");
     this->material = material;
-    this->id = id;
+    //this->id = id;
     this->thickness = thickness; // in meters
     this->line = QLineF(start.x(),start.y(), end.x(), end.y());
     QLineF graphics_line = QLineF(start.x(),-start.y(), end.x(), -end.y());

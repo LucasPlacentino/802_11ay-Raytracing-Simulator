@@ -27,22 +27,23 @@ bool checkSameSideOfWall(QVector2D n, QVector2D rx, QVector2D tx)
 }
 
 // TODO: Use this instead of SimulationGraphicsScene
+/*
 QGraphicsScene* createGraphicsScene() {
     auto* scene = new QGraphicsScene();
 
-    /*
-    QBrush rxBrush(Qt::blue);
-    QPen rxPen(Qt::darkBlue);
-    QBrush txBrush(Qt::black);
-    QPen txPen(Qt::darkGray);
-    QPen dVectorPen(Qt::green);
-    dVectorPen.setWidth(1); // 2?
-    QPen wallPen(Qt::gray);
-    wallPen.setWidth(4);
-    */
+
+    //QBrush rxBrush(Qt::blue);
+    //QPen rxPen(Qt::darkBlue);
+    //QBrush txBrush(Qt::black);
+    //QPen txPen(Qt::darkGray);
+    //QPen dVectorPen(Qt::green);
+    //dVectorPen.setWidth(1); // 2?
+    //QPen wallPen(Qt::gray);
+    //wallPen.setWidth(4);
 
 
     return scene;
 }
+*/
 
 #endif // UTILS_H
