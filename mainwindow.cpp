@@ -415,5 +415,6 @@ void MainWindow::on_liftOnFloorCheckBox_clicked(bool checked)
 void MainWindow::on_showCellOutlineCheckBox_toggled(bool checked)
 {
     simulation.show_cell_outline = checked;
+    qDebug() << "Show cell outline:" << checked;
 }
 

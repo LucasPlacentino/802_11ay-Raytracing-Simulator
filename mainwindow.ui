@@ -70,7 +70,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>271</width>
+       <width>273</width>
        <height>258</height>
       </rect>
      </property>
@@ -173,9 +173,16 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <property name="spacing">
-           <number>10</number>
+           <number>2</number>
           </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -217,6 +224,13 @@
              </layout>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_10">
