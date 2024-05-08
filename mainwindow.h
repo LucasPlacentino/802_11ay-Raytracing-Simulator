@@ -53,6 +53,8 @@ private slots:
 
     void on_liftOnFloorCheckBox_clicked(bool checked);
 
+    void on_showCellOutlineCheckBox_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation();

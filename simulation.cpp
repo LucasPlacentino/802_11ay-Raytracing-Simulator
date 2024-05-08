@@ -661,7 +661,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
             RX->power = _rx_power;
 
             //TEST:
-            //RX->power = 0.0000004;
+            //RX->power = 0.00000000004;
 
             RX->updateBitrateAndColor();
             QBrush _rxBrush = RX->graphics->brush();

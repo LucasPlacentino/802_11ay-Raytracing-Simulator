@@ -113,6 +113,7 @@ void MainWindow::on_runSimulationButton_clicked()
 
     qInfo("Starting simulation");
     ui->simulationProgressBar->setValue(100);
+    ui->runSimulationButton->setEnabled(false);
     bool res = runSimulation();
     ui->simulationProgressBar->setValue(0);
     // Turn the text green if simulation ran successfully, red otherwise
@@ -131,35 +132,16 @@ void MainWindow::on_runSimulationButton_clicked()
 
 bool MainWindow::runSimulation()
 {
+    // debug :
     //simulation.test();
 
     // Run the simulation and returns true if no errors ocurred
     simulation.ran = true;
     simulation.is_running = true;
     try {
-        ////simulation = Simulation(); //do not override the object, change/reset global one
-
-        // TODO: show a progress bar ? or at least a
+        // TODO: show a dynamic progress bar ?
 
         simulation.run(); // TODO: the run func
-
-        /*
-        // TODO: from Salman's code
-        QGraphicsScene* scene = createGraphicsScene();// (RX, TX);
-        //QGraphicsScene* scene = createGraphicsScene(RX);
-
-        //addReflectionComponents(scene, RX, TX, r_image);
-        QGraphicsView* view = new QGraphicsView(scene);
-
-        // ? :
-        view->setAttribute( Qt::WA_AlwaysShowToolTips);
-
-        // une view, TODO pour quand on implémente, faire en sorte que les ellipses de RX et TX
-        //  soient plus petites, parce que j'ai fait un scale x2 juste pour que ça soit moins minuscule
-        view->setFixedSize(600, 400);
-        view->scale(2.0, 2.0);
-        view->show();
-        */
 
         qInfo("Simulation ended successfully");
         return true;
@@ -197,8 +179,6 @@ void MainWindow::changeBaseStationCoordinates(QPointF point)
     Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
     base_station->changeCoordinates(point);
     showBaseStationCoordinates(point);
-
-    // TODO: redraw the base station at new position on view
 }
 
 void MainWindow::on_baseStationXspinBox_valueChanged(double x)
@@ -237,7 +217,7 @@ void MainWindow::on_actionReset_triggered()
     qInfo("Resetting app...");
 
     // Reset all user input values to default/reset app
-    //simulation.resetAll(); // not necessary as we restart the whole program?
+    //simulation.resetAll(); // not necessary as we restart the whole program
 
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -266,26 +246,15 @@ void MainWindow::on_actionSave_image_triggered()
 {
     // User clicked on the menu's "Save Image" button, captures an image of the simulation view.
 
-    /*
-    if (simulation.ran) // checks if a simulation has run
-    {
-        // TODO: save image from the simulation frame window
-
-    } else { // no simulation has already run
-        // do nothing?
-    }
-    */
-
-    // get the simulation Scene ?
-    //QGraphicsScene* scene = &simulation.simulation_scene;
-    // scene is: simulation_scene or simulation->scene
-    if (simulation.scene == nullptr) {
+    if (simulation.scene == nullptr || !simulation.ran) { // checks if a simulation has run
         qInfo("Cannot save simulation that has not already run.");
-        throw std::runtime_error("Cannot save simulation that has not already run.");
+        //throw std::runtime_error("Cannot save simulation that has not already run.");
         return;
     }
-    QSize size = simulation.scene->sceneRect().size().toSize(); // get the Scene size // FIXME: SEG FAULTS ?
-    QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+
+    QSize size = simulation.scene->sceneRect().size().toSize()*10; // get the Scene size
+    //QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+    QImage img(size, QImage::Format_RGBA64);
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing);
     // renderscene() //&painter //? scene->render(&painter);
@@ -439,5 +408,11 @@ void MainWindow::on_liftOnFloorCheckBox_clicked(bool checked)
 {
     qDebug() << "Set lift:" << checked;
     simulation.lift_is_on_floor = checked;
+}
+
+
+void MainWindow::on_showCellOutlineCheckBox_toggled(bool checked)
+{
+    simulation.show_cell_outline = checked;
 }
 
