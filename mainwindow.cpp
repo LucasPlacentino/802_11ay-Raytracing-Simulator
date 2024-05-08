@@ -112,10 +112,13 @@ void MainWindow::on_runSimulationButton_clicked()
     }
 
     qInfo("Starting simulation");
-    ui->simulationProgressBar->setValue(100);
+    QProgressBar* progress_bar = ui->simulationProgressBar;
+    progress_bar->setValue(100);
     ui->runSimulationButton->setEnabled(false);
-    bool res = runSimulation();
-    ui->simulationProgressBar->setValue(0);
+    ui->runSimulationButton->setStyleSheet("font-size: 14px;");
+    ui->runSimulationButton->setText("[Menu->Reset App] or (Ctrl+R) to reset");
+    bool res = runSimulation(progress_bar);
+    progress_bar->setValue(100);
     // Turn the text green if simulation ran successfully, red otherwise
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
     ui->runSuccessOrFailText->setText(res ? QString("Success, took %1ms").arg(simulation.getSimulationTime()): "Failed");
@@ -130,7 +133,7 @@ void MainWindow::on_runSimulationButton_clicked()
     simulation.is_running = false;
 }
 
-bool MainWindow::runSimulation()
+bool MainWindow::runSimulation(QProgressBar* progress_bar)
 {
     // debug :
     //simulation.test();
@@ -139,9 +142,7 @@ bool MainWindow::runSimulation()
     simulation.ran = true;
     simulation.is_running = true;
     try {
-        // TODO: show a dynamic progress bar ?
-
-        simulation.run(); // TODO: the run func
+        simulation.run(progress_bar); // TODO: the run func
 
         qInfo("Simulation ended successfully");
         return true;

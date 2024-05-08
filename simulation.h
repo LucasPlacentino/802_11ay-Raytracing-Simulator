@@ -10,6 +10,7 @@
 
 #include <QElapsedTimer>
 #include <QGraphicsView>
+#include <QProgressBar>
 
 class Simulation
 {
@@ -18,7 +19,7 @@ public:
     bool ran = false;
     bool is_running = false;
 
-    void run();
+    void run(QProgressBar* progress_bar);
     void clear();
     void resetAll(); // needed ?
     void createBaseStation(Transmitter* transmitter);

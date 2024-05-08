@@ -4,6 +4,7 @@
 #include "transmitter.h"
 
 #include <QMainWindow>
+#include <QProgressBar>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -57,7 +58,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    bool runSimulation();
+    bool runSimulation(QProgressBar* progress_bar);
     void changeBaseStationPower(int value);
     void changeBaseStationCoordinates(QPointF point);
     void initFirstBaseStation();

@@ -64,7 +64,7 @@ void Simulation::createWalls()
     this->obstacles = all_obstacles;
 }
 
-void Simulation::run()
+void Simulation::run(QProgressBar* progress_bar)
 {
     // TODO: compute everything
     this->timer.start();
@@ -120,6 +120,7 @@ void Simulation::run()
 
     //QPair<int, int> matrix_size = {this->cells_matrix[0].size(), this->cells_matrix.size()};
     //QPair<int, int> matrix_size = {this->cells[0].size(), this->cells.size()};
+    int i=0;
     for (QList<Receiver*> cells_line : this->cells){
     //for (int l = 0; l < matrix_size.first; l++) {
         // loops over each line
@@ -141,8 +142,11 @@ void Simulation::run()
             // TODO : multiple transmitters ?
             computeDirect(cell, *base_station);
             computeReflections(cell, *base_station);
+            progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
+            i++;
         }
     }
+    qDebug() << this->cells.length()*this->cells[0].length() << i;
 
     //end of simulation
     this->simulation_time = this->timer.elapsed();
