@@ -8,13 +8,13 @@
 #include <QDir>
 
 // https://doc.qt.io/qt-6/graphicsview.html (replaces QCanvas) :
-#include <QGraphicsScene> // The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.
-#include <QGraphicsView> // displays the content of the QGraphicsScene
+//#include <QGraphicsScene> // The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.
+//#include <QGraphicsView> // displays the content of the QGraphicsScene
 
 ////#include <QPainter> // use QPainter to render the floorplan and rays ?
 
 #include "simulation.h"
-#include "simulationgraphicsscene.h"
+//#include "simulationgraphicsscene.h"
 //#include "utils.h"
 //#include "parameters.h"
 
@@ -118,17 +118,18 @@ void MainWindow::on_runSimulationButton_clicked()
 
     // -- TEST : ? --
     //simulation.view->scene()->update();
-    ui->simulationGraphicsView->scene()->update();
+    //ui->simulationGraphicsView->scene()->update();
     ////simulation.view->viewport()->update();
     ////ui->simulationGraphicsView->viewport()->update();
     //simulation.view->show();
-    ui->simulationGraphicsView->show();
+    //ui->simulationGraphicsView->show();
     simulation.is_running = false;
 }
 
 bool MainWindow::runSimulation()
 {
-    simulation.test();
+    //simulation.test();
+
     // Run the simulation and returns true if no errors ocurred
     simulation.ran = true;
     simulation.is_running = true;
@@ -199,8 +200,10 @@ void MainWindow::changeBaseStationCoordinates(QPointF point)
 void MainWindow::on_baseStationXspinBox_valueChanged(double x)
 {
     // User changed the current editing base station X coordinate
-    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
-    QPointF coordinates = base_station->getCoordinates();
+    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
+    QPointF coordinates = base_station->toPointF();
+    //QPointF coordinates = base_station->getCoordinates();
     coordinates.setX(x);
     changeBaseStationCoordinates(coordinates);
 }
@@ -208,8 +211,10 @@ void MainWindow::on_baseStationXspinBox_valueChanged(double x)
 void MainWindow::on_baseStationYspinBox_valueChanged(double y)
 {
     // User changed the current editing base station Y coordinate
-    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
-    QPointF coordinates = base_station->getCoordinates();
+    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
+    QPointF coordinates = base_station->toPointF();
+    //QPointF coordinates = base_station->getCoordinates();
     coordinates.setY(y);
     changeBaseStationCoordinates(coordinates);
 }
@@ -225,7 +230,7 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_actionReset_triggered()
 {
     // User clicked on the menu's "Reset" button, or presse "CTRL+R"
-    qInfo("Resetting all values and restarting app...");
+    qInfo("Resetting app...");
 
     // Reset all user input values to default/reset app
     //simulation.resetAll(); // not necessary as we restart the whole program?
@@ -270,6 +275,11 @@ void MainWindow::on_actionSave_image_triggered()
     // get the simulation Scene ?
     //QGraphicsScene* scene = &simulation.simulation_scene;
     // scene is: simulation_scene or simulation->scene
+    if (simulation.scene == nullptr) {
+        qInfo("Cannot save simulation that has not already run.");
+        throw std::runtime_error("Cannot save simulation that has not already run.");
+        return;
+    }
     QSize size = simulation.scene->sceneRect().size().toSize(); // get the Scene size // FIXME: SEG FAULTS ?
     QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
     QPainter painter(&img);
@@ -293,9 +303,8 @@ void MainWindow::initFirstBaseStation()
 {
     // Creates the first (non-deletable) Base Station
     //TODO: create a new transmitter object
-    simulation.createBaseStation(
-        Transmitter(0, "Base Station 1", 20, QPointF(1,-1)) // TODO: QPoint
-        );
+    simulation.baseStations.append(new Transmitter(9.4,7, 0, "Base Station 1"));
+    //simulation.createBaseStation(new Transmitter(9.4,7));//new Transmitter(0, "Base Station 1", 20, QPointF(1,-1)) // TODO: QPoint
 }
 
 void MainWindow::showFirstBaseStation()
@@ -348,7 +357,8 @@ void MainWindow::on_transmitterSelector_activated(int index)
     showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index)->getPower_dBm());
     //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
 
-    showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
+    showBaseStationCoordinates(simulation.baseStations.at(currentEditingBaseStation_index)->toPointF());
+    //showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
 
     // TODO: highlight the current editing base station in another color on the view, redraw the transmitter
 }
@@ -362,12 +372,13 @@ void MainWindow::on_addTransmitterButton_clicked()
         qDebug("Added base station");
 
         //TODO: create a new transmitter object
-        QString new_item = QString("Base Station %1").arg(ui->transmitterSelector->count()+1);
-        ui->transmitterSelector->addItem(new_item);
+        QString new_item_name = QString("Base Station %1").arg(ui->transmitterSelector->count()+1);
+        ui->transmitterSelector->addItem(new_item_name);
 
-        int new_item_index = ui->transmitterSelector->findText(new_item);
+        int new_item_index = ui->transmitterSelector->findText(new_item_name);
 
-        simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,-1))); // TODO: QPoint
+        simulation.baseStations.append(new Transmitter(5,5, new_item_index, new_item_name));
+        //simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,-1))); // TODO: QPoint
 
         on_transmitterSelector_activated(new_item_index);
         ui->transmitterSelector->setCurrentIndex(new_item_index);

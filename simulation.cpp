@@ -29,27 +29,27 @@ void Simulation::createWalls()
 
     // Add obstacles:
     QList<Obstacle*> concrete_walls;
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(), QVector2D(), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(15,0), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(15,0), QVector2D(15,4), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(7,0), QVector2D(7,4), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(0,8), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(0,8), QVector2D(6,8), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(9,6), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(4,8), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(9,6), QVector2D(9,8), ConcreteWall, 30));
+    concrete_walls.append(new Obstacle(QVector2D(9,8), QVector2D(12,8), ConcreteWall, 30));
 
     QList<Obstacle*> drywall_walls;
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(), QVector2D(), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(4,0), QVector2D(4,4), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(4,4), QVector2D(5,4), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(6,4), QVector2D(9,4), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(10,4), QVector2D(11,4), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(11,0), QVector2D(11,4), DryWall, 10));
+    drywall_walls.append(new Obstacle(QVector2D(0,5), QVector2D(4,5), DryWall, 10));
 
-    Obstacle* glass_window = new Obstacle(QVector2D(),QVector2D(), Window, 5); // this one is diagonal
+    Obstacle* glass_window = new Obstacle(QVector2D(12,8),QVector2D(15,4), Window, 5); // this one is diagonal
 
-    Obstacle* metal_lift_door = new Obstacle(QVector2D(),QVector2D(), MetalWall, 5);
+    Obstacle* metal_lift_door = new Obstacle(QVector2D(6,6),QVector2D(6,8), MetalWall, 5);
 
     // /!\ The lift is only added to the obstacles if enabled
     QList<Obstacle*> all_obstacles;
@@ -77,12 +77,14 @@ void Simulation::run()
     createWalls();
     if (this->lift_is_on_floor) { // Adds the lift metal walls if set as present
         qDebug() << "Lift is on this floor.";
-        // change the metal door of the lift to twice its thickness (because metal door + metal wall at same place)
-        this->obstacles.last() = new Obstacle(QVector2D(),QVector2D(),MetalWall,10); // door+wall
+        //// change the metal door of the lift to twice its thickness (because metal door + metal wall at same place)
+        ////this->obstacles.last() = new Obstacle(QVector2D(),QVector2D(),MetalWall,10); // door+wall
+        //// no, they have different legnths (2m for the metal door and 1.75m for the metal wall)
         QList<Obstacle*> lift_walls;
-        lift_walls.append(new Obstacle(QVector2D(),QVector2D(), MetalWall, 5));
-        lift_walls.append(new Obstacle(QVector2D(),QVector2D(), MetalWall, 5));
-        lift_walls.append(new Obstacle(QVector2D(),QVector2D(), MetalWall, 5));
+        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(5.75,6.25), MetalWall, 5));
+        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(4.25,7.75), MetalWall, 5));
+        lift_walls.append(new Obstacle(QVector2D(5.75,6.25),QVector2D(5.75,7.75), MetalWall, 5));
+        lift_walls.append(new Obstacle(QVector2D(4.25,7.75),QVector2D(5.75,7.75), MetalWall, 5));
 
         //this->obstacles.insert(this->obstacles.end(), lift_walls.begin(), lift_walls.end());
         this->obstacles.append(lift_walls);
@@ -409,13 +411,14 @@ void Simulation::showView()
 {
     qDebug() << "Creating graphics view...";
     QGraphicsScene* sim_scene = createGraphicsScene();
+    this->scene = sim_scene;
     this->view = new QGraphicsView(sim_scene); // create user's view showing the graphics scene
 
     this->view->setAttribute(Qt::WA_AlwaysShowToolTips); //? maybe necessary ?
 
     // TODO: test some view parameters
-    this->view->setFixedSize(1000, 900);
-    this->view->scale(2, 2);
+    this->view->setFixedSize(1000, 600);
+    this->view->scale(6, 6);
     qDebug() << "Showing graphics view";
     this->view->show(); // shows the graphics scene to the user
 }
@@ -467,6 +470,7 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 void Simulation::createCellsMatrix()
 {
     //TODO:
+    qInfo("Creating cells matrix...");
     qDebug() << "cells matrix initial size:" << this->cells.size();
     int max_x_count = ceil(max_x/this->resolution); // -1 ?
     qDebug() << "Max count of cells X:" << max_x_count;
@@ -474,14 +478,14 @@ void Simulation::createCellsMatrix()
     qDebug() << "Max count of cells Y:" << max_y_count;
     for (int x_count=0; x_count < max_x_count; x_count++) {
         qDebug() << "Creating new line of cells_matrix...";
-        qreal x = 0+(this->resolution*x_count);
+        qreal x = this->resolution/2+(this->resolution*x_count);
         //QList<QSharedPointer<Receiver>> temp_list;
         QList<Receiver*> temp_list;
         for (int y_count=0; y_count < max_y_count; y_count++) {
-            qreal y = 0-(this->resolution*y_count);
+            qreal y = this->resolution/2+(this->resolution*y_count);
             //temp_list.push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
             //temp_list.push_back(QSharedPointer<Receiver>(new Receiver(x,y)));
-            temp_list.append(new Receiver(x,y));
+            temp_list.append(new Receiver(x,y,this->resolution));
             qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
         }
         this->cells.append(temp_list);
@@ -639,6 +643,24 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
 
     QGraphicsScene* scene = new QGraphicsScene();
 
+    Transmitter* TX = this->baseStations[0];
+
+    for (QList<Receiver*> cells_line : this->cells) {
+        for (Receiver* RX : cells_line) {
+            // compute total power and set it in RX
+            qreal _rx_power = RX->computeTotalPower(TX);
+            RX->power = _rx_power;
+
+            // Draw RX and add its tooltip
+            float _rx_power_dBm = 10*std::log10(RX->power*1000); // TODO: correct ? *1000 because is in Watts and need in mW :
+            qDebug() << "RX power:" << _rx_power << "W," << _rx_power_dBm << "dBm";
+
+            RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2)));
+            scene->addItem(RX->graphics);
+            qDebug() << "RX.graphics:" << RX->graphics->rect();
+        }
+    }
+
     // Draw all walls in wall_list
     for (Obstacle* wall : this->obstacles){
         qDebug() << "Adding wall to scene...";
@@ -651,7 +673,6 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     drawAllRays(scene);
 #endif
 
-    Transmitter* TX = this->baseStations[0];
     // TODO: multiple transmitters ?
     //for (Transmitter* TX : this->baseStations) {
     //    // Draw TX and add its tooltip
@@ -662,20 +683,6 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->G_TXP_TX)));
     qDebug() << "TX.graphics:" << TX->graphics->rect();
     scene->addItem(TX->graphics);
-
-    for (QList<Receiver*> cells_line : this->cells) {
-        for (Receiver* RX : cells_line) {
-            // compute total power and set it in RX
-            qreal totalPower = RX->computeTotalPower(TX);
-            RX->power = totalPower;
-
-            // Draw RX and add its tooltip
-            float _rx_power_dBm = 10*std::log10(RX->power*1000); // TODO: correct ? *1000 because is in Watts and need in mW :
-            RX->graphics->setToolTip(QString("Test receiver\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(RX->power*1000),QString::number(_rx_power_dBm,'f',2)));
-            scene->addItem(RX->graphics);
-            qDebug() << "RX.graphics:" << RX->graphics->rect();
-        }
-    }
 
 #ifdef DRAW_IMAGES
     // For debugging: draw all images from the tx_images list

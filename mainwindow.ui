@@ -293,16 +293,16 @@
                      </size>
                     </property>
                     <property name="minimum">
-                     <double>-9.000000000000000</double>
+                     <double>0.000000000000000</double>
                     </property>
                     <property name="maximum">
-                     <double>0.000000000000000</double>
+                     <double>9.000000000000000</double>
                     </property>
                     <property name="singleStep">
                      <double>0.500000000000000</double>
                     </property>
                     <property name="value">
-                     <double>-3.000000000000000</double>
+                     <double>0.000000000000000</double>
                     </property>
                    </widget>
                   </item>
@@ -455,6 +455,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QSlider" name="sliderBaseStationPower">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -480,6 +483,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBoxBaseStationPower">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -571,16 +577,16 @@
                <number>1</number>
               </property>
               <property name="minimum">
-               <double>-9.000000000000000</double>
+               <double>0.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>0.000000000000000</double>
+               <double>9.000000000000000</double>
               </property>
               <property name="singleStep">
                <double>0.500000000000000</double>
               </property>
               <property name="value">
-               <double>-7.000000000000000</double>
+               <double>0.000000000000000</double>
               </property>
              </widget>
             </item>

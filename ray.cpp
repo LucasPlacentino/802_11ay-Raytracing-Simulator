@@ -71,7 +71,7 @@ QList<QGraphicsLineItem*> Ray::getSegmentsGraphics(){
     // returns this ray's graphics: list of its segment's QGraphicsItems
     qDebug() << "Getting ray segments graphics";
     QPen ray_pen;
-    ray_pen.setWidth(1);
+    ray_pen.setWidthF(0.1);
     // set ray graphics color depending on number of reflections
     qDebug() << "This ray has" << this->segments.length() << "segments, so" << this->segments.length()-1 << "reflections";
     this->num_reflections=this->segments.length()-1;

@@ -11,17 +11,21 @@ Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPoint
 }
 */
 
-Transmitter::Transmitter(qreal x, qreal y){
+Transmitter::Transmitter(qreal x, qreal y, int selector_index, QString name){
     // Transmitter object constructor
     QBrush txBrush(Qt::white);
     QPen txPen(Qt::darkGray);
+    txPen.setWidthF(10*0.1);
+
+    this->selector_index = selector_index;
+    this->name = name;
 
     this->setX(x);
     this->setY(y);
     this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
     this->graphics->setBrush(txBrush);
     this->graphics->setPen(txPen);
-    this->graphics->setRect(x-3,-y-3,6,6);
+    this->graphics->setRect(10*(x-0.3),10*(y-0.3),10*0.6,10*0.6);
     this->graphics->setAcceptHoverEvents(true);
 };
 
@@ -42,7 +46,7 @@ qreal Transmitter::getG_TXP_TX() const
 
 void Transmitter::setPower_dBm(int power_dBm)
 {
-    // TODO:
+    // TODO: correct ?
     this->power = (10^(power_dBm/10))/1000; // dBm to Watts
 }
 

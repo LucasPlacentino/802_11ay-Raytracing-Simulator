@@ -98,7 +98,7 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     //this->id = id;
     this->thickness = thickness; // in meters
     this->line = QLineF(start.x(),start.y(), end.x(), end.y());
-    QLineF graphics_line = QLineF(start.x(),-start.y(), end.x(), -end.y());
+    QLineF graphics_line = QLineF(10*start.x(), 10*start.y(), 10*end.x(), 10*end.y());
     qDebug() << "Wall" << id << "line:" << this->line ;
     QLineF normal_line = this->line.normalVector();
     qDebug() << "Line" << id << "normal:" << normal_line;
@@ -112,36 +112,42 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     this->graphics->setLine(graphics_line);
 
     QPen pen(Qt::gray);
-    pen.setWidth(3);
+    //pen.setWidthF(10*0.2);
 
     switch (this->material) {
     case BrickWall:
         pen.setColor(Qt::darkRed);
+        pen.setWidthF(10*0.18);
         this->properties.relative_permittivity = 3.95;
         this->properties.conductivity = 0.073;
         break;
     case Window:
         pen.setColor(Qt::cyan);
+        pen.setWidthF(10*0.08);
         this->properties.relative_permittivity = 6.3919;
         this->properties.conductivity = 0.0107;
         break;
     case MetalWall:
         pen.setColor(Qt::gray);
+        pen.setWidthF(10*0.1);
         this->properties.relative_permittivity = 1;
         this->properties.conductivity = 10e7;
         break;
     case DryWall:
         pen.setColor(Qt::lightGray);
+        pen.setWidthF(10*0.12);
         this->properties.relative_permittivity = 2.7;
         this->properties.conductivity = 0.05349;
         break;
     case ConcreteWall:
         pen.setColor(Qt::green);
+        pen.setWidthF(10*0.2);
         this->properties.relative_permittivity = 6.4954;
         this->properties.conductivity = 1.43;
         break;
     default:
         pen.setColor(Qt::white);
+        pen.setWidthF(10*0.12);
         this->properties.relative_permittivity = 0;
         this->properties.conductivity = 0;
         break;

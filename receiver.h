@@ -23,7 +23,7 @@ public:
     QVector2D get2DVector() const;
     */
 
-    Receiver(qreal x, qreal y);
+    Receiver(qreal x, qreal y, qreal resolution);
 
     QGraphicsRectItem* graphics = new QGraphicsRectItem(); // RX's QGraphicsItem
     qulonglong power; // ! in Watts

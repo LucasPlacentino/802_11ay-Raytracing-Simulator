@@ -31,7 +31,7 @@ public:
 
     qint64 getSimulationTime() const;
 
-    //QGraphicsScene* scene = nullptr;//new QGraphicsScene();//this->createGraphicsScene(&this->baseStations);
+    QGraphicsScene* scene = nullptr;//new QGraphicsScene();//this->createGraphicsScene(&this->baseStations);
     QGraphicsView* view = nullptr;//new QGraphicsView(this->scene);
 
     bool lift_is_on_floor = false;

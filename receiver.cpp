@@ -73,16 +73,18 @@ QVector2D Receiver::get2DVector() const
 }
 */
 
-Receiver::Receiver(qreal x, qreal y) {
+Receiver::Receiver(qreal x, qreal y, qreal resolution) {
     // Receiver object constructor
     QBrush rxBrush(Qt::blue);
-    QPen rxPen(Qt::darkBlue);
+    QPen rxPen(Qt::black);
+    rxPen.setWidthF(10*0.01);
+
     this->setX(x);
     this->setY(y);
     this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
     this->graphics->setBrush(rxBrush);
     this->graphics->setPen(rxPen);
-    this->graphics->setRect(x-3,-y-3,6,6);
+    this->graphics->setRect(10*(x-resolution/2),10*(y-resolution/2),10*resolution,10*resolution);
     this->graphics->setAcceptHoverEvents(true);
 }
 void Receiver::updateBitrateAndColor()

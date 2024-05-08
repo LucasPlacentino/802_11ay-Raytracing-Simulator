@@ -10,12 +10,14 @@ class Transmitter : public QVector2D// : public QGraphicsEllipseItem // QGraphic
 {
 public:
 
+    /*
     Transmitter(
         int selector_index,
         QString name,
         int power_dBm,
         QPointF coordinates // QPoint ? // TODO: change to QVector2D ?
         );
+    */
     int getPower_dBm() const;
     qreal getPower() const;
     qreal getG_TXP_TX() const;
@@ -23,12 +25,14 @@ public:
     QPointF getCoordinates() const;
     void changeCoordinates(QPointF new_coordinates);
 
-    QVector2D get2DVector() const;
+    //QVector2D get2DVector() const;
 
     //QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem();
 
+    int selector_index;
+    QString name;
 
-    Transmitter(qreal x, qreal y);
+    Transmitter(qreal x, qreal y, int selector_index, QString name);
     /* // uses parent class implementation
     qreal x() const{
         return this->QPointF::x();
@@ -38,7 +42,8 @@ public:
     }
     */
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
-    qreal power; // ! in Watts
+    qreal power = 0.1; // ! in Watts
+    qreal power_dBm = 20;
     // TODO:
     qreal G_TXP_TX = 1.64; // vertical dipole lamda/2 antenna
     //qreal G_TX; // ?
