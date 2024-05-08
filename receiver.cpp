@@ -73,15 +73,20 @@ QVector2D Receiver::get2DVector() const
 }
 */
 
-Receiver::Receiver(qreal x, qreal y, qreal resolution) {
+Receiver::Receiver(qreal x, qreal y, qreal resolution, bool showOutline) {
     // Receiver object constructor
-    QBrush rxBrush(Qt::blue);
-    QPen rxPen(Qt::black);
+    QBrush rxBrush(Qt::black);
+    QPen rxPen;
+    if (showOutline){
+        rxPen.setColor(Qt::black);
+    } else {
+        rxPen.setColor(Qt::transparent);
+    }
     rxPen.setWidthF(10*0.01);
 
     this->setX(x);
     this->setY(y);
-    this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
+    //this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
     this->graphics->setBrush(rxBrush);
     this->graphics->setPen(rxPen);
     this->graphics->setRect(10*(x-resolution/2),10*(y-resolution/2),10*resolution,10*resolution);
@@ -121,6 +126,6 @@ qulonglong Receiver::computeTotalPower(Transmitter* transmitter) // returns fina
     // multiply by the term before the sum:
     res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
-    qDebug() << "computeTotalPower:" << res;
+    //qDebug() << "computeTotalPower:" << res;
     return res;
 }

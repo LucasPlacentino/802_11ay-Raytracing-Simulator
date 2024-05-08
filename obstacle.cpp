@@ -93,22 +93,22 @@ Obstacle::Obstacle(
 Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal thickness)//, int id)
 {
     // Wall object cosntructor
-    qDebug("Creating wall...");
+    //qDebug("Creating wall...");
     this->material = material;
     //this->id = id;
     this->thickness = thickness; // in meters
     this->line = QLineF(start.x(),start.y(), end.x(), end.y());
     QLineF graphics_line = QLineF(10*start.x(), 10*start.y(), 10*end.x(), 10*end.y());
-    qDebug() << "Wall" << id << "line:" << this->line ;
+    //qDebug() << "Wall" << id << "line:" << this->line ;
     QLineF normal_line = this->line.normalVector();
-    qDebug() << "Line" << id << "normal:" << normal_line;
+    //qDebug() << "Line" << id << "normal:" << normal_line;
     this->normal = QVector2D(normal_line.dx(),normal_line.dy()).normalized(); // ! normalized !
-    qDebug() << "Wall" << id << "normal:" << this->normal;
+    //qDebug() << "Wall" << id << "normal:" << this->normal;
     QLineF unit_line = this->line.unitVector();
-    qDebug() << "Line" << id << "unitary:" << unit_line;
+    //qDebug() << "Line" << id << "unitary:" << unit_line;
     this->unitary = QVector2D(unit_line.dx(),unit_line.dy()).normalized(); // ! normalized !
-    qDebug() << "Wall" << id << "unitary:" << this->unitary;
-    qDebug("Setting Wall graphics line...");
+    //qDebug() << "Wall" << id << "unitary:" << this->unitary;
+    //qDebug("Setting Wall graphics line...");
     this->graphics->setLine(graphics_line);
 
     QPen pen(Qt::gray);
@@ -160,7 +160,7 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     this->properties.beta_m = 1;
     this->properties.gamma_m = this->properties.alpha_m +j*this->properties.beta_m;
 
-    qDebug("Wall created.");
+    //qDebug("Wall created.");
 }
 
 ObstacleType Obstacle::getMaterial()

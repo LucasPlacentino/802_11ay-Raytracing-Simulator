@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     // MainWindow constructor, is ran on program's UI launch
+    this->setWindowIcon(QIcon(":/assets/icon.png"));
     initFirstBaseStation();
     ui->setupUi(this);
     showFirstBaseStation();
@@ -84,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent)
     // ////ui->simulationGraphicsView->viewport()->update();
     // //simulation.view->show();
     //ui->simulationGraphicsView->show();
+
+    this->setWindowIcon(QIcon(":/assets/icon.png"));
 }
 
 MainWindow::~MainWindow()
@@ -190,7 +193,8 @@ void MainWindow::on_spinBoxBaseStationPower_valueChanged(int value)
 void MainWindow::changeBaseStationCoordinates(QPointF point)
 {
     // Modify the current editing base station with the new user chosen coordinates
-    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
     base_station->changeCoordinates(point);
     showBaseStationCoordinates(point);
 
@@ -343,8 +347,8 @@ void MainWindow::toggleCellParametersLayout(bool enabled)
 void MainWindow::toggleCoverageParametersLayout(bool enabled)
 {
     //ui->
-    ui->coverageHeatmapTestLabel->setEnabled(enabled);
-    //...
+    //ui->coverageHeatmapTestLabel->setEnabled(enabled);
+    ui->showCellOutlineCheckBox->setEnabled(enabled);
 }
 
 void MainWindow::on_transmitterSelector_activated(int index)

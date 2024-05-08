@@ -2,6 +2,7 @@
 #include "utils.h"
 //#include "parameters.h"
 
+#include <QDir>
 #include <QtMath>
 
 Simulation::Simulation() {
@@ -16,7 +17,7 @@ Simulation::Simulation() {
 
 void Simulation::createWalls()
 {
-    qDebug("Creating walls...");
+    //qDebug("Creating walls...");
 
     // Delete old obstacles vector objects (avoid memory leak)
     if(!this->obstacles.empty()) {
@@ -168,11 +169,11 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
         // check if same side of wall, if false, then no reflection only transmission
         if (checkSameSideOfWall(wall->normal,_TX,*_RX)) {
             //same side of this wall, can make a reflection
-            qDebug() << "Same side of wall TX and RX:" << wall << _TX.toPointF() << _RX->toPointF() ;
+            //qDebug() << "Same side of wall TX and RX:" << wall << _TX.toPointF() << _RX->toPointF() ;
             Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX->toPointF());
 
             QVector2D _imageTX = computeImage(_TX, wall);
-            qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
+            //qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
 
             QVector2D _P_r = calculateReflectionPoint(_imageTX,*_RX,wall);
 
@@ -180,13 +181,13 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX->x(),_RX->y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
-                qDebug() << "ignore";
+                //qDebug() << "ignore";
                 delete test_segment;
                 continue; // break out of this forloop instance for this wall
             }
             delete test_segment;
 
-            qDebug() << "P_r" << _P_r;
+            //qDebug() << "P_r" << _P_r;
             //debug :
             //tx_images.append(new QGraphicsEllipseItem(_imageTX.x()-2, -_imageTX.y()-2, 4, 4));
             //reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
@@ -200,31 +201,31 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             addReflection(ray_1_reflection,_imageTX,*_RX,wall);
             checkTransmissions(ray_1_reflection,{wall});
 
-            qDebug() << "ray_1_refl distance:" << QVector2D(*_RX - _imageTX).length();
+            //qDebug() << "ray_1_refl distance:" << QVector2D(*_RX - _imageTX).length();
             ray_1_reflection->distance = QVector2D(*_RX-_imageTX).length();
-            qDebug() << "Ray's (1refl) total coeffs:" << ray_1_reflection->getTotalCoeffs();
+            //qDebug() << "Ray's (1refl) total coeffs:" << ray_1_reflection->getTotalCoeffs();
             _RX->all_rays.append(ray_1_reflection);
 
             // 2nd reflection
             for (Obstacle* wall_2 : this->obstacles) {
                 // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
                 if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,*_RX)) {
-                    qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX->toPointF() ;
+                    //qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX->toPointF() ;
                     Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX->toPointF());
 
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
-                    qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
+                    //qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
 
                     QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,*_RX,wall_2);
                     QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
                     if (_P_r_2_last.x()==_P_r_2_first.x() && _P_r_2_last.y()==_P_r_2_first.y()) {
-                        qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
+                        //qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
                     }
 
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX->x(),_RX->y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
                     if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) && !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
-                        qDebug() << "ignore";
+                        //qDebug() << "ignore";
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                         delete test_segment_1;
                         delete test_segment_2;
@@ -233,8 +234,8 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
                     delete test_segment_1;
                     delete test_segment_2;
 
-                    qDebug() << "P_r_2_first" << _P_r_2_first;
-                    qDebug() << "P_r_2_last" << _P_r_2_last;
+                    //qDebug() << "P_r_2_first" << _P_r_2_first;
+                    //qDebug() << "P_r_2_last" << _P_r_2_last;
                     //debug :
                     //tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
                     //reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
@@ -250,9 +251,9 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
                     addReflection(ray_2_reflection,_image_imageTX,*_RX,wall_2);
                     checkTransmissions(ray_2_reflection,{wall,wall_2});
 
-                    qDebug() << "ray_2_refl distance:" << QVector2D(*_RX - _image_imageTX).length();
+                    //qDebug() << "ray_2_refl distance:" << QVector2D(*_RX - _image_imageTX).length();
                     ray_2_reflection->distance = QVector2D(*_RX-_image_imageTX).length();
-                    qDebug() << "Ray's (2refl) total coeffs:" << ray_2_reflection->getTotalCoeffs();
+                    //qDebug() << "Ray's (2refl) total coeffs:" << ray_2_reflection->getTotalCoeffs();
                     _RX->all_rays.append(ray_2_reflection);
                 }
             }
@@ -265,9 +266,9 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
 QVector2D Simulation::computeImage(const QVector2D& _point, Obstacle* wall) {
     // returns the coordinates of _point's image with wall
     QVector2D new_origin = QVector2D(wall->line.p1()); // set origin to point1 of wall
-    qDebug() << "new coords" << wall->line.p1();
+    //qDebug() << "new coords" << wall->line.p1();
     QVector2D _normal = wall->normal; // normal to the wall (is normalized so it is relative to any origin)
-    qDebug() << "normal" << wall->normal;
+    //qDebug() << "normal" << wall->normal;
     QVector2D new_point_coords = _point - new_origin; // initial point in new coordinates relative to point1 of wall
     double _dotProduct = QVector2D::dotProduct(new_point_coords, _normal);
     QVector2D _image_new_coords = new_point_coords - 2 * _dotProduct * _normal; // image point in new coordinates relative to point1 of wall
@@ -296,7 +297,7 @@ void Simulation::addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D&
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->properties.relative_permittivity);
     qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
     qreal Gamma_coeff = abs(computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall));
-    qDebug() << "addReflection, Gamma_coeff:" << Gamma_coeff;
+    //qDebug() << "addReflection, Gamma_coeff:" << Gamma_coeff;
     _ray->addCoeff(Gamma_coeff);
 }
 
@@ -327,7 +328,7 @@ void Simulation::checkTransmissions(Ray* _ray, QList<Obstacle*> _reflection_wall
                     //////qreal s = wall->thickness/_cos_theta_t;
                     ////qreal T_coeff = abs(computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall));
                     qreal T_coeff = abs(makeTransmission(ray_segment,wall));
-                    qDebug() << "checkTransmission, T_coeff:" << T_coeff;
+                    //qDebug() << "checkTransmission, T_coeff:" << T_coeff;
                     _ray->addCoeff(T_coeff);
                 }
             }
@@ -357,9 +358,9 @@ void Simulation::computeDirect(Receiver* _RX, const QVector2D& _TX)
             continue;
         }
     }
-    qDebug() << "ray_direct distance:" << QVector2D(*_RX - _TX).length();
+    //qDebug() << "ray_direct distance:" << QVector2D(*_RX - _TX).length();
     direct_ray->distance = QVector2D(*_RX-_TX).length();
-    qDebug() << "Ray's (direct) total coeffs:" << direct_ray->getTotalCoeffs();
+    //qDebug() << "Ray's (direct) total coeffs:" << direct_ray->getTotalCoeffs();
     direct_ray->segments = {_direct_line};
     _RX->all_rays.append(direct_ray);
 }
@@ -369,7 +370,7 @@ complex<qreal> Simulation::computePerpendicularGamma(qreal _cos_theta_i, qreal _
     // returns Gamma_perpendicular
     complex<qreal> Gamma_perp = (wall->properties.Z_m*_cos_theta_i-Z_0*_cos_theta_t)/(wall->properties.Z_m*_cos_theta_i+Z_0*_cos_theta_t);
 
-    qDebug() << "Gamma_perp=" << QString::number(Gamma_perp.real()) << "+j" << QString::number(Gamma_perp.imag());
+    //qDebug() << "Gamma_perp=" << QString::number(Gamma_perp.real()) << "+j" << QString::number(Gamma_perp.imag());
     return Gamma_perp;
 }
 
@@ -379,9 +380,9 @@ complex<qreal> Simulation::computeReflectionCoeff(qreal _cos_theta_i, qreal _sin
     qreal s = wall->thickness/_cos_theta_t;
     complex<qreal> Gamma_perpendicular = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
     complex<qreal> reflection_term = exp(-2.0 * wall->properties.gamma_m * s) * exp(j * 2.0 * beta_0 * s * _sin_theta_t * _sin_theta_i);
-    qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
+    //qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
     complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
-    qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
+    //qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
 
     return Gamma_m;
 }
@@ -393,7 +394,7 @@ complex<qreal> Simulation::computeTransmissionCoeff(qreal _cos_theta_i, qreal _s
     complex<qreal> perpGamma = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
     complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->properties.gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->properties.gamma_m)*s)*exp(j*beta_0*2.0*s*_sin_theta_t*_sin_theta_i)));
 
-    qDebug() << "TransmissionCoeff=" << QString::number(T_m.real()) << "+j" << QString::number(T_m.imag());
+    //qDebug() << "TransmissionCoeff=" << QString::number(T_m.real()) << "+j" << QString::number(T_m.imag());
     return T_m;
 }
 
@@ -425,6 +426,9 @@ void Simulation::showView()
     this->view->setFixedSize(1000, 600);
     this->view->scale(6, 6);
     qDebug() << "Showing graphics view";
+    //QIcon _icon = QIcon(QDir::currentPath()+"/icon.png");
+    //view->setWindowIcon(QIcon("./assets/icon.png"));
+    view->setWindowIcon(QIcon(":/assets/icon.png"));
     this->view->show(); // shows the graphics scene to the user
 }
 
@@ -433,7 +437,7 @@ void Simulation::showView()
 /*
 void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
 {
-    qDebug() << "Tracing Ray(s) with" << num_reflections << "reflections to cell ("<<cell_index.first<<","<<cell_index.second<<")";
+    //qDebug() << "Tracing Ray(s) with" << num_reflections << "reflections to cell ("<<cell_index.first<<","<<cell_index.second<<")";
     // ! TODO: but we can have multiple possible rays for a set number of reflections ?
     // TODO: find how many rays we can compute for num_reflections
     traceRay(QSharedPointer<Ray>(new Ray(getBaseStation(0)->getCoordinates(), this->cells_matrix[cell_index.second][cell_index.first])), num_reflections); // Careful about memory leak if using raw pointer
@@ -441,7 +445,7 @@ void Simulation::traceRaysToCell(QPair<int,int> cell_index,int num_reflections)
 
 void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 {
-    qDebug() << "Tracing ray";
+    //qDebug() << "Tracing ray";
     if (ray->num_reflections < reflections) {
         QPointF intersection_point;
         //... compute
@@ -482,7 +486,7 @@ void Simulation::createCellsMatrix()
     int max_y_count = ceil(-min_y/this->resolution); // -1 ?
     qDebug() << "Max count of cells Y:" << max_y_count;
     for (int x_count=0; x_count < max_x_count; x_count++) {
-        qDebug() << "Creating new line of cells_matrix...";
+        //qDebug() << "Creating new line of cells_matrix...";
         qreal x = this->resolution/2+(this->resolution*x_count);
         //QList<QSharedPointer<Receiver>> temp_list;
         QList<Receiver*> temp_list;
@@ -490,11 +494,11 @@ void Simulation::createCellsMatrix()
             qreal y = this->resolution/2+(this->resolution*y_count);
             //temp_list.push_back(QSharedPointer<Receiver>(new Receiver(0,QPointF(x,y))));
             //temp_list.push_back(QSharedPointer<Receiver>(new Receiver(x,y)));
-            temp_list.append(new Receiver(x,y,this->resolution));
-            qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
+            temp_list.append(new Receiver(x,y,this->resolution, this->show_cell_outline));
+            //qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
         }
         this->cells.append(temp_list);
-        qDebug() << "cells_matrix size:" << this->cells.size();
+        //qDebug() << "cells_matrix size:" << this->cells.size();
     }
     qDebug() << "cells_matrix created";
 }
@@ -590,13 +594,13 @@ void Simulation::test()
     QVector2D wall_start = QVector2D(2,-3); // r_0 // used so it does not need to be at (0,0)
     QVector2D wall_end = QVector2D(0,5); // r_1
     QVector2D u = (wall_end-wall_start).normalized(); // normalized tangent vector to this wall
-    qDebug() << "u norm =" << u.length();
+    //qDebug() << "u norm =" << u.length();
 
     bool dir = true; // TODO: determine
     QVector2D n = transpose2DVector(&u, dir).normalized(); // normalized normal vector to this wall
-    qDebug() << "n norm =" << n.length();
+    //qDebug() << "n norm =" << n.length();
 
-    qDebug() << "Check <u,n>?=0 :" << QVector2D::dotProduct(u,n);
+    //qDebug() << "Check <u,n>?=0 :" << QVector2D::dotProduct(u,n);
 
     QVector2D rx = QVector2D(4,0.5); // r_RX
     QVector2D tx = QVector2D(5,3.5); // r_TX or s
@@ -629,11 +633,11 @@ void Simulation::drawAllRays(QGraphicsScene* scene, Receiver* _RX) {
     // Adds all rays in all_rays QList to the scene
     for (Ray* ray : _RX->all_rays) {
         //for (int i=0; i<all_rays.length(); i++) {
-        qDebug() << "Adding ray to scene";
+        //qDebug() << "Adding ray to scene";
         //QList<QGraphicsLineItem*> segments_graphics = all_rays.at(i)->getSegmentsGraphics();
         for (QGraphicsLineItem* segment_graphics : ray->getSegmentsGraphics()) {
             //for (int p=0; p<segments_graphics.length(); p++) {
-            qDebug() << "->Adding ray segment to scene...";
+            //qDebug() << "->Adding ray segment to scene...";
             QGraphicsLineItem* line = segment_graphics;
             scene->addItem(line);
         }
@@ -656,19 +660,29 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
             qreal _rx_power = RX->computeTotalPower(TX);
             RX->power = _rx_power;
 
+            //TEST:
+            //RX->power = 0.0000004;
+
+            RX->updateBitrateAndColor();
+            QBrush _rxBrush = RX->graphics->brush();
+            _rxBrush.setColor(RX->cell_color);
+            RX->graphics->setBrush(_rxBrush);
+
             // Draw RX and add its tooltip
             float _rx_power_dBm = 10*std::log10(RX->power*1000); // TODO: correct ? *1000 because is in Watts and need in mW :
-            qDebug() << "RX power:" << _rx_power << "W," << _rx_power_dBm << "dBm";
+            //qDebug() << "RX power:" << _rx_power << "W," << _rx_power_dBm << "dBm";
+            //qDebug() << "RX bitrate:" << RX->bitrate_Mbps << "Mbps";
 
-            RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2)));
+            RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm\nBitrate: %5 Mbps").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2),QString::number(RX->bitrate_Mbps)));
             scene->addItem(RX->graphics);
-            qDebug() << "RX.graphics:" << RX->graphics->rect();
+            //qDebug() << "RX.graphics:" << RX->graphics->rect();
         }
     }
+    qDebug() << "All receiver cells added to scene.";
 
     // Draw all walls in wall_list
     for (Obstacle* wall : this->obstacles){
-        qDebug() << "Adding wall to scene...";
+        //qDebug() << "Adding wall to scene...";
         scene->addItem(wall->graphics);
     }
     qDebug() << "All walls added to scene.";
@@ -676,6 +690,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
 #ifdef DRAW_RAYS
     // Draw all rays (their segments) from the all_rays list
     drawAllRays(scene);
+    qDebug() << "All rays added to scene.";
 #endif
 
     // TODO: multiple transmitters ?
@@ -683,11 +698,12 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     //    // Draw TX and add its tooltip
     //    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain*TX->power)));
     //    scene->addItem(TX->graphics);
-    //    qDebug() << "TX.graphics:" << TX->graphics->rect();
+    //    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
     TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->G_TXP_TX)));
-    qDebug() << "TX.graphics:" << TX->graphics->rect();
+    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     scene->addItem(TX->graphics);
+    qDebug() << "Transmitter added to scene.";
 
 #ifdef DRAW_IMAGES
     // For debugging: draw all images from the tx_images list
@@ -697,6 +713,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
         image_graphics->setToolTip(QString("image\nx=%1 y=%2").arg(QString::number(image_graphics->rect().x()+image_graphics->rect().width()/2),QString::number(-image_graphics->rect().y()-image_graphics->rect().height()/2)));
         scene->addItem(image_graphics);
     }
+    qDebug() << "All images added to scene.";
 #endif
 
 #ifdef DRAW_REFLECTION_POINTS
@@ -707,9 +724,12 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
         reflection_graphics->setToolTip(QString("reflection\nx=%1 y=%2").arg(QString::number(reflection_graphics->rect().x()+reflection_graphics->rect().width()/2),QString::number(-reflection_graphics->rect().y()-reflection_graphics->rect().height()/2)));
         scene->addItem(reflection_graphics);
     }
+    qDebug() << "All reflection points added to scene.";
 #endif
 
     scene->setBackgroundBrush(QBrush(Qt::black)); // black background
+
+    qDebug() << "Scene created.";
 
     return scene;
 }

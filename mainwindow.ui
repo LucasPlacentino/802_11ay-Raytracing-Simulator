@@ -10,9 +10,21 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
+    <width>313</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>313</width>
     <height>600</height>
    </size>
   </property>
@@ -26,7 +38,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../Pictures/server-info-icon.png</normaloff>../../Pictures/server-info-icon.png</iconset>
+    <normaloff>assets/icon.png</normaloff>assets/icon.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -59,7 +71,7 @@
        <x>10</x>
        <y>20</y>
        <width>271</width>
-       <height>251</height>
+       <height>258</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -178,11 +190,31 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="coverageHeatmapTestLabel">
-              <property name="text">
-               <string>Parameters</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QCheckBox" name="showCellOutlineCheckBox">
+                <property name="text">
+                 <string>Show cells outline</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Minimum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>0</width>
+                  <height>48</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -193,6 +225,9 @@
             </property>
             <item>
              <widget class="QRadioButton" name="singleCellRadioButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -368,6 +403,9 @@
         </property>
         <item>
          <widget class="QPushButton" name="addTransmitterButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximumSize">
            <size>
             <width>20</width>
@@ -381,6 +419,9 @@
         </item>
         <item>
          <widget class="QComboBox" name="transmitterSelector">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -597,6 +638,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="deleteBaseStationPushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>

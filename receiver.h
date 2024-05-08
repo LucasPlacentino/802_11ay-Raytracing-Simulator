@@ -23,10 +23,10 @@ public:
     QVector2D get2DVector() const;
     */
 
-    Receiver(qreal x, qreal y, qreal resolution);
+    Receiver(qreal x, qreal y, qreal resolution, bool showOutline);
 
     QGraphicsRectItem* graphics = new QGraphicsRectItem(); // RX's QGraphicsItem
-    qulonglong power; // ! in Watts
+    qreal power; // ! in Watts
     qulonglong bitrate_Mbps; // bitrate in Mbps
     qreal Ra = 73; // antenna resistance
     QColor cell_color = QColor(Qt::transparent); // receiver cell color, based on power/bitrate

@@ -50,6 +50,8 @@ public:
     //qreal gain = G_TX;
 
 private:
+    void setGraphicsRect(qreal x,qreal y);
+
     /*
     int selector_index;
     QString name;

@@ -34,6 +34,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         utils.h
         parameters.h
         raysegment.h raysegment.cpp
+        resources.qrc
 
 
 

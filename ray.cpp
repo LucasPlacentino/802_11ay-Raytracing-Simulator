@@ -45,7 +45,7 @@ Ray::Ray(QPointF start, QPointF end) {
 
 void Ray::addCoeff(qreal coeff_module) {
     // add a Transmission or Reflection coefficient to this ray's list of coeffs
-    qDebug() << "Adding coeff to ray:" << coeff_module;
+    //qDebug() << "Adding coeff to ray:" << coeff_module;
     // which one to use ? :
     this->coeffsList.append(coeff_module);
     this->totalCoeffs*=pow(coeff_module,2);
@@ -55,7 +55,7 @@ qreal Ray::getTotalCoeffs() {
     // returns the total product of all of the ray's coefficients multiplied by the exponent term
     qreal res = totalCoeffs;
     res *= pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
-    qDebug() << "getTotalCoeffs ray:" << res;
+    //qDebug() << "getTotalCoeffs ray:" << res;
     return res;
 
     //qreal res = 0;
@@ -69,23 +69,23 @@ qreal Ray::getTotalCoeffs() {
 
 QList<QGraphicsLineItem*> Ray::getSegmentsGraphics(){
     // returns this ray's graphics: list of its segment's QGraphicsItems
-    qDebug() << "Getting ray segments graphics";
+    //qDebug() << "Getting ray segments graphics";
     QPen ray_pen;
     ray_pen.setWidthF(0.1);
     // set ray graphics color depending on number of reflections
-    qDebug() << "This ray has" << this->segments.length() << "segments, so" << this->segments.length()-1 << "reflections";
+    //qDebug() << "This ray has" << this->segments.length() << "segments, so" << this->segments.length()-1 << "reflections";
     this->num_reflections=this->segments.length()-1;
     switch (this->num_reflections){
     case 0: // no reflections: direct ray
-        qDebug() << "This ray is direct";
+        //qDebug() << "This ray is direct";
         ray_pen.setColor(Qt::green);
         break;
     case 1: // 1 reflection
-        qDebug() << "This ray has 1 reflection";
+        //qDebug() << "This ray has 1 reflection";
         ray_pen.setColor(Qt::red);
         break;
     case 2: // 2 reflection
-        qDebug() << "This ray has 2 reflections";
+        //qDebug() << "This ray has 2 reflections";
         ray_pen.setColor(Qt::yellow);
         break;
     }
@@ -111,7 +111,7 @@ qreal Ray::getTotalDistance() const {
     //    d += segment->distance;
     //}
     //return d;
-    qDebug() << "Ray getTotalDisctance:" << this->distance;
+    //qDebug() << "Ray getTotalDisctance:" << this->distance;
 
     return this->distance;
 }

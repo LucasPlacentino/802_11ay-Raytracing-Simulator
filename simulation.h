@@ -35,6 +35,7 @@ public:
     QGraphicsView* view = nullptr;//new QGraphicsView(this->scene);
 
     bool lift_is_on_floor = false;
+    bool show_cell_outline = true;
     int max_ray_reflections = 2;
     bool showRaySingleCell = false;
 
