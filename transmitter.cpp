@@ -15,7 +15,7 @@ Transmitter::Transmitter(qreal x, qreal y, int selector_index, QString name){
     // Transmitter object constructor
     QBrush txBrush(Qt::white);
     QPen txPen(Qt::darkGray);
-    txPen.setWidthF(10*0.1);
+    txPen.setWidthF(6*0.1);
 
     this->selector_index = selector_index;
     this->name = name;
@@ -25,7 +25,7 @@ Transmitter::Transmitter(qreal x, qreal y, int selector_index, QString name){
     this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
     this->graphics->setBrush(txBrush);
     this->graphics->setPen(txPen);
-    this->graphics->setRect(10*(x-0.3),10*(y-0.3),10*0.6,10*0.6);
+    this->graphics->setRect(10*x-1.5,10*y-1.5,3,3);
     this->graphics->setAcceptHoverEvents(true);
 };
 

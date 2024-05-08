@@ -70,8 +70,12 @@ void Simulation::run()
     qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
 
     //this->cells_matrix.clear();
+    for (QList<Receiver*> cells_line : this->cells) {
+        qDeleteAll(cells_line);
+    }
     this->cells.clear();
     //this->rays_list.clear();
+    qDeleteAll(this->obstacles);
     this->obstacles.clear();
 
     createWalls();
@@ -144,6 +148,7 @@ void Simulation::run()
     qDebug() << "Simulation time:" << this->simulation_time << "ms";
 
     showView();
+
 }
 
 void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)

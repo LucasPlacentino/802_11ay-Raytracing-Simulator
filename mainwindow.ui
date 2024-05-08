@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1345</width>
+    <width>313</width>
     <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1345</width>
+    <width>300</width>
     <height>600</height>
    </size>
   </property>
@@ -40,7 +40,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>271</width>
+      <width>291</width>
       <height>281</height>
      </rect>
     </property>
@@ -58,7 +58,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>259</width>
+       <width>271</width>
        <height>251</height>
       </rect>
      </property>
@@ -73,7 +73,7 @@
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -321,28 +321,12 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGraphicsView" name="simulationGraphicsView">
-    <property name="geometry">
-     <rect>
-      <x>295</x>
-      <y>10</y>
-      <width>1034</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <property name="renderHints">
-     <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-    </property>
-    <property name="viewportUpdateMode">
-     <enum>QGraphicsView::FullViewportUpdate</enum>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>300</y>
-      <width>271</width>
+      <width>291</width>
       <height>261</height>
      </rect>
     </property>
@@ -354,7 +338,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>251</width>
+       <width>271</width>
        <height>231</height>
       </rect>
      </property>
@@ -369,7 +353,7 @@
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -635,7 +619,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1345</width>
+     <width>313</width>
      <height>18</height>
     </rect>
    </property>
