@@ -33,7 +33,7 @@ public:
 
     QList<Ray*> all_rays; // list of all rays that go to this receiver
 
-    qulonglong computeTotalPower(Transmitter* transmitter); // returns final total power computation for this RX
+    qreal computeTotalPower(Transmitter* transmitter); // returns final total power computation for this RX
 
     void updateBitrateAndColor(); // update this receiver's bitrate and cell color
 protected:

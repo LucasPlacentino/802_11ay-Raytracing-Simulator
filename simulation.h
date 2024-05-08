@@ -18,6 +18,7 @@ public:
     Simulation(); // constructor
     bool ran = false;
     bool is_running = false;
+    qreal resolution = 0.5; // meters, 0.5m x 0.5m cells
 
     void run(QProgressBar* progress_bar);
     void clear();
@@ -58,7 +59,6 @@ private:
     //qreal min_x = 0;
     //qreal max_y = 0;
     //qreal min_y = -8;
-    qreal resolution = 0.5; // meters, 0.5m x 0.5m cells
 
     //QVector2D origin = QVector2D(0,0);
     //QGraphicsScene* createGraphicsScene(std::vector<Transmitter>* TX_list);

@@ -117,15 +117,16 @@ void Receiver::updateBitrateAndColor()
 }
 
 
-qulonglong Receiver::computeTotalPower(Transmitter* transmitter) // returns final total power computation for this RX
+qreal Receiver::computeTotalPower(Transmitter* transmitter) // returns final total power computation for this RX
 {
     qreal res = 0;
     for (Ray* ray : this->all_rays) {
         res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
     }
+    qDebug() << "computeTotalPower res+=ray->getTotalCoeffs" << res;
     // multiply by the term before the sum:
     res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
-    //qDebug() << "computeTotalPower:" << res;
+    qDebug() << "computeTotalPower:" << res;
     return res;
 }

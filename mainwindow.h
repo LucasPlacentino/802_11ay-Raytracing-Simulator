@@ -56,6 +56,8 @@ private slots:
 
     void on_showCellOutlineCheckBox_toggled(bool checked);
 
+    void on_resolutionComboBox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation(QProgressBar* progress_bar);

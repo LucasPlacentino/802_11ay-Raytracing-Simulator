@@ -24,6 +24,8 @@ Simulation simulation = Simulation(); // The global simulation object, use `exte
 
 int currentEditingBaseStation_index = 0; // The base station that is currently selected for user edit
 
+QList<qreal> resolutions = {0.5, 0.25, 0.125, 0.0625};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -86,6 +88,11 @@ MainWindow::MainWindow(QWidget *parent)
     // //simulation.view->show();
     //ui->simulationGraphicsView->show();
 
+    for (qreal resolution : resolutions) {
+        ui->resolutionComboBox->addItem(QString("%1 m").arg(resolution));
+    }
+    ui->resolutionComboBox->setCurrentIndex(0);
+
     this->setWindowIcon(QIcon(":/assets/icon.png"));
 }
 
@@ -130,19 +137,20 @@ void MainWindow::on_runSimulationButton_clicked()
     ////ui->simulationGraphicsView->viewport()->update();
     //simulation.view->show();
     //ui->simulationGraphicsView->show();
+
     simulation.is_running = false;
 }
 
 bool MainWindow::runSimulation(QProgressBar* progress_bar)
 {
-    // debug :
-    //simulation.test();
+    //// debug :
+    ////simulation.test();
 
     // Run the simulation and returns true if no errors ocurred
     simulation.ran = true;
     simulation.is_running = true;
     try {
-        simulation.run(progress_bar); // TODO: the run func
+        simulation.run(progress_bar);
 
         qInfo("Simulation ended successfully");
         return true;
@@ -276,7 +284,6 @@ void MainWindow::on_actionSave_image_triggered()
 void MainWindow::initFirstBaseStation()
 {
     // Creates the first (non-deletable) Base Station
-    //TODO: create a new transmitter object
     simulation.baseStations.append(new Transmitter(9.4,7, 0, "Base Station 1"));
     //simulation.createBaseStation(new Transmitter(9.4,7));//new Transmitter(0, "Base Station 1", 20, QPointF(1,-1)) // TODO: QPoint
 }
@@ -316,8 +323,6 @@ void MainWindow::toggleCellParametersLayout(bool enabled)
 
 void MainWindow::toggleCoverageParametersLayout(bool enabled)
 {
-    //ui->
-    //ui->coverageHeatmapTestLabel->setEnabled(enabled);
     ui->showCellOutlineCheckBox->setEnabled(enabled);
 }
 
@@ -333,8 +338,6 @@ void MainWindow::on_transmitterSelector_activated(int index)
 
     showBaseStationCoordinates(simulation.baseStations.at(currentEditingBaseStation_index)->toPointF());
     //showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
-
-    // TODO: highlight the current editing base station in another color on the view, redraw the transmitter
 }
 
 
@@ -376,8 +379,6 @@ void MainWindow::on_deleteBaseStationPushButton_clicked()
         int previous_item_index = currentEditingBaseStation_index-1;
         on_transmitterSelector_activated(previous_item_index);
         ui->transmitterSelector->setCurrentIndex(previous_item_index);
-
-        // TODO: undraw this base station from the view
     } else {
         qDebug("Cannot delete Base Station 1");
     }
@@ -389,8 +390,6 @@ void MainWindow::on_coverageHeatmapRadioButton_clicked(bool checked)
     toggleCoverageParametersLayout(checked);
     toggleCellParametersLayout(!checked);
     qDebug() << "Coverage parameters" << (checked? "enabled," : "disabled,") << "Cell parameters" << (!checked? "enabled" : "disabled");
-
-    // TODO: unhightlight the selected cell on the view
 }
 
 
@@ -400,8 +399,6 @@ void MainWindow::on_singleCellRadioButton_clicked(bool checked)
     toggleCellParametersLayout(checked);
     toggleCoverageParametersLayout(!checked);
     qDebug() << "Coverage parameters" << (!checked? "enabled," : "disabled,") << "Cell parameters" << (checked? "enabled" : "disabled");
-
-    // TODO: hightlight the selected cell on the view, redraw the cell
 }
 
 
@@ -416,5 +413,12 @@ void MainWindow::on_showCellOutlineCheckBox_toggled(bool checked)
 {
     simulation.show_cell_outline = checked;
     qDebug() << "Show cell outline:" << checked;
+}
+
+
+void MainWindow::on_resolutionComboBox_currentIndexChanged(int index)
+{
+    simulation.resolution = resolutions[index];
+    qInfo() << "Changed resolution to" << resolutions[index] << "m";
 }
 
