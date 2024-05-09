@@ -122,7 +122,7 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
         this->properties.conductivity = 0.073;
         break;
     case Window:
-        pen.setColor(Qt::cyan);
+        pen.setColor(Qt::white);
         pen.setWidthF(10*0.08);
         this->properties.relative_permittivity = 6.3919;
         this->properties.conductivity = 0.0107;
@@ -140,7 +140,7 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
         this->properties.conductivity = 0.05349;
         break;
     case ConcreteWall:
-        pen.setColor(Qt::green);
+        pen.setColor(Qt::darkMagenta);
         pen.setWidthF(10*0.2);
         this->properties.relative_permittivity = 6.4954;
         this->properties.conductivity = 1.43;

@@ -94,6 +94,7 @@ private:
 #endif
 
     void showView();
+    void addLegend(QGraphicsScene* scene);
 };
 
 #endif // SIMULATION_H

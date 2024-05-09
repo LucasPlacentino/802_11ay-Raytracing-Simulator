@@ -45,6 +45,7 @@ private:
     QColor cell_color;
     QPointF center_coordinates; // TODO: change to QVector2D ?
     */
+    QColor computeColor(qreal value_noramlized);
 };
 
 #endif // RECEIVER_H

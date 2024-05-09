@@ -427,7 +427,7 @@ void Simulation::showView()
     this->view->setAttribute(Qt::WA_AlwaysShowToolTips); //? maybe necessary ?
 
     // TODO: test some view parameters
-    this->view->setFixedSize(1000, 600);
+    this->view->setFixedSize(970, 690);
     this->view->scale(6, 6);
     qDebug() << "Showing graphics view";
     //QIcon _icon = QIcon(QDir::currentPath()+"/icon.png");
@@ -677,7 +677,13 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
             //qDebug() << "RX power:" << _rx_power << "W," << _rx_power_dBm << "dBm";
             //qDebug() << "RX bitrate:" << RX->bitrate_Mbps << "Mbps";
 
-            RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm\nBitrate: %5 Mbps").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2),QString::number(RX->bitrate_Mbps)));
+            qulonglong bitrate_Mbps = RX->bitrate_Mbps;
+            if (bitrate_Mbps >= 1000) {
+                qreal bitrate_Gbps = qreal(bitrate_Mbps)/1000;
+                RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm\nBitrate: %5 Gbps").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2),QString::number(bitrate_Gbps,'f',2)));
+            } else {
+                RX->graphics->setToolTip(QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm\nBitrate: %5 Mbps").arg(QString::number(RX->x()),QString::number(RX->y()),QString::number(_rx_power*1000),QString::number(_rx_power_dBm,'f',2),QString::number(bitrate_Mbps)));
+            }
             scene->addItem(RX->graphics);
             //qDebug() << "RX.graphics:" << RX->graphics->rect();
         }
@@ -731,9 +737,63 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     qDebug() << "All reflection points added to scene.";
 #endif
 
+    addLegend(scene);
+
     scene->setBackgroundBrush(QBrush(Qt::black)); // black background
 
     qDebug() << "Scene created.";
 
     return scene;
+}
+
+void Simulation::addLegend(QGraphicsScene* scene)
+{
+    qDebug() << "Adding legend to scene";
+    QLinearGradient gradient;
+    QRectF rect(6,85,138,10); // gradient rectangle scene coordinates
+    QGraphicsRectItem* gradient_graphics = new QGraphicsRectItem(rect);
+
+    gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    gradient.setColorAt(0.0, QColor::fromRgb(255,0,0)); // blue
+    gradient.setColorAt(0.25, QColor::fromRgb(255,255,0)); // cyan
+    gradient.setColorAt(0.5, QColor::fromRgb(0,255,0)); // green
+    gradient.setColorAt(0.75, QColor::fromRgb(0,255,255)); // yellow
+    gradient.setColorAt(1.0, QColor::fromRgb(0,0,255)); // red
+    gradient.setStart(1.0, 0.0); // start left
+    gradient.setFinalStop(0.0, 0.0); // end right
+
+    QPen gradientPen(Qt::white);
+    gradientPen.setWidthF(0.3);
+    QBrush gradientBrush(gradient);
+
+    gradient_graphics->setPen(gradientPen);
+    gradient_graphics->setBrush(gradientBrush);
+    scene->addItem(gradient_graphics); // draw gradient rectangle
+    qreal rect_width = rect.width();
+    for (int i=0; i<5; i++) {
+        QGraphicsLineItem* small_line = new QGraphicsLineItem(rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y(),rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y()+2.0);
+        small_line->setPen(gradientPen);
+        scene->addItem(small_line);
+    }
+    //QGraphicsLineItem* left_line = new QGraphicsLineItem(rect.bottomLeft().x(),rect.bottomLeft().y(),rect.bottomLeft().x(),rect.bottomLeft().y()+2.0);
+    //QGraphicsLineItem* right_line = new QGraphicsLineItem(rect.bottomRight().x(),rect.bottomRight().y(),rect.bottomRight().x(),rect.bottomRight().y()+2.0);
+    //left_line->setPen(gradientPen);
+    //right_line->setPen(gradientPen);
+    //scene->addItem(left_line);
+    //scene->addItem(right_line);
+
+
+    // text for minimum of gradient
+    QGraphicsTextItem* min_text = new QGraphicsTextItem("-90dBm\n50Mbps");
+    min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
+    min_text->setDefaultTextColor(Qt::white);
+    min_text->setScale(0.25);
+    // text for maximum of gradient
+    QGraphicsTextItem* max_text = new QGraphicsTextItem("-40dBm\n40Gbps");
+    max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
+    max_text->setDefaultTextColor(Qt::white);
+    max_text->setScale(0.25);
+
+    scene->addItem(min_text);
+    scene->addItem(max_text);
 }

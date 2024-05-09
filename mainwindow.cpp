@@ -267,7 +267,7 @@ void MainWindow::on_actionSave_image_triggered()
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing);
     // renderscene() //&painter //? scene->render(&painter);
-    simulation.scene->render(&painter);
+    simulation.view->render(&painter);
 
     QString img_filename= QFileDialog::getSaveFileName(
         this,
