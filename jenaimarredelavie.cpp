@@ -892,6 +892,7 @@ QGraphicsView* runTP4(){
     view->setFixedSize(600, 400);
     view->scale(4, 4);
 #endif
+    view->setWindowIcon(QIcon(":/assets/icon.png"));
     view->show(); // shows the graphics scene to the user
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
     qDebug() << "Total number of rays:" << QString::number(all_rays.length()) << "(should be 5).";
