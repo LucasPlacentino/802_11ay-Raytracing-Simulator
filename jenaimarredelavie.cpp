@@ -18,9 +18,9 @@
 //#include <iostream> // for cout
 
 // Defines for debugging:
-#define DRAW_RAYS 1
-#define DRAW_IMAGES 1
-#define DRAW_REFLECTION_POINTS 1
+#define DRAW_RAYS_TP4 1
+//#define DRAW_IMAGES_TP4 1
+#define DRAW_REFLECTION_POINTS_TP4 1
 
 // pour plus de simplicité
 using namespace std;
@@ -137,26 +137,26 @@ QList<Wall*> wall_list = { // list containing all the created walls
     new Wall(wall3start,wall3end, 0.15, 3),
 };
 
-class RaySegment : public QLineF { // Finite segment of a ray
+class RaySegmentTP4 : public QLineF { // Finite segment of a ray
 public:
     qreal distance; //? not used ?
     QGraphicsLineItem* graphics = new QGraphicsLineItem(); // segment's QGraphicsItem
-    RaySegment(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
-        // RaySegment object constructor
+    RaySegmentTP4(qreal start_x, qreal start_y, qreal end_x, qreal end_y){
+        // RaySegmentTP4 object constructor
         this->setLine(start_x, start_y, end_x, end_y);
         this->graphics->setLine(start_x, -start_y, end_x, -end_y);
         this->distance = this->length();
     }
 };
 
-class Ray { // Ray, made of one or multiple ray segments
+class RayTP4 { // RayTP4, made of one or multiple ray segments
 public:
-    Ray(QPointF start, QPointF end) {
-        // Ray object constructor
+    RayTP4(QPointF start, QPointF end) {
+        // RayTP4 object constructor
         this->start=start;
         this->end=end;
     }
-    QList<RaySegment*> segments; // list of this ray's segment(s)
+    QList<RaySegmentTP4*> segments; // list of this ray's segment(s)
     int num_reflections = 0;
     QPointF start; // ray's starting point (TX)
     QPointF end; // ray's end point (RX)
@@ -212,7 +212,7 @@ public:
             break;
         }
         QList<QGraphicsLineItem*> ray_graphics;
-        for (RaySegment* ray_segment: this->segments) {
+        for (RaySegmentTP4* ray_segment: this->segments) {
         //for (int i=0; i<this->segments.length(); i++) {
             //qDebug() << "Adding this segment to list ray_graphics";
             ray_segment->graphics->setPen(ray_pen);
@@ -238,12 +238,12 @@ public:
         return this->distance;
     }
 };
-QList<Ray*> all_rays; // list in which all computed rays will be added
+QList<RayTP4*> all_rays; // list in which all computed rays will be added
 
-class Transmitter : public QVector2D { // TX class
+class TransmitterTP4 : public QVector2D { // TX class
 public:
-    Transmitter(qreal x, qreal y){
-        // Transmitter object constructor
+    TransmitterTP4(qreal x, qreal y){
+        // TransmitterTP4 object constructor
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test transmitter x=%1 y=%2").arg(this->x(),this->y()));
@@ -263,10 +263,10 @@ public:
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
     qreal power; // ! in Watts
 };
-class Receiver : public QVector2D { // RX class
+class ReceiverTP4 : public QVector2D { // RX class
 public:
-    Receiver(qreal x, qreal y) {
-        // Receiver object constructor
+    ReceiverTP4(qreal x, qreal y) {
+        // ReceiverTP4 object constructor
         this->setX(x);
         this->setY(y);
         this->graphics->setToolTip(QString("Test receiver x=%1 y=%2").arg(this->x(),this->y()));
@@ -278,8 +278,8 @@ public:
     QGraphicsRectItem* graphics = new QGraphicsRectItem(); // RX's QGraphicsItem
     qreal power; // ! in Watts
 };
-Transmitter TX(32,10); // initialized global TX
-Receiver RX(47, 65); // initialized global RX
+TransmitterTP4 TX(32,10); // initialized global TX
+ReceiverTP4 RX(47, 65); // initialized global RX
 
 QList<QGraphicsEllipseItem*> tx_images; // used for debugging: list of images graphics
 QList<QGraphicsEllipseItem*> reflection_points; // used for debugging: list of reflection points graphics
@@ -291,7 +291,7 @@ QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem(); // u
 qreal computeTotalPower() // returns final total power computation for this RX
 {
     qreal res = 0;
-    for (Ray* ray : all_rays) {
+    for (RayTP4* ray : all_rays) {
         res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
     }
     // multiply by the term before the sum:
@@ -404,7 +404,7 @@ QVector2D calculateReflectionPoint(const QVector2D& _start, const QVector2D& _en
 
 void drawAllRays(QGraphicsScene* scene) {
     // Adds all rays in all_rays QList to the scene
-    for (Ray* ray : all_rays) {
+    for (RayTP4* ray : all_rays) {
     //for (int i=0; i<all_rays.length(); i++) {
         qDebug() << "Adding ray to scene";
         //QList<QGraphicsLineItem*> segments_graphics = all_rays.at(i)->getSegmentsGraphics();
@@ -419,7 +419,7 @@ void drawAllRays(QGraphicsScene* scene) {
 
 // scène graphique, encore une fois merci gpt pour la syntaxe
 //QGraphicsScene* createGraphicsScene(const QVector2D& RX, const QVector2D& TX) {
-QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
+QGraphicsScene* createGraphicsScene(ReceiverTP4& RX, TransmitterTP4& TX) {
     // creates the QGraphicsScene (to give to QGraphicsView) and adds all graphics to it
 
     auto* scene = new QGraphicsScene();
@@ -431,7 +431,7 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     }
     qDebug() << "All walls added to scene.";
 
-#ifdef DRAW_RAYS
+#ifdef DRAW_RAYS_TP4
     // Draw all rays (their segments) from the all_rays list
     drawAllRays(scene);
 #endif
@@ -451,7 +451,7 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     scene->addItem(TX.graphics);
     qDebug() << "TX.graphics:" << TX.graphics->rect();
 
-#ifdef DRAW_IMAGES
+#ifdef DRAW_IMAGES_TP4
     // For debugging: draw all images from the tx_images list
     for (QGraphicsEllipseItem* image_graphics : tx_images) {
         image_graphics->setPen(QPen(Qt::darkYellow));
@@ -461,11 +461,11 @@ QGraphicsScene* createGraphicsScene(Receiver& RX, Transmitter& TX) {
     }
 #endif
 
-#ifdef DRAW_REFLECTION_POINTS
+#ifdef DRAW_REFLECTION_POINTS_TP4
     // For debugging: draw all reflection points from the reflection_points list
     for (QGraphicsEllipseItem* reflection_graphics : reflection_points) {
-        reflection_graphics->setPen(QPen(Qt::darkGreen));
-        reflection_graphics->setBrush(QBrush(Qt::darkGreen));
+        reflection_graphics->setPen(QPen(Qt::magenta));
+        reflection_graphics->setBrush(QBrush(Qt::magenta));
         reflection_graphics->setToolTip(QString("reflection\nx=%1 y=%2").arg(QString::number(reflection_graphics->rect().x()+reflection_graphics->rect().width()/2),QString::number(-reflection_graphics->rect().y()-reflection_graphics->rect().height()/2)));
         scene->addItem(reflection_graphics);
     }
@@ -516,7 +516,7 @@ bool checkSameSideOfWall(const QVector2D& _normal, const QVector2D& _TX, const Q
     return res;
 }
 
-bool checkRaySegmentIntersectsWall(const Wall* wall, RaySegment* ray_segment, QPointF* intersection_point=nullptr) {
+bool checkRaySegmentIntersectsWall(const Wall* wall, RaySegmentTP4* ray_segment, QPointF* intersection_point=nullptr) {
     // returns true if ray_segment intersects wall
     // the intersection_point pointer's value is set wit hthe intersection point coordinates if they intersect
     int _intersection_type = ray_segment->intersects(wall->line, intersection_point); // also writes to intersection pointer the QPointF
@@ -524,7 +524,7 @@ bool checkRaySegmentIntersectsWall(const Wall* wall, RaySegment* ray_segment, QP
     return intersects_wall;
 }
 
-qreal makeTransmission(RaySegment* ray_segment, Wall* wall) {
+qreal makeTransmission(RaySegmentTP4* ray_segment, Wall* wall) {
     // computes the final |T| coeff for the ray_segment's transmission with this wall
     QVector2D _eta = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
     qreal _cos_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->unitary));
@@ -536,10 +536,10 @@ qreal makeTransmission(RaySegment* ray_segment, Wall* wall) {
     return T_coeff;
 }
 
-void checkTransmissions(Ray* _ray, QList<Wall*> _reflection_walls) {
+void checkTransmissions(RayTP4* _ray, QList<Wall*> _reflection_walls) {
     // checks for every segment in this ray if they intersect a wall (which isn't a wall already used for a reflection by this ray)
     // if so: adds the Transmission coefficient to this ray's coeffs list
-    for (RaySegment* ray_segment : _ray->segments) {
+    for (RaySegmentTP4* ray_segment : _ray->segments) {
         for (Wall* wall : wall_list) {
             //qDebug() << "pwall" << &wall;
             if (!_reflection_walls.contains(wall)) { // is NOT reflection wall
@@ -560,7 +560,7 @@ void checkTransmissions(Ray* _ray, QList<Wall*> _reflection_walls) {
     }
 }
 
-void addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D& _p2, Wall* wall){
+void addReflection(RayTP4* _ray, const QVector2D& _p1, const QVector2D& _p2, Wall* wall){
     // computes the final |Gamma| coeff for the ray_segment's reflection with this wall, and adds it to this ray's coeffs list
     QVector2D _d = _p2-_p1;
     qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
@@ -590,7 +590,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
         if (checkSameSideOfWall(wall->normal,_TX,_RX)) {
             //same side of this wall, can make a reflection
             qDebug() << "Same side of wall TX and RX:" << wall << _TX.toPointF() << _RX.toPointF() ;
-            Ray* ray_1_reflection = new Ray(_TX.toPointF(), _RX.toPointF());
+            RayTP4* ray_1_reflection = new RayTP4(_TX.toPointF(), _RX.toPointF());
 
             QVector2D _imageTX = computeImage(_TX, wall);
             qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
@@ -598,7 +598,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             QVector2D _P_r = calculateReflectionPoint(_imageTX,_RX,wall);
 
             // CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
-            RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX.x(),_RX.y());
+            RaySegmentTP4* test_segment = new RaySegmentTP4(_imageTX.x(),_imageTX.y(),_RX.x(),_RX.y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                 qDebug() << "ignore";
@@ -612,9 +612,9 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             reflection_points.append(new QGraphicsEllipseItem(_P_r.x()-1, -_P_r.y()-1, 2, 2));
 
             // create ray segments between points
-            QList<RaySegment*> ray_segments;
-            ray_segments.append(new RaySegment(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
-            ray_segments.append(new RaySegment(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
+            QList<RaySegmentTP4*> ray_segments;
+            ray_segments.append(new RaySegmentTP4(_TX.x(),_TX.y(),_P_r.x(),_P_r.y())); // first segment
+            ray_segments.append(new RaySegmentTP4(_P_r.x(),_P_r.y(),_RX.x(),_RX.y())); // last segment
 
             ray_1_reflection->segments = ray_segments;
             addReflection(ray_1_reflection,_imageTX,_RX,wall);
@@ -630,7 +630,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                 // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
                 if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
                     qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX.toPointF() ;
-                    Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX.toPointF());
+                    RayTP4* ray_2_reflection = new RayTP4(_TX.toPointF(),_RX.toPointF());
 
                     QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
                     qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
@@ -641,8 +641,8 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                         qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
                     }
 
-                    RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
-                    RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
+                    RaySegmentTP4* test_segment_1 = new RaySegmentTP4(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
+                    RaySegmentTP4* test_segment_2 = new RaySegmentTP4(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
                     if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) && !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
                         qDebug() << "ignore";
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
@@ -659,10 +659,10 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
                     reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
 
-                    QList<RaySegment*> ray_segments_2;
-                    ray_segments_2.append(new RaySegment(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
-                    ray_segments_2.append(new RaySegment(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
-                    ray_segments_2.append(new RaySegment(_P_r_2_last.x(),_P_r_2_last.y(),_RX.x(),_RX.y()));
+                    QList<RaySegmentTP4*> ray_segments_2;
+                    ray_segments_2.append(new RaySegmentTP4(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
+                    ray_segments_2.append(new RaySegmentTP4(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
+                    ray_segments_2.append(new RaySegmentTP4(_P_r_2_last.x(),_P_r_2_last.y(),_RX.x(),_RX.y()));
 
                     ray_2_reflection->segments = ray_segments_2;
                     addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
@@ -683,8 +683,8 @@ void computeDirect(const QVector2D& _RX, const QVector2D& _TX)
 {
     // Computes the direct ray: checks all walls between RX and TX and adds
     // their computed transmission coefficients to the direct ray list of coeffs
-    Ray* direct_ray = new Ray(_TX.toPointF(), _RX.toPointF());
-    RaySegment* _direct_line = new RaySegment(_RX.x(), _RX.y(), _TX.x(), _TX.y());
+    RayTP4* direct_ray = new RayTP4(_TX.toPointF(), _RX.toPointF());
+    RaySegmentTP4* _direct_line = new RaySegmentTP4(_RX.x(), _RX.y(), _TX.x(), _TX.y());
     for (Wall* wall : wall_list) {
     //for (int i=0; i<wall_list.length(); i++) {
         //Wall* wall = wall_list[i];
@@ -861,8 +861,9 @@ void runTestOui1(QGraphicsScene* scene) { // ! TODO: old code when testing, remo
 }
 
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
+//int main(int argc, char *argv[]) {
+QGraphicsView* runTP4(){
+    //QApplication app(argc, argv);
 
     QElapsedTimer timer;
     timer.start(); // timer for both computation and drawing
@@ -884,8 +885,13 @@ int main(int argc, char *argv[]) {
     view->setAttribute(Qt::WA_AlwaysShowToolTips); //? maybe necessary ?
 
     // TODO: find good values
-    view->setFixedSize(1000, 900);
+#ifdef DRAW_IMAGES_TP4
+    view->setFixedSize(500, 750);
     view->scale(2.6, 2.6);
+#else
+    view->setFixedSize(600, 400);
+    view->scale(4, 4);
+#endif
     view->show(); // shows the graphics scene to the user
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
     qDebug() << "Total number of rays:" << QString::number(all_rays.length()) << "(should be 5).";
@@ -894,17 +900,18 @@ int main(int argc, char *argv[]) {
     qDebug() << QString((10*std::log10(RX.power*1000) >= -65) ? "-> Enough power:" : "-> Not enough power:") << 10*std::log10(RX.power*1000) << "dBm";
 
     // prints RX power values only for each ray
-    for (Ray* ray : all_rays) {
+    for (RayTP4* ray : all_rays) {
         qreal coeffs = ray->getTotalCoeffs();
         qreal power = coeffs*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
         // power *1000 because it's in Watts and we need in mW :
         qDebug() << "Ray" << ray->num_reflections << "reflections, power:" << power*1000 << "mW " << 10*std::log10(power*1000) << "dBm.";
     }
 
-    return app.exec();
-
     ////? In real app:
     ////delete scene;
     ////delete view;
+
+    return view;
+    //return app.exec();
 }
 

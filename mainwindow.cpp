@@ -18,6 +18,9 @@
 //#include "utils.h"
 //#include "parameters.h"
 
+#include "jenaimarredelavie.h"
+QGraphicsView* TP4view;
+
 //SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
 Simulation simulation = Simulation(); // The global simulation object, use `extern Simulation simulation;` in other files?
 //QGraphicsView simulation_view(simulation_scene);
@@ -250,6 +253,25 @@ void MainWindow::on_actionAbout_triggered()
                           "<br>This simulator uses..."));
 }
 
+void MainWindow::saveImage(QGraphicsView* view = simulation.view, bool isTP4 = false)
+{
+    QSize size = view->scene()->sceneRect().size().toSize()*10; // get the Scene size
+    //QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+    QImage img(size, QImage::Format_RGBA64);
+    QPainter painter(&img);
+    painter.setRenderHint(QPainter::Antialiasing);
+    // renderscene() //&painter //? scene->render(&painter);
+    view->render(&painter);
+
+    QString img_filename= QFileDialog::getSaveFileName(
+        this,
+        tr("Save Image"),
+        QDir::currentPath(),
+        "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)"
+        );
+    bool success = img.save(img_filename);
+    success? qInfo("Image saved") : qInfo("Cancelled");
+}
 
 void MainWindow::on_actionSave_image_triggered()
 {
@@ -260,23 +282,24 @@ void MainWindow::on_actionSave_image_triggered()
         //throw std::runtime_error("Cannot save simulation that has not already run.");
         return;
     }
+    saveImage(simulation.view);
 
-    QSize size = simulation.scene->sceneRect().size().toSize()*10; // get the Scene size
-    //QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
-    QImage img(size, QImage::Format_RGBA64);
-    QPainter painter(&img);
-    painter.setRenderHint(QPainter::Antialiasing);
-    // renderscene() //&painter //? scene->render(&painter);
-    simulation.view->render(&painter);
+    //QSize size = simulation.scene->sceneRect().size().toSize()*10; // get the Scene size
+    ////QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
+    //QImage img(size, QImage::Format_RGBA64);
+    //QPainter painter(&img);
+    //painter.setRenderHint(QPainter::Antialiasing);
+    //// renderscene() //&painter //? scene->render(&painter);
+    //simulation.view->render(&painter);
 
-    QString img_filename= QFileDialog::getSaveFileName(
-        this,
-        tr("Save Image"),
-        QDir::currentPath(),
-        "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)"
-    );
-    bool success = img.save(img_filename);
-    success? qInfo("Image saved") : qInfo("Cancelled");
+    //QString img_filename= QFileDialog::getSaveFileName(
+    //    this,
+    //    tr("Save Image"),
+    //    QDir::currentPath(),
+    //    "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)"
+    //);
+    //bool success = img.save(img_filename);
+    //success? qInfo("Image saved") : qInfo("Cancelled");
 
 }
 
@@ -420,5 +443,17 @@ void MainWindow::on_resolutionComboBox_currentIndexChanged(int index)
 {
     simulation.resolution = resolutions[index];
     qInfo() << "Changed resolution to" << resolutions[index] << "m";
+}
+
+
+void MainWindow::on_actionRun_TP4_Simulation_triggered()
+{
+    TP4view = runTP4();
+}
+
+
+void MainWindow::on_actionSave_TP4_image_triggered()
+{
+    saveImage(TP4view);
 }
 

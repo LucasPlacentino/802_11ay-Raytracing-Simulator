@@ -3,6 +3,7 @@
 
 #include "transmitter.h"
 
+#include <QGraphicsView>
 #include <QMainWindow>
 #include <QProgressBar>
 
@@ -58,6 +59,10 @@ private slots:
 
     void on_resolutionComboBox_currentIndexChanged(int index);
 
+    void on_actionRun_TP4_Simulation_triggered();
+
+    void on_actionSave_TP4_image_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation(QProgressBar* progress_bar);
@@ -70,5 +75,6 @@ private:
 
     void toggleCellParametersLayout(bool enabled);
     void toggleCoverageParametersLayout(bool enabled);
+    void saveImage(QGraphicsView *view, bool isTP4);
 };
 #endif // MAINWINDOW_H
