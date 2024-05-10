@@ -18,7 +18,7 @@
 //#include "utils.h"
 //#include "parameters.h"
 
-#include "jenaimarredelavie.h"
+#include "tp4.h"
 QGraphicsView* TP4view;
 
 //SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
