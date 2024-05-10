@@ -1,3 +1,4 @@
+/*
 #ifndef HEATMAPGRADIENTLEGEND_H
 #define HEATMAPGRADIENTLEGEND_H
 
@@ -15,3 +16,4 @@ private:
 };
 
 #endif // HEATMAPGRADIENTLEGEND_H
+*/

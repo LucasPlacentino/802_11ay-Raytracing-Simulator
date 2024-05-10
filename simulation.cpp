@@ -1,9 +1,9 @@
 #include "simulation.h"
-//#include "utils.h"
-//#include "parameters.h"
 
 #include <QDir>
 #include <QtMath>
+
+#include "parameters.h"
 
 Simulation::Simulation() {
     // constructor

@@ -7,23 +7,11 @@
 #include <QFileDialog>
 #include <QDir>
 
-// https://doc.qt.io/qt-6/graphicsview.html (replaces QCanvas) :
-//#include <QGraphicsScene> // The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.
-//#include <QGraphicsView> // displays the content of the QGraphicsScene
-
-////#include <QPainter> // use QPainter to render the floorplan and rays ?
-
 #include "simulation.h"
-//#include "simulationgraphicsscene.h"
-//#include "utils.h"
-//#include "parameters.h"
-
 #include "tp4.h"
 QGraphicsView* TP4view;
 
-//SimulationGraphicsScene* simulation_scene; // global QGraphicsScene scene object
 Simulation simulation = Simulation(); // The global simulation object, use `extern Simulation simulation;` in other files?
-//QGraphicsView simulation_view(simulation_scene);
 
 int currentEditingBaseStation_index = 0; // The base station that is currently selected for user edit
 

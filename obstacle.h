@@ -2,10 +2,8 @@
 #define OBSTACLE_H
 
 #include <QGraphicsRectItem>
-#include <QPoint> // TODO: this one?
 #include <complex>
 #include <QVector2D>
-#include "parameters.h"
 
 using namespace std;
 

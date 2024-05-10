@@ -1,7 +1,7 @@
 #include "ray.h"
 
 #include <QPen>
-
+#include "parameters.h"
 
 /*
 Ray::Ray(QPointF start_point, QPointF end_point)

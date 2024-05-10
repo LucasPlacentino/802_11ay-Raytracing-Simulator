@@ -2,8 +2,6 @@
 #define RAY_H
 
 #include "raysegment.h"
-//#include "receiver.h"
-#include "parameters.h"
 
 #include <QGraphicsLineItem>
 #include <complex>
@@ -22,7 +20,7 @@ struct InteractionPoint {
     qreal incidence_angle; // needed ?
 };
 
-class Ray : public QGraphicsLineItem
+class Ray //: public QGraphicsLineItem
 {
 public:
     /*

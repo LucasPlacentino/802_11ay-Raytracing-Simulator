@@ -15,7 +15,6 @@
 #include <complex>
 #include <QVector2D>
 #include <QElapsedTimer>
-//#include <iostream> // for cout
 
 // Defines for debugging:
 #define DRAW_RAYS_TP4 1
@@ -24,7 +23,6 @@
 
 // pour plus de simplicité
 using namespace std;
-//using namespace Qt; // ?
 
 // constants
 constexpr qreal epsilon_0 = 8.8541878128e-12;

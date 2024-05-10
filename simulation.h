@@ -1,16 +1,15 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <QElapsedTimer>
+#include <QGraphicsView>
+#include <QProgressBar>
+
 #include "obstacle.h"
 #include "ray.h"
 #include "receiver.h"
 #include "simulationgraphicsscene.h"
 #include "transmitter.h"
-#include "parameters.h"
-
-#include <QElapsedTimer>
-#include <QGraphicsView>
-#include <QProgressBar>
 
 class Simulation
 {

@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "transmitter.h"
-
 #include <QGraphicsView>
 #include <QMainWindow>
 #include <QProgressBar>

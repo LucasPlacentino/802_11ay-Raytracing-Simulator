@@ -1,20 +1,20 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-#include "qtypes.h"
 #include <complex>
+#include <QtTypes>
 
 using namespace std;
 
-constexpr complex<double> j(0, 1); // ! définition de j, useful
+constexpr complex<qreal> j(0, 1); // ! définition de j, useful
 constexpr qulonglong c = 3*1e8;
 //constexpr qulonglong frequency = 60*1e9;
-constexpr double epsilon_0 = 8.854187817e-12;
-constexpr double mu_0 = 1.256637e-6;//4 * M_PI * 1e-7; // 1.256637e-6; // ?
-constexpr double freq = 60e9; // 60 GHz
-constexpr double omega = 2 * M_PI * freq; // pulsation
+constexpr qreal epsilon_0 = 8.854187817e-12;
+constexpr qreal mu_0 = 1.256637e-6;//4 * M_PI * 1e-7; // 1.256637e-6; // ?
+constexpr qreal freq = 60e9; // 60 GHz
+constexpr qreal omega = 2 * M_PI * freq; // pulsation
 constexpr qreal wavelength = c/freq;
-constexpr double lambda = c / freq;
+constexpr qreal lambda = c / freq;
 const qreal Z_0 = sqrt(mu_0 / epsilon_0); // impédance du vide // vacuum impedance
 
 constexpr qreal max_x = 15;

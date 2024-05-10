@@ -2,6 +2,7 @@
 
 #include <QBrush>
 #include <QPen>
+#include "parameters.h"
 
 static constexpr qreal max_power_dBm = -40.0;
 static constexpr qreal min_power_dBm = -90.0;

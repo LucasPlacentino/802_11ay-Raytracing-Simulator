@@ -1,3 +1,4 @@
+/*
 #include "heatmapgradientlegend.h"
 #include <QPainter>
 
@@ -27,3 +28,4 @@ void HeatmapGradientLegend::paint(QPainter *painter, const QStyleOptionGraphicsI
     painter->drawText(left, rect().top() + rect().height() / 2, "-65dBm");
     painter->drawText(left, rect().top() + rect().height(), "-90dBm");
 }
+*/
