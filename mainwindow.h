@@ -3,9 +3,7 @@
 
 #include "transmitter.h"
 
-#include <QGraphicsView>
 #include <QMainWindow>
-#include <QProgressBar>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -55,17 +53,9 @@ private slots:
 
     void on_liftOnFloorCheckBox_clicked(bool checked);
 
-    void on_showCellOutlineCheckBox_toggled(bool checked);
-
-    void on_resolutionComboBox_currentIndexChanged(int index);
-
-    void on_actionRun_TP4_Simulation_triggered();
-
-    void on_actionSave_TP4_image_triggered();
-
 private:
     Ui::MainWindow *ui;
-    bool runSimulation(QProgressBar* progress_bar);
+    bool runSimulation();
     void changeBaseStationPower(int value);
     void changeBaseStationCoordinates(QPointF point);
     void initFirstBaseStation();
@@ -75,6 +65,5 @@ private:
 
     void toggleCellParametersLayout(bool enabled);
     void toggleCoverageParametersLayout(bool enabled);
-    void saveImage(QGraphicsView *view, bool isTP4);
 };
 #endif // MAINWINDOW_H

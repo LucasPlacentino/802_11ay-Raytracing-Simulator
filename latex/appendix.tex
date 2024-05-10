@@ -16,7 +16,8 @@ frame=lines,
 framesep=2mm,
 baselinestretch=1.2,
 fontsize=\footnotesize,
-linenos
+linenos,
+breaklines
 ]{cpp}{../main.cpp}
 
 % \begin{minted}[
@@ -32,24 +33,46 @@ linenos
 
 % \end{minted}
 
-\newpage
-\section{mainwindow.cpp}
-\label{appendix:mainwindow.cpp}
 
+\newpage
+\section{simulation.cpp}
+\label{appendix:simulation.cpp}
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Simulation} se trouve dans le Github du projet.
 \inputminted[
 frame=lines,
 framesep=2mm,
 baselinestretch=1.2,
 fontsize=\footnotesize,
-linenos
-]{cpp}{../mainwindow.cpp}
+linenos,
+breaklines
+]{cpp}{../simulation.cpp}
 
 
 
 
+% ---- pas nécessaire d'afficher mainwindow.cpp ? ----
+%\newpage
+%\section{mainwindow.cpp}
+%\label{appendix:mainwindow.cpp}
+%
+%\inputminted[
+%frame=lines,
+%framesep=2mm,
+%baselinestretch=1.2,
+%fontsize=\footnotesize,
+%linenos,
+%breaklines
+%]{cpp}{../mainwindow.cpp}
 
 \newpage
-\section{Autres codes}
+\section{Autres parties du code}
 \label{appendix:autres-codes}
-D'autres parties du code sont disponible sur le Github du projet:\\
-\underline{\url{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}}.
+D'autres parties du code sont disponibles sur le Github du projet:\\
+\underline{\url{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}}.\\
+
+Ceci inclut:
+\begin{itemize}
+    \item \textbf{mainwindow.cpp} (et son \textbf{.h}) : classe s'occupant de l'interface utilisateur.
+    \item \textbf{tp4.cpp} : code reprenant l'implémentation de la simulation exclusivement utilisée pour le TP4, qui a servi de base initiale avant d'étendre les fonctionnalités au projet global.
+    \item ...
+\end{itemize}

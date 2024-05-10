@@ -6,25 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
+    <width>1400</width>
     <height>600</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="minimumSize">
    <size>
-    <width>313</width>
-    <height>600</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>313</width>
+    <width>1400</width>
     <height>600</height>
    </size>
   </property>
@@ -38,7 +26,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>assets/icon.png</normaloff>assets/icon.png</iconset>
+    <normaloff>../../Pictures/server-info-icon.png</normaloff>../../Pictures/server-info-icon.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -52,7 +40,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>291</width>
+      <width>271</width>
       <height>281</height>
      </rect>
     </property>
@@ -70,8 +58,8 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>273</width>
-       <height>258</height>
+       <width>259</width>
+       <height>251</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -85,7 +73,7 @@
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>5</number>
+       <number>4</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -145,7 +133,7 @@
         <item>
          <widget class="QProgressBar" name="simulationProgressBar">
           <property name="value">
-           <number>0</number>
+           <number>25</number>
           </property>
           <property name="textVisible">
            <bool>false</bool>
@@ -173,22 +161,9 @@
          </widget>
         </item>
         <item>
-         <widget class="Line" name="line">
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <property name="spacing">
-           <number>2</number>
+           <number>10</number>
           </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -203,61 +178,13 @@
              </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QCheckBox" name="showCellOutlineCheckBox">
-                <property name="text">
-                 <string>Show cells outline</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
-                 <widget class="QLabel" name="resolutionLabel">
-                  <property name="text">
-                   <string>Resolution</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="resolutionComboBox">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
+             <widget class="QLabel" name="coverageHeatmapTestLabel">
+              <property name="text">
+               <string>Parameters</string>
+              </property>
+             </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="Line" name="line_2">
-            <property name="frameShadow">
-             <enum>QFrame::Plain</enum>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -266,9 +193,6 @@
             </property>
             <item>
              <widget class="QRadioButton" name="singleCellRadioButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -369,16 +293,16 @@
                      </size>
                     </property>
                     <property name="minimum">
-                     <double>0.000000000000000</double>
+                     <double>-9.000000000000000</double>
                     </property>
                     <property name="maximum">
-                     <double>9.000000000000000</double>
+                     <double>0.000000000000000</double>
                     </property>
                     <property name="singleStep">
                      <double>0.500000000000000</double>
                     </property>
                     <property name="value">
-                     <double>0.000000000000000</double>
+                     <double>-3.000000000000000</double>
                     </property>
                    </widget>
                   </item>
@@ -397,12 +321,28 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QGraphicsView" name="simulationGraphicsView">
+    <property name="geometry">
+     <rect>
+      <x>295</x>
+      <y>10</y>
+      <width>1091</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="renderHints">
+     <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+    </property>
+    <property name="viewportUpdateMode">
+     <enum>QGraphicsView::FullViewportUpdate</enum>
+    </property>
+   </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>300</y>
-      <width>291</width>
+      <width>271</width>
       <height>261</height>
      </rect>
     </property>
@@ -414,7 +354,7 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>271</width>
+       <width>251</width>
        <height>231</height>
       </rect>
      </property>
@@ -429,7 +369,7 @@
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>5</number>
+       <number>4</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -444,9 +384,6 @@
         </property>
         <item>
          <widget class="QPushButton" name="addTransmitterButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="maximumSize">
            <size>
             <width>20</width>
@@ -460,9 +397,6 @@
         </item>
         <item>
          <widget class="QComboBox" name="transmitterSelector">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -521,9 +455,6 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QSlider" name="sliderBaseStationPower">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -549,9 +480,6 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBoxBaseStationPower">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -643,16 +571,16 @@
                <number>1</number>
               </property>
               <property name="minimum">
-               <double>0.000000000000000</double>
+               <double>-9.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>9.000000000000000</double>
+               <double>0.000000000000000</double>
               </property>
               <property name="singleStep">
                <double>0.500000000000000</double>
               </property>
               <property name="value">
-               <double>0.000000000000000</double>
+               <double>-7.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -679,9 +607,6 @@
         </item>
         <item>
          <widget class="QPushButton" name="deleteBaseStationPushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -704,7 +629,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>313</width>
+     <width>1400</width>
      <height>18</height>
     </rect>
    </property>
@@ -728,16 +653,8 @@
     <addaction name="separator"/>
     <addaction name="actionSee_Github"/>
    </widget>
-   <widget class="QMenu" name="menuTP4_Simulation">
-    <property name="title">
-     <string>TP4-Simulation</string>
-    </property>
-    <addaction name="actionRun_TP4_Simulation"/>
-    <addaction name="actionSave_TP4_image"/>
-   </widget>
    <addaction name="menuTest"/>
    <addaction name="menuInfo"/>
-   <addaction name="menuTP4_Simulation"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
@@ -785,19 +702,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionRun_TP4_Simulation">
-   <property name="text">
-    <string>Run TP4 Simulation</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
-   </property>
-  </action>
-  <action name="actionSave_TP4_image">
-   <property name="text">
-    <string>Save TP4 image</string>
    </property>
   </action>
  </widget>
