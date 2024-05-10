@@ -28,10 +28,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ray.h ray.cpp
         obstacle.h obstacle.cpp
         transmitter.h transmitter.cpp
-        simulationgraphicsscene.h simulationgraphicsscene.cpp
         receiver.h receiver.cpp
-        heatmapgradientlegend.h heatmapgradientlegend.cpp
-        utils.h
         parameters.h
         raysegment.h raysegment.cpp
         resources.qrc

@@ -8,7 +8,6 @@
 #include "obstacle.h"
 #include "ray.h"
 #include "receiver.h"
-#include "simulationgraphicsscene.h"
 #include "transmitter.h"
 
 class Simulation
