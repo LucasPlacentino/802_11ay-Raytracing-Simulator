@@ -16,7 +16,7 @@ public:
     Simulation(); // constructor
     bool ran = false;
     bool is_running = false;
-    qreal resolution = 0.5; // meters, 0.5m x 0.5m cells
+    qreal resolution = 0.5; // meters, default is 0.5m x 0.5m cells
 
     void run(QProgressBar* progress_bar);
     void clear();
