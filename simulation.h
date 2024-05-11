@@ -24,7 +24,6 @@ public:
     void createBaseStation(Transmitter* transmitter);
     Transmitter* getBaseStation(int index); // needed ?
     void deleteBaseStation(int index);
-    //std::vector<Obstacle*>* getObstacles();
     QList<Obstacle*>* getObstacles(); // needed ?
     unsigned int getNumberOfObstacles(); // needed ?
     unsigned int getNumberOfBaseStations(); // needed ?
