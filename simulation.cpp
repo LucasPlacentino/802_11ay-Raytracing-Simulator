@@ -146,7 +146,7 @@ void Simulation::run(QProgressBar* progress_bar)
             i++;
         }
     }
-    qDebug() << this->cells.length()*this->cells[0].length() << i;
+    qDebug() << this->cells.length()*this->cells[0].length() << "cells," << i << "computed";
 
     //end of simulation
     this->simulation_time = this->timer.elapsed();
@@ -186,6 +186,7 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                 //qDebug() << "ignore";
+                delete ray_1_reflection;
                 delete test_segment;
                 continue; // break out of this forloop instance for this wall
             }
@@ -228,9 +229,10 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
 
                     RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX->x(),_RX->y());
                     RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
-                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) && !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
+                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) || !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
                         //qDebug() << "ignore";
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
+                        delete ray_2_reflection;
                         delete test_segment_1;
                         delete test_segment_2;
                         continue; // break out of this forloop instance for this wall
@@ -297,23 +299,39 @@ void Simulation::addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D&
     // computes the final |Gamma| coeff for the ray_segment's reflection with this wall, and adds it to this ray's coeffs list
     QVector2D _d = _p2-_p1;
     qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
-    qreal _sin_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary)); // sqrt(1 - pow(_cos_theta_i,2))
+    qreal _sin_theta_i = sqrt(1 - pow(_cos_theta_i,2));
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->properties.relative_permittivity);
     qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
-    qreal Gamma_coeff = abs(computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall));
+    complex<qreal> Gamma_coeff = computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall);
     //qDebug() << "addReflection, Gamma_coeff:" << Gamma_coeff;
+    if (Gamma_coeff.real() != Gamma_coeff.real() || Gamma_coeff.imag() != Gamma_coeff.imag()) {
+        qDebug() << "Gamma_coeff = NaN";
+        qDebug() << "_d" << _d;
+        qDebug() << "_cos_theta_i" << _cos_theta_i;
+        qDebug() << "_sin_theta_i" << _sin_theta_i;
+        qDebug() << "_sin_theta_t" << _sin_theta_t;
+        qDebug() << "_cos_theta_t" << _cos_theta_t;
+    }
     _ray->addCoeff(Gamma_coeff);
 }
 
-qreal Simulation::makeTransmission(RaySegment* ray_segment, Obstacle* wall) {
+complex<qreal> Simulation::makeTransmission(RaySegment* ray_segment, Obstacle* wall) {
     // computes the final |T| coeff for the ray_segment's transmission with this wall
-    QVector2D _eta = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
-    qreal _cos_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->unitary));
-    qreal _sin_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->normal));
+    QVector2D _d = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
+    qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary));
+    qreal _sin_theta_i = sqrt(1 - pow(_cos_theta_i,2));
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->properties.relative_permittivity);
     qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
     //qreal s = wall->thickness/_cos_theta_t;
-    qreal T_coeff = abs(computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall));
+    complex<qreal> T_coeff = computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall);
+    if (T_coeff.real() != T_coeff.real() || T_coeff.imag() != T_coeff.imag()) {
+        qDebug() << "Gamma_coeff = NaN";
+        qDebug() << "_d" << _d;
+        qDebug() << "_cos_theta_i" << _cos_theta_i;
+        qDebug() << "_sin_theta_i" << _sin_theta_i;
+        qDebug() << "_sin_theta_t" << _sin_theta_t;
+        qDebug() << "_cos_theta_t" << _cos_theta_t;
+    }
     return T_coeff;
 }
 void Simulation::checkTransmissions(Ray* _ray, QList<Obstacle*> _reflection_walls) {
@@ -331,7 +349,7 @@ void Simulation::checkTransmissions(Ray* _ray, QList<Obstacle*> _reflection_wall
                     ////qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
                     //////qreal s = wall->thickness/_cos_theta_t;
                     ////qreal T_coeff = abs(computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall));
-                    qreal T_coeff = abs(makeTransmission(ray_segment,wall));
+                    complex<qreal> T_coeff = makeTransmission(ray_segment,wall);
                     //qDebug() << "checkTransmission, T_coeff:" << T_coeff;
                     _ray->addCoeff(T_coeff);
                 }
@@ -356,8 +374,8 @@ void Simulation::computeDirect(Receiver* _RX, const QVector2D& _TX)
             // add coeff to power computing
             //addCoeff(T_coeff);
 
-            qreal T_coeff_module = abs(makeTransmission(_direct_line,wall));
-            direct_ray->addCoeff(T_coeff_module);
+            complex<qreal> T_coeff = makeTransmission(_direct_line,wall);
+            direct_ray->addCoeff(T_coeff);
         } else {
             continue;
         }
@@ -482,13 +500,13 @@ void Simulation::traceRay(QSharedPointer<Ray> ray, int reflections)
 
 void Simulation::createCellsMatrix()
 {
-    //TODO:
-    qInfo("Creating cells matrix...");
-    qDebug() << "cells matrix initial size:" << this->cells.size();
     int max_x_count = ceil(max_x/this->resolution); // -1 ?
-    qDebug() << "Max count of cells X:" << max_x_count;
+    //qDebug() << "Max count of cells X:" << max_x_count;
     int max_y_count = ceil(-min_y/this->resolution); // -1 ?
-    qDebug() << "Max count of cells Y:" << max_y_count;
+    //qDebug() << "Max count of cells Y:" << max_y_count;
+
+    qInfo() << "Creating cells matrix" << max_x_count << "x" << max_y_count << "...";
+    //qDebug() << "cells matrix initial size:" << this->cells.size();
     for (int x_count=0; x_count < max_x_count; x_count++) {
         //qDebug() << "Creating new line of cells_matrix...";
         qreal x = this->resolution/2+(this->resolution*x_count);

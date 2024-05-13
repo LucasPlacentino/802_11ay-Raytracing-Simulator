@@ -43,28 +43,34 @@ Ray::Ray(QPointF start, QPointF end) {
     this->end=end;
 }
 
-void Ray::addCoeff(qreal coeff_module) {
+void Ray::addCoeff(complex<qreal> coeff) {
     // add a Transmission or Reflection coefficient to this ray's list of coeffs
     //qDebug() << "Adding coeff to ray:" << coeff_module;
     // which one to use ? :
-    this->coeffsList.append(coeff_module);
-    this->totalCoeffs*=pow(coeff_module,2);
+    if (coeff.real() != coeff.real() || coeff.imag() != coeff.imag() ||coeff != coeff) {
+        qDebug() << "NaN coeff";
+    }
+    this->coeffsList.append(coeff);
+    //this->totalCoeffs*=pow(abs(coeff),2);
 }
 
 qreal Ray::getTotalCoeffs() {
     // returns the total product of all of the ray's coefficients multiplied by the exponent term
-    qreal res = totalCoeffs;
-    res *= pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
-    //qDebug() << "getTotalCoeffs ray:" << res;
-    return res;
-
-    //qreal res = 0;
-    //for (complex<qreal> coeff : this->coeffsList) {
-    //    res*=pow(abs(coeff),2); // all coeffs
-    //}
-    //res*=pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
-    //qDebug() << "computeAllCoeffs:" << res;
+    //qreal res = totalCoeffs;
+    //res *= pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
+    ////qDebug() << "getTotalCoeffs ray:" << res;
     //return res;
+
+    qreal res = 1;
+    for (complex<qreal> coeff : this->coeffsList) {
+        res*=pow(abs(coeff),2); // all coeffs
+    }
+    res*=pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
+    //qDebug() << "computeAllCoeffs:" << res;
+    if (res != res) {
+        qDebug() << "NaN Total Coeff";
+    }
+    return res;
 }
 
 QList<QGraphicsLineItem*> Ray::getSegmentsGraphics(){

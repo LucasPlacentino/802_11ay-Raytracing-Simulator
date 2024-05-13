@@ -109,7 +109,7 @@ void MainWindow::on_runSimulationButton_clicked()
         return;
     }
 
-    qInfo("Starting simulation");
+    qInfo("\n### Starting simulation ###");
     QProgressBar* progress_bar = ui->simulationProgressBar;
     progress_bar->setValue(100);
     ui->runSimulationButton->setEnabled(false);
@@ -143,10 +143,10 @@ bool MainWindow::runSimulation(QProgressBar* progress_bar)
     try {
         simulation.run(progress_bar);
 
-        qInfo("Simulation ended successfully");
+        qInfo("### Simulation ended successfully ###\n");
         return true;
     } catch (...) {
-        qInfo("Simulation failed");
+        qInfo("#!#!#!# Simulation failed #!#!#!#\n");
         //qError(error);
         return false;
     }

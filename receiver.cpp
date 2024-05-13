@@ -113,11 +113,11 @@ void Receiver::updateBitrateAndColor()
         qreal min_power_mW = std::pow(10.0, min_power_dBm / 10.0);
         //qreal power_mW = std::pow(10.0, power_dBm / 10.0);
 
-        bitrate = min_bitrate_Mbps + (((this->power*1000 - min_power_mW) / (max_power_mW - min_power_mW)) * (max_bitrate_Mbps - min_bitrate_Mbps));
+        bitrate = min_bitrate_Mbps + (((this->power - min_power_mW/1000) / (max_power_mW/1000 - min_power_mW/1000)) * (max_bitrate_Mbps - min_bitrate_Mbps));
         // OR ?
         //bitrate = min_bitrate_Mbps + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_Mbps - min_bitrate_Mbps));
 
-        qDebug() << "bitrate (Mbps):" << bitrate;
+        //qDebug() << "bitrate (Mbps):" << bitrate;
         ////bitrate = qBound(50, bitrate, 40000);
 
         // Color gradient heatmap scale:
@@ -125,17 +125,17 @@ void Receiver::updateBitrateAndColor()
         ////int h = static_cast<int>((10*std::log10(this->power*1000) - -90) * (0 - 240) / (-40 - -90) + 240); // ? modulo 360 because QColor::fromHsl() h is in [0,359]
         ////this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
 
-        qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);
+        //qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);
         // or
         //qreal value_normalized = (this->power*1000 - min_power_mW) / (max_power_mW - min_power_mW);
         // or
-        //qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
-        qDebug() << "value_normalized:" << value_normalized;
+        qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
+        //qDebug() << "value_normalized:" << value_normalized;
         //value_normalized = qBound(0.0, value_normalized, 1.0);
         QColor color = computeColor(value_normalized);
         // testing in monochrome :
         //QColor color = QColor::fromRgbF(value_normalized,value_normalized,value_normalized);
-        qDebug() << "cell color:" << color;
+        //qDebug() << "cell color:" << color;
         this->cell_color = color;
     }
     this->bitrate_Mbps = bitrate;
@@ -179,12 +179,16 @@ qreal Receiver::computeTotalPower(Transmitter* transmitter) // returns final tot
 {
     qreal res = 0;
     for (Ray* ray : this->all_rays) {
-        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
+        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term, returns |T|²|G|²|exp|²
     }
-    qDebug() << "computeTotalPower res+=ray->getTotalCoeffs" << res;
+    //qDebug() << "computeTotalPower res+=ray->getTotalCoeffs" << res;
     // multiply by the term before the sum:
     res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
-    qDebug() << "computeTotalPower:" << res;
+    if (res != res) {
+        qDebug() << "computeTotalPower: NaN !!!";
+    }
+
+    //qDebug() << "computeTotalPower:" << res;
     return res;
 }

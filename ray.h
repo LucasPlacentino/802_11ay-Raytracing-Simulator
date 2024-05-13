@@ -45,7 +45,7 @@ public:
     qreal totalCoeffs=1; // product of all of the ray's coefficients (|T_1|^2 * |G_1|^2 * ...)
     qreal distance=1e10; //? not used ? // total ray's distance (default is 1e10 instead of 0 to avoid inf power)
 
-    void addCoeff(qreal coeff_module);
+    void addCoeff(complex<qreal> coeff);
 
     qreal getTotalCoeffs();
 

@@ -278,6 +278,9 @@ public:
 };
 TransmitterTP4 TX(32,10); // initialized global TX
 ReceiverTP4 RX(47, 65); // initialized global RX
+// Debug TEST, reverse positions :
+//ReceiverTP4 RX(32,10); // initialized global TX
+//TransmitterTP4 TX(47, 65); // initialized global RX
 
 QList<QGraphicsEllipseItem*> tx_images; // used for debugging: list of images graphics
 QList<QGraphicsEllipseItem*> reflection_points; // used for debugging: list of reflection points graphics
@@ -600,6 +603,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
                 // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                 qDebug() << "ignore";
+                delete ray_1_reflection;
                 delete test_segment;
                 continue; // break out of this forloop instance for this wall
             }
@@ -641,8 +645,9 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
 
                     RaySegmentTP4* test_segment_1 = new RaySegmentTP4(_image_imageTX.x(),_image_imageTX.y(),_RX.x(),_RX.y());
                     RaySegmentTP4* test_segment_2 = new RaySegmentTP4(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
-                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) && !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
+                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) || !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
                         qDebug() << "ignore";
+                        delete ray_2_reflection;
                         // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
                         delete test_segment_1;
                         delete test_segment_2;
@@ -893,7 +898,7 @@ QGraphicsView* runTP4(){
     view->setWindowIcon(QIcon(":/assets/icon.png"));
     view->show(); // shows the graphics scene to the user
     qDebug() << "Time elapsed:" << timer.elapsed() << "ms";
-    qDebug() << "Total number of rays:" << QString::number(all_rays.length()) << "(should be 5).";
+    qDebug() << "Total number of rays:" << QString::number(all_rays.length());
     qDebug() << "The receiver threshold is at -65 dBm";
     // RX.power *1000 because it's in Watts and we need in mW :
     qDebug() << QString((10*std::log10(RX.power*1000) >= -65) ? "-> Enough power:" : "-> Not enough power:") << 10*std::log10(RX.power*1000) << "dBm";
