@@ -445,7 +445,7 @@ void Simulation::showView()
     this->view->setAttribute(Qt::WA_AlwaysShowToolTips); //? maybe necessary ?
 
     // TODO: test some view parameters
-    this->view->setFixedSize(970, 690);
+    this->view->setFixedSize(990, 720);
     this->view->scale(6, 6);
     qDebug() << "Showing graphics view";
     //QIcon _icon = QIcon(QDir::currentPath()+"/icon.png");
@@ -780,17 +780,17 @@ void Simulation::addLegend(QGraphicsScene* scene)
     gradient.setStart(1.0, 0.0); // start left
     gradient.setFinalStop(0.0, 0.0); // end right
 
-    QPen gradientPen(Qt::white);
-    gradientPen.setWidthF(0.3);
+    QPen legendPen(Qt::white);
+    legendPen.setWidthF(0.3);
     QBrush gradientBrush(gradient);
 
-    gradient_graphics->setPen(gradientPen);
+    gradient_graphics->setPen(legendPen);
     gradient_graphics->setBrush(gradientBrush);
     scene->addItem(gradient_graphics); // draw gradient rectangle
     qreal rect_width = rect.width();
     for (int i=0; i<5; i++) {
         QGraphicsLineItem* small_line = new QGraphicsLineItem(rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y(),rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y()+2.0);
-        small_line->setPen(gradientPen);
+        small_line->setPen(legendPen);
         scene->addItem(small_line);
     }
     //QGraphicsLineItem* left_line = new QGraphicsLineItem(rect.bottomLeft().x(),rect.bottomLeft().y(),rect.bottomLeft().x(),rect.bottomLeft().y()+2.0);
@@ -814,4 +814,42 @@ void Simulation::addLegend(QGraphicsScene* scene)
 
     scene->addItem(min_text);
     scene->addItem(max_text);
+
+    QGraphicsLineItem* x_line = new QGraphicsLineItem(0,-5,15*10,-5);
+    QGraphicsLineItem* y_line = new QGraphicsLineItem(-5,0,-5,8*10);
+    x_line->setPen(legendPen);
+    y_line->setPen(legendPen);
+    scene->addItem(x_line);
+    scene->addItem(y_line);
+    QGraphicsTextItem* x_label = new QGraphicsTextItem("x");
+    x_label->setPos(-2.5,-6.8);
+    x_label->setScale(0.15);
+    x_label->setDefaultTextColor(Qt::white);
+    scene->addItem(x_label);
+    QGraphicsTextItem* y_label = new QGraphicsTextItem("y");
+    y_label->setPos(-6,-3.7);
+    y_label->setScale(0.15);
+    y_label->setDefaultTextColor(Qt::white);
+    scene->addItem(y_label);
+    for (int x=0; x<=15; x++) {
+        QGraphicsLineItem* small_line = new QGraphicsLineItem(0+(x*10),-5,0+(x*10),-6);
+        small_line->setPen(legendPen);
+        QGraphicsTextItem* x_index = new QGraphicsTextItem(QString::number(x));
+        x_index->setPos(small_line->line().x2()-1.2,small_line->line().y2()-3.5);
+        x_index->setScale(0.15);
+        x_index->setDefaultTextColor(Qt::white);
+        scene->addItem(small_line);
+        scene->addItem(x_index);
+    }
+    for (int y=0; y<=8; y++) {
+        QGraphicsLineItem* small_line = new QGraphicsLineItem(-5,0+(y*10),-6,0+(y*10));
+        small_line->setPen(legendPen);
+        QGraphicsTextItem* y_index = new QGraphicsTextItem(QString::number(y));
+        y_index->setPos(small_line->line().x2()-2.3,small_line->line().y2()-2);
+        y_index->setScale(0.15);
+        y_index->setDefaultTextColor(Qt::white);
+        scene->addItem(small_line);
+        scene->addItem(y_index);
+    }
+
 }
