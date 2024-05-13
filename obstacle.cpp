@@ -156,8 +156,10 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
 
     this->properties.epsilon = epsilon_0 * this->properties.relative_permittivity;
     this->properties.Z_m = sqrt(mu_0 / (this->properties.epsilon - j * this->properties.conductivity / omega));
-    this->properties.alpha_m = 1;
-    this->properties.beta_m = 1;
+    this->properties.gamma_m = 0;
+    this->properties.alpha_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) - (double)1);
+    this->properties.beta_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) + (double)1);
+    //this->properties.beta_m = 1;
     this->properties.gamma_m = this->properties.alpha_m +j*this->properties.beta_m;
 
     //qDebug("Wall created.");

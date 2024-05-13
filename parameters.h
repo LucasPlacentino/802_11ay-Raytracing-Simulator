@@ -25,6 +25,6 @@ constexpr qreal min_y = -8;
 
 constexpr qreal beta_0 = 2*M_PI*freq/c; // beta
 
-constexpr qreal G_TX = 1; // TODO: use correct value
+constexpr qreal G_TX = 1.7; // TODO: je crois que c'est la bonne value!
 
 #endif //PARAMETERS_H

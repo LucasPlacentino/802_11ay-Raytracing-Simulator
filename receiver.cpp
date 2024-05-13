@@ -176,7 +176,7 @@ qreal Receiver::computeTotalPower(Transmitter* transmitter) // returns final tot
     }
     //qDebug() << "computeTotalPower res+=ray->getTotalCoeffs" << res;
     // multiply by the term before the sum:
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->G_TXP_TX*transmitter->power_dBm; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
     if (res != res) {
         qDebug() << "computeTotalPower: NaN !!!";
@@ -185,3 +185,6 @@ qreal Receiver::computeTotalPower(Transmitter* transmitter) // returns final tot
     //qDebug() << "computeTotalPower:" << res;
     return res;
 }
+
+
+
