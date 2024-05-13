@@ -151,3 +151,47 @@ Le coefficient de r{\'e}flexion se calcule comme suit :
 
 o{\`u} $\Gamma_{\perp}$ se calcule de la m{\^e}me mani{\`e}re que pour le
 coefficient de transmission.
+\subsection{Directivit{\'e} et gain}
+
+Les antennes n'{\'e}mettent pas de mani{\`e}re isotrope par construction. Leur
+efficacit{\'e} d{\'e}pend de la direction dans laquelle elles
+{\'e}mettent/re{\c c}oivent l'onde. Pour quantifier cela, on fait appel {\`a}
+un coefficient appel{\'e} le gain d'antenne $G (\theta, \phi)$, qui défini à
+{\`a} partir de l'efficacité d'antenne $\eta$ et de sa directivit{\'e} $D (\theta, \varphi)$ (quotient de son intensit{\'e} rayonn{\'e}e
+dans une direction $U$ et de son intensit{\'e} rayonn{\'e}e moyenne $P / 4
+\pi$). Mis sous forme d'{\'e}quation nous avons
+\[ G (\theta, \varphi) = \eta D (\theta, \varphi) = \eta \frac{U (\theta,
+   \varphi)}{P_{a r} / 4 \pi} \]
+Or, nous avons suppos{\'e} par hypoth{\`e}se que notre antenne a un rendement
+maximal $\eta = 1$. Nous avons une antenne $\lambda / 2$, et comme toutes nos
+antennes {\'e}mettent et re{\c c}oivent dans le plan horizontal, nous savons
+{\'e}valuer la directivit{\'e} dans cette direction (qui est la direction
+maximale pour ce genre d'antennes), qui vaut donc:
+\[ D (\theta = 90\degree) = \frac{16}{3 \pi} \approx 1.7 = G
+   (\theta = 90\degree )\]
+\subsection{Champ {\'e}lectrique et puissance }
+\subsubsection*{Champ électrique}
+L'amplitude du champ {\'e}lectrique de l'onde {\'e}lectromagn{\'e}tique re{\c
+c}ue au point de r{\'e}ception sera impact{\'e}e par toutes les r{\'e}flexions
+et transmissions qu'elle subira durant le trajet qui la m{\`e}ne au
+r{\'e}cepteur. Pour mod{\'e}liser cela, on se sert des coefficients
+appropri{\'e}s d{\'e}finis pr{\'e}c{\'e}demment, l'amplitude du champ sera
+\[ \underline{E_n} = T_1 T_2 \ldots \Gamma_1 \Gamma_2 \ldots D_1 D_2 \ldots
+   \sqrt{60 G_{\tmop{TX}} P_{\tmop{TX}}} \frac{e^{- j \beta d_n}}{d_n} \]
+avec $d_n$ la distance parcourue par l'onde, $D_n$ les coefficients de
+diffraction (qui ne seront pas pris en compte pour le projet donc vaudront 1)
+et $P_{\tmop{TX}}$ la puissance de l'antenne transmettrice. Les autres param{\`e}tres de
+l'{\'e}quation sont les param{\`e}tres d{\'e}finis plus haut.
+\subsubsection*{Puissance reçue}
+L'onde {\'e}lectromagn{\'e}tique, quand elle est r{\'e}ceptionn{\'e}e au point
+d'antenne, a une certaine valeur de puissance, cette valeur peut se calculer
+comme suit
+\[ P_{\tmop{RX}} = \frac{1}{8 R_a} \left| \sum_{i = 1}^N \vec{h}_e (\theta_n,
+   \varphi_n) \cdot \overrightarrow{\underline{E}}_n (\vec{r}) \right|^2 \]
+Cependant, pour {\'e}valuer la puissance moyenne re{\c c}ue sur la zone locale
+(que nous noterons aussi $P_{\tmop{RX}}$), et donc
+\[ P_{\tmop{RX}} = \frac{1}{8 R_a} \sum_{i = 1}^N \left| \vec{h}_e (\theta_n,
+   \varphi_n) \cdot \overrightarrow{\underline{E}}_n (\vec{r}) \right|^2 \]
+Avec tous les termes d{\'e}finis dans les sections pr{\'e}c{\'e}dentes.
+
+\ 
