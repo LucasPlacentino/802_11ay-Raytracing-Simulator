@@ -9,7 +9,7 @@ Ces annexes comprennent des parties du code du projet.
 \section{main.cpp}
 \label{appendix:main.cpp}
 
-%TOUT LE CODE WESH
+Lance simplement l'interface utilisateur de l'aplication.
 
 \inputminted[
 frame=lines,
@@ -37,7 +37,8 @@ breaklines
 \newpage
 \section{simulation.cpp}
 \label{appendix:simulation.cpp}
-Le \textit{header file \textbf{.h}} définissant la classe \textbf{Simulation} se trouve dans le Github du projet.
+Ce fichier contient toute l'implémentation de la logique de la simulation.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Simulation} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
 \inputminted[
 frame=lines,
 framesep=2mm,
@@ -47,6 +48,75 @@ linenos,
 breaklines
 ]{cpp}{../simulation.cpp}
 
+\newpage
+\section{transmitter.cpp}
+\label{appendix:transmitter.cpp}
+Ce fichier contient toute l'implémentation de la classe \textbf{Transmitter}.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Transmitter} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos,
+breaklines
+]{cpp}{../transmitter.cpp}
+
+\newpage
+\section{receiver.cpp}
+\label{appendix:receiver.cpp}
+Ce fichier contient toute l'implémentation de la classe \textbf{Receiver}.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Receiver} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos,
+breaklines
+]{cpp}{../receiver.cpp}
+
+\newpage
+\section{obstacle.cpp}
+\label{appendix:obstacle.cpp}
+Ce fichier contient toute l'implémentation de la classe \textbf{Obstacle} pour les murs.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Obstacle} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos,
+breaklines
+]{cpp}{../obstacle.cpp}
+
+\newpage
+\section{ray.cpp}
+\label{appendix:ray.cpp}
+Ce fichier contient toute l'implémentation de la classe \textbf{Ray}.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{Ray} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos,
+breaklines
+]{cpp}{../ray.cpp}
+
+\newpage
+\section{raysegment.cpp}
+\label{appendix:raysegment.cpp}
+Ce fichier contient toute l'implémentation de la classe \textbf{RaySegment}.\\
+Le \textit{header file \textbf{.h}} définissant la classe \textbf{RaySegment} se trouve dans le \underline{\href{https://github.com/LucasPlacentino/802_11ay-Raytracing-Simulator}{Github}} du projet.
+\inputminted[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+fontsize=\footnotesize,
+linenos,
+breaklines
+]{cpp}{../raysegment.cpp}
 
 
 
@@ -74,5 +144,4 @@ Ceci inclut:
 \begin{itemize}
     \item \textbf{mainwindow.cpp} (et son \textbf{.h}) : classe s'occupant de l'interface utilisateur.
     \item \textbf{tp4.cpp} : code reprenant l'implémentation de la simulation exclusivement utilisée pour le TP4, qui a servi de base initiale avant d'étendre les fonctionnalités au projet global.
-    \item ...
 \end{itemize}
