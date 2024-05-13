@@ -419,7 +419,6 @@ void MainWindow::on_liftOnFloorCheckBox_clicked(bool checked)
     simulation.lift_is_on_floor = checked;
 }
 
-
 void MainWindow::on_showCellOutlineCheckBox_toggled(bool checked)
 {
     simulation.show_cell_outline = checked;

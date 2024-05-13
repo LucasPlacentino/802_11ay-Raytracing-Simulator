@@ -734,7 +734,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     //    scene->addItem(TX->graphics);
     //    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
-    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->G_TXP_TX)));
+    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain*TX->power)));
     //qDebug() << "TX.graphics:" << TX->graphics->rect();
     scene->addItem(TX->graphics);
     qDebug() << "Transmitter added to scene.";

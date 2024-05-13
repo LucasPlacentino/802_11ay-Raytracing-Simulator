@@ -47,7 +47,7 @@ double Transmitter::getPower() const
 
 qreal Transmitter::getG_TXP_TX() const
 {
-    return this->G_TXP_TX;
+    return this->gain*this->power;
 }
 
 void Transmitter::setPower_dBm(int power_dBm)

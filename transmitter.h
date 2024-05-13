@@ -45,7 +45,7 @@ public:
     qreal power = 0.1; // ! in Watts
     qreal power_dBm = 20;
     // TODO:
-    qreal G_TXP_TX = 1.64; // vertical dipole lamda/2 antenna
+    qreal gain = 1.64; // calculé dans le rapport
     //qreal G_TX; // ?
     //qreal gain = G_TX;
 

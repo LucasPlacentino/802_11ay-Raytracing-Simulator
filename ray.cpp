@@ -60,12 +60,15 @@ qreal Ray::getTotalCoeffs() {
     //res *= pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
     ////qDebug() << "getTotalCoeffs ray:" << res;
     //return res;
-
+    qreal distance_ray = getTotalDistance();
+    qDebug() << distance_ray;
     qreal res = 1;
+    complex<qreal> res_q = 1;
     for (complex<qreal> coeff : this->coeffsList) {
-        res*=pow(abs(coeff),2); // all coeffs
+        res_q*=coeff; // all coeffs
     }
-    res*=pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
+    res = pow(abs(res_q),2);
+    res*=pow(abs(exp(-j*beta_0*distance_ray)/distance_ray),2); // exp term
     //qDebug() << "computeAllCoeffs:" << res;
     if (res != res) {
         qDebug() << "NaN Total Coeff";
@@ -107,7 +110,7 @@ QList<QGraphicsLineItem*> Ray::getSegmentsGraphics(){
     return ray_graphics;
 }
 
-qreal Ray::getTotalDistance() const {
+qreal Ray::getTotalDistance() {
     // returns the total distance of this ray (which is the either the sum of the distances of each segments,
     // or the distance between the last image and RX)
 
@@ -117,7 +120,6 @@ qreal Ray::getTotalDistance() const {
     //    d += segment->distance;
     //}
     //return d;
-    //qDebug() << "Ray getTotalDisctance:" << this->distance;
-
-    return this->distance;
+    qDebug() << "Ray getTotalDisctance:" << this->distance;
+    return this->distance*10;
 }
