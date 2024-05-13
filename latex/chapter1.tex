@@ -1,42 +1,153 @@
 \chapter{Modélisation}
 \label{chaper-1}
-Ce chapitre a pour but de présenter les différentes hypothèses et simplification de modélisation faites pour mettre en place notre simulation.
+\section{Hypoth{\`e}ses physiques}
 
-\section{Hypothèses physiques}
-On utilise les \textbf{hypothèses de champ lointain}, ce qui nous permet de modéliser la propagation des ondes électromagnétiques à l'aide de techniques de \textbf{\textit{ray-tracing}}. Les ondes sont supposées localement planes et leurs interactions avec l'environnement peuvent être calculées grâce aux modèles vus au cours (réflexion, transmission, diffraction). Nous utiliserons une géométrie de l'environnement simplifiée afin d'accélérer les calculs.\\
-On ne prend pas en compte la diffraction. On ignore les réflexions sur le plafond ou le sol. L'épaisseur des murs ne sera utilisée que pour le calcul des coefficients de transmission et réflexion. La détermination des chemins de propagation se fait de façon purement géométrique par la méthode des images. Chaque onde peut subir plusieurs interactions successivement le long de son trajet. On ne prend en compte que : \textbf{1.} l'onde directe, \textbf{2.} les ondes ayant subi une ou deux réflexions sur les murs. Chaque onde peut avoir subi des transmissions à travers des obstacles.\\
-La puissance reçue sera calculée de au centre de zones locales de 0,5m x 0,5m (puissance moyenne (8.80) du cours sera considérée pour chaque zone).\\
+\subsection{Hypoth{\`e}ses de d{\'e}part}
 
-Wi-Fi norme \textbf{IEEE 802.11ay}, opérant à \textbf{60GHz}. Nous considérons le problème dans un cadre \textbf{purement bidimensionnel}, la BS (\textit{base station}) et le récepteur se trouvent à la même hauteur. Antennes réceptrices et émettrices sont faites de \textbf{dipôles verticaux $\lambda/2$, sans pertes, avec une puissance d'émission de 20dBm}.\\
-Voir tableau [\ref{tab:materials-properties}] pour les caractéristiques de chaque matériau des obstacles (béton, cloison, vitre, et paroi métallique).\footnote{Pinhasi, Yosef \& Yahalom, Asher \& Petnev, Sergey. (2008). Propagation of ultra wide-band signals in lossy dispersive media. 2008 IEEE International Conference on Microwaves, Communications, Antennas and Electronic Systems, COMCAS 2008. 1 - 10. 10.1109/COMCAS.2008.4562803.}\\
+Pour simplifier la r{\'e}alisation du code, plusieurs simplifications
+g{\'e}om{\'e}triques et physiques ont {\'e}t{\'e} prises en compte.
 
-\begin{table}[H]
-\centering
-\caption{Permittivité relative et conductivité des différents matériaux}
-\label{tab:materials-properties}
-\begin{tabular}{|l|c|c|}
-    \hline
-    Matériau & Permittivité relative $\varepsilon_r$ & Conductivité $\sigma$ \\
-    \hline
-    Béton & 6,4954  & 0,073  \\
-    Cloison & 2,7  & 0,05346  \\
-    Verre & 6,3919  & 0,00107  \\
-    Métal & 1  & 10$^7$ \\
-    \hline
-\end{tabular}
-\end{table}
+\subsubsection{Sp{\'e}cificit{\'e}s du r{\'e}seau}
 
-La sensibilité du récepteur (un seuil de puissance reçue) dépend du débit binaire recherché. La zone où $P_{signal venant de la BS} > sensibilité récepteur$, est la \textbf{zone de couverture}. Nous supposerons que la sensibilité varie linéairement avec le débit binaire maximal atteignable. Quand en échelle log, les deux valeurs extrêmes sont: sensi=-90dBm -> débit=50Mb/s, sensi=-40dBm -> débit=40Gb/s (en dessous de -90dBm le communincation est impossible, et à partir de -40dBm le débit maximal est plafonné). Si plusieurs émetteurs, nous supposerons que le récepteur se connecte à l'émetteur offrant le plus de puissance (\textbf{donc pas de sommation des puissances de plusieurs émetteurs!}).\\
+Notre couverture de base est assur{\'e}e par une antenne dip{\^o}le $\lambda /
+2$, celle ci sera consid{\'e}r{\'e}e sans pertes. Elle {\'e}mettra avec une
+fr{\'e}quence de 60 GHz (suivant la norme wifi 802.11 ay) et avec une
+puissance de 20 dBm. Pour la r{\'e}ception, nous consid{\'e}rons un seuil
+minimal de -90 dBm et un seuil maximal de -40 dBm. Les d{\'e}bits binaires
+correspondants valent respectivement 50 Mb/s et 40 Gb/s.
 
-Résolution de 50cm.\\
+\subsubsection{G{\'e}om{\'e}trie du probl{\`e}me}
+
+Nous ne prendrons en compte que deux dimensions de l'espace, c'est {\`a} dire
+que nous consid{\'e}rons que les antennes sont plac{\'e}s {\`a} une m{\^e}me
+hauteur sur l'axe $z$ et n'{\'e}mettent et ne recoivent que dans la dimension
+transverse {\`a} celui ci. Donc nous ne consid{\'e}rons bien {\'e}videmment
+que les dimensions en $(x, y)$ de nos murs.
+
+\subsubsection{Simulation de la couverture de base}
+
+L'{\'e}tude de la couverture de base de la borne wifi se fait via la
+m{\'e}thode des images (d{\'e}taill{\'e}e plus loin) qui nous permettra de
+tracer le trajet des rayons entre l'antenne {\'e}mettrice et l'antenne
+r{\'e}ceptrice. On consid{\'e}reras les rayons transmis {\`a} travers les
+murs, et les ondes r{\'e}fl{\'e}chies avec un maximum de deux r{\'e}flexions.
+On ne prendra pas en compte la diffraction des ondes.
+
+\subsection{Hypoth{\`e}se de champ lointain}
+
+Afin d'utiliser nos m{\'e}thodes de trac{\'e} de rayon, nous allons
+d{\'e}terminer dans quel cadre th{\'e}orique on se place. Les dimensions de
+notre probl{\`e}mae nous imposent de travailler sous les hypoth{\`e}ses de
+\tmtextit{champ lointain}.
+
+La fronti{\`e}re de champ lointain est d{\'e}finie avec
+\[ r_f = \max \left\{ 1.6 \lambda, 5 D, \frac{2 D^2}{\lambda} \right\} \]
+avec $D$ la dimension du circuit {\'e}metteur et $\lambda$ la longueur d'onde
+d{\'e}duite de la fr{\'e}quence de travail $f$. Nos {\'e}metteurs sont des
+{\'e}metteurs de type $\lambda / 2$, leur dimension vaut donc
+approximativement $\lambda / 2$. Notre fr{\'e}quence de travail est celle du
+wifi 802.11 et donc $f = 60 \tmop{GHz}$. On peut donc {\'e}valuer $\lambda$
+via
+\[ \lambda = \frac{c}{f} = 5 \cdot 10^{- 3} m \]
+On en d{\'e}duit que $r_f = 5 D = 1.25 \tmop{cm}$ et que donc notre
+approximation est donc tout {\`a} fait valable car notre espace est
+d{\'e}coup{\'e} en carr{\'e}s de 0.5m.
+
+\subsection{Propri{\'e}t{\'e}s des antennes $\lambda / 2$}
+
+Les propri{\'e}t{\'e}s des antennes dip{\^o}les, dites $\lambda / 2$, ont
+{\'e}t{\'e} {\'e}tudi{\'e}es au cours dans le chapitre relatif aux antennes,
+d'o{\`u} nous d{\'e}duirons nos {\'e}quations. Dans notre cas, elle n'a pas de
+pertes et une r{\'e}sistance $R_a = 73 \Omega$. Plac{\'e}e sur l'axe $z$, sa
+hauteur {\'e}quivalente s'exprime comme
+\[ \vec{h}_e (\theta, \phi) = - \frac{\lambda \cos \left( \frac{\pi}{2} \cos
+   \theta \right)}{\pi \sin^2 \theta} \vec{1}_z \]
+Cependant, comme {\'e}nonc{\'e} plus haut, nous n'allons consid{\'e}rer que
+deux dimensions de l'espace, et donc nous prendrons $\theta = \frac{\pi}{2}$.
+\[ \vec{h}_e \left( \frac{\pi}{2}, \phi \right) = - \frac{\lambda}{\pi}
+   \vec{1}_z \]
+Nous prendrons cette valeur en compte dans le calcul des puissances.
+
+\section{Propagation des ondes}
+
+Les formules de cette section sont issues du cours, principalement du chapitre
+relatif aux calculs de coefficients de r{\'e}flexion, transmission et
+diffraction.
+
+\subsection{Propri{\'e}t{\'e}s des murs}
+
+Les champs se propageront soit dans l'air (assimil{\'e} au vide), soit en
+traversant et en se r{\'e}fl{\'e}chissant sur des murs. Pour calculer les
+effets relatifs {\`a} ces interactions entre les murs et les ondes, on
+utiliseras leurs propri{\'e}t{\'e}s {\'e}lectriques. Ces propri{\'e}t{\'e}s
+sont donn{\'e}es par la constante de propagation dans un mat{\'e}riau
+\[ \gamma_m = \alpha_m + j \beta_m = \sqrt{j \omega \mu (\sigma + j \omega
+   \epsilon)} \]
+avec $\sigma$ la conductivit{\'e} et $\epsilon$ la permettivit{\'e} du
+mat{\'e}riau, repris dans ce tableau (o{\`u} $\epsilon = \epsilon_r
+\epsilon_0$).
+
+\begin{center}{
+{\begin{tabular}{|l|l|l|}
+  \hline
+  \textbf{Mat{\'e}riau} & \textbf{$\epsilon$} & \textbf{$\sigma$}\\
+  \hline
+  brique & 3.95 & 0.073\\
+  \hline
+  b{\'e}ton & 6.4954 & 1.43\\
+  \hline
+  cloison & 2.7 & 0.05346\\
+  \hline
+  vitre & 6.3919 & 0.00107\\
+  \hline
+  paroi m{\'e}tallique & 1 & $10^7$\\
+  \hline
+\end{tabular}}
+\end{center}
+
+\subsection{R{\'e}flexions et transmissions}
+
+\subsubsection*{Angle transmis}
+
+Pour calculer l'angle transmis $\theta_t$ {\`a} l'interface entre deux
+mat{\'e}riaux on utilise la loi de Snell Descartes qui s'exprime
+\[ \sin \theta_t = \sqrt{\frac{\epsilon_{r 1}}{\epsilon_{r 2}}} \sin \theta_i
+\]
+avec $\theta_i$ l'angle incident, et $\epsilon_r$ la permittivit{\'e}
+relative. En pratique, nous assimilerons l'air au vide et prendrons donc
+$\epsilon_r = 1$ pour celui ci.
+
+\subsubsection*{Imp{\'e}dance}
+
+Pour {\'e}valuer nos coefficients de transmission et de r{\'e}flexion, on
+d{\'e}finit l'imp{\'e}dance d'un mat{\'e}riau $Z_m$ comme suit
+\[ Z_m = \sqrt{\frac{\mu}{\tilde{\epsilon}}} = \sqrt{\frac{\mu_0}{\epsilon - j
+   \sigma / \omega}} \]
+avec $\mu_0$ la perm{\'e}abilit{\'e} du vide, $\epsilon$ la permittivit{\'e}
+du mat{\'e}riau, $\sigma$ sa conductivit{\'e} et $\omega$ la pulsation de
+l'onde {\'e}lectromagn{\'e}tique.
+
+\subsubsection*{Coefficient de transmission}
+
+Le coefficient de transmission {\`a} travers un obstacle se calcule avec cette
+formule
+\[ T_m (\theta_i) = \frac{(1 - \Gamma_{\perp}^2 (\theta_i)) e^{- \gamma_m
+   s}}{1 - \Gamma_{\perp}^2 (\theta_i) e^{- 2 \gamma_m s} e^{j \beta 2 s \sin
+   \theta_t \sin \theta_i}} \]
+o{\`u} $\Gamma_{\perp}$ est le coefficient de r{\'e}flexion de la polarisation
+perpendiculaire, qui se calcule comme suit
+\[ \Gamma_{\perp} (\theta_i) = \frac{Z_m \cos \theta_i - Z_0 \cos
+   \theta_t}{Z_m \cos \theta_i + Z_0 \cos \theta_t} \]
+
+\subsubsection*{Coefficient de r{\'e}flexion}
+
+Le coefficient de r{\'e}flexion se calcule comme suit :
+\[ \Gamma_m (\theta_i) = \Gamma_{\perp} (\theta_i) - \frac{(1 -
+   \Gamma_{\perp}^2 (\theta_i)) \Gamma_{\perp} (\theta_i) e^{- 2 \gamma_m s}
+   e^{j \beta 2 s \sin \theta_t \sin \theta_i}}{1 - \Gamma_{\perp}^2
+   (\theta_i) e^{- 2 \gamma_m s} e^{j \beta 2 s \sin \theta_t \sin \theta_i}}
+\]
 
 
--> Voir syllabus p 59? etc\\
-
-Longueur d'onde 60GHz: $\lambda=5 \mathrm{~mm}$\\
-
-$$
-r_{\mathrm{ff}}=\operatorname{Max}\left\{1,6 \lambda ; 5 D ; \frac{2 D^2}{\lambda}\right\}
-$$
-Les antennes d'une station de base pour du Wi-Fi 802.11ay sont de l'ordre de quelques centimètres, prenons 2cm. La zone de champ lointain commence alors à une distance de $r_{\mathrm{ff}}= \operatorname{Max}\{16 ; 10 ; 0.8\} = 16\mathrm{~cm}$. 
-
+o{\`u} $\Gamma_{\perp}$ se calcule de la m{\^e}me mani{\`e}re que pour le
+coefficient de transmission.
