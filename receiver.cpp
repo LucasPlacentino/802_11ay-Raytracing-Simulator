@@ -99,7 +99,7 @@ void Receiver::updateBitrateAndColor()
     qreal power_dBm = 10*std::log10(this->power*1000);
     if (this->power != this->power) {
         bitrate = 9999999999999999;
-        this->cell_color = QColor::fromRgb(255,192,203);
+        this->cell_color = QColor::fromRgb(255,192,203); // pink
         qDebug() << "--- ! ERROR: Cell has NaN power ! ---";
     } else if (power_dBm > max_power_dBm) {
         bitrate = max_bitrate_Mbps; //in Mbps, 40 Gbps max from -40 dBm
@@ -111,19 +111,11 @@ void Receiver::updateBitrateAndColor()
         // Conversion to bitrate (beware log scale)
         qreal max_power_mW = std::pow(10.0, max_power_dBm / 10.0);
         qreal min_power_mW = std::pow(10.0, min_power_dBm / 10.0);
-        //qreal power_mW = std::pow(10.0, power_dBm / 10.0);
 
         bitrate = min_bitrate_Mbps + (((this->power - min_power_mW/1000) / (max_power_mW/1000 - min_power_mW/1000)) * (max_bitrate_Mbps - min_bitrate_Mbps));
         // OR ?
         //bitrate = min_bitrate_Mbps + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_Mbps - min_bitrate_Mbps));
-
         //qDebug() << "bitrate (Mbps):" << bitrate;
-        ////bitrate = qBound(50, bitrate, 40000);
-
-        // Color gradient heatmap scale:
-        //// normalize power_dBm (or bitrate) to [0,360[ or more like [0,240] so that we have between red and dark blue
-        ////int h = static_cast<int>((10*std::log10(this->power*1000) - -90) * (0 - 240) / (-40 - -90) + 240); // ? modulo 360 because QColor::fromHsl() h is in [0,359]
-        ////this->cell_color = QColor::fromHsl(h, 255, 92); // or QColor::fromHsv(), h, 255 saturation, 128 or 92 lightness
 
         //qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);
         // or
@@ -131,11 +123,12 @@ void Receiver::updateBitrateAndColor()
         // or
         qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
         //qDebug() << "value_normalized:" << value_normalized;
-        //value_normalized = qBound(0.0, value_normalized, 1.0);
+
         QColor color = computeColor(value_normalized);
         // testing in monochrome :
         //QColor color = QColor::fromRgbF(value_normalized,value_normalized,value_normalized);
         //qDebug() << "cell color:" << color;
+
         this->cell_color = color;
     }
     this->bitrate_Mbps = bitrate;
@@ -143,9 +136,9 @@ void Receiver::updateBitrateAndColor()
 
 QColor Receiver::computeColor(qreal value)
 {
-    // Maps a noramlized value to a 5 color gradient
-    // Ensure value is within the range [0, 1]
-    value = qBound(0.0, value, 1.0);
+    // Maps a normalized value to a 5 color gradient
+    //// Ensure value is within the range [0, 1]
+    ////value = qBound(0.0, value, 1.0);
 
     // Define colors for the heatmap gradient
     QColor colors[] = {
@@ -165,11 +158,11 @@ QColor Receiver::computeColor(qreal value)
 
     // Interpolate between the two colors
     QColor color = colors[index1].toRgb();
-    QColor nextColor = colors[index2].toRgb();
+    QColor next_color = colors[index2].toRgb();
 
-    int red = color.red() + factor * (nextColor.red() - color.red());
-    int green = color.green() + factor * (nextColor.green() - color.green());
-    int blue = color.blue() + factor * (nextColor.blue() - color.blue());
+    int red = color.red() + factor * (next_color.red() - color.red());
+    int green = color.green() + factor * (next_color.green() - color.green());
+    int blue = color.blue() + factor * (next_color.blue() - color.blue());
 
     return QColor(red, green, blue);
 }

@@ -30,27 +30,33 @@ void Simulation::createWalls()
 
     // Add obstacles:
     QList<Obstacle*> concrete_walls;
-    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(15,0), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(15,0), QVector2D(15,4), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(7,0), QVector2D(7,4), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(0,8), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(0,8), QVector2D(6,8), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(9,6), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(4,8), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(9,6), QVector2D(9,8), ConcreteWall, 30));
-    concrete_walls.append(new Obstacle(QVector2D(9,8), QVector2D(12,8), ConcreteWall, 30));
+    ObstacleType concrete = ConcreteWall; // change to test other materials
+    qreal thickness = 30; // 30
+    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(15,0), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(15,0), QVector2D(15,4), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(7,0), QVector2D(7,4), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(0,8), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(0,8), QVector2D(6,8), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(9,6), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(4,6), QVector2D(4,8), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(9,6), QVector2D(9,8), concrete, thickness));
+    concrete_walls.append(new Obstacle(QVector2D(9,8), QVector2D(12,8), concrete, thickness));
 
     QList<Obstacle*> drywall_walls;
-    drywall_walls.append(new Obstacle(QVector2D(4,0), QVector2D(4,4), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(4,4), QVector2D(5,4), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(6,4), QVector2D(9,4), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(10,4), QVector2D(11,4), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(11,0), QVector2D(11,4), DryWall, 10));
-    drywall_walls.append(new Obstacle(QVector2D(0,5), QVector2D(4,5), DryWall, 10));
+    ObstacleType drywall = DryWall; // change to test other materials
+    thickness=10; // 10
+    drywall_walls.append(new Obstacle(QVector2D(4,0), QVector2D(4,4), drywall, thickness));
+    drywall_walls.append(new Obstacle(QVector2D(4,4), QVector2D(5,4), drywall, thickness));
+    drywall_walls.append(new Obstacle(QVector2D(6,4), QVector2D(9,4), drywall, thickness));
+    drywall_walls.append(new Obstacle(QVector2D(10,4), QVector2D(11,4), drywall, thickness));
+    drywall_walls.append(new Obstacle(QVector2D(11,0), QVector2D(11,4), drywall, thickness));
+    drywall_walls.append(new Obstacle(QVector2D(0,5), QVector2D(4,5), drywall, thickness));
 
-    Obstacle* glass_window = new Obstacle(QVector2D(12,8),QVector2D(15,4), Window, 5); // this one is diagonal
+    thickness=5; // 5
+    Obstacle* glass_window = new Obstacle(QVector2D(12,8),QVector2D(15,4), Window, thickness); // this one is diagonal
 
-    Obstacle* metal_lift_door = new Obstacle(QVector2D(6,6),QVector2D(6,8), MetalWall, 5);
+    thickness=5; // 5
+    Obstacle* metal_lift_door = new Obstacle(QVector2D(6,6),QVector2D(6,8), MetalWall, thickness);
 
     // /!\ The lift is only added to the obstacles if enabled
     QList<Obstacle*> all_obstacles;
@@ -793,21 +799,14 @@ void Simulation::addLegend(QGraphicsScene* scene)
         small_line->setPen(legendPen);
         scene->addItem(small_line);
     }
-    //QGraphicsLineItem* left_line = new QGraphicsLineItem(rect.bottomLeft().x(),rect.bottomLeft().y(),rect.bottomLeft().x(),rect.bottomLeft().y()+2.0);
-    //QGraphicsLineItem* right_line = new QGraphicsLineItem(rect.bottomRight().x(),rect.bottomRight().y(),rect.bottomRight().x(),rect.bottomRight().y()+2.0);
-    //left_line->setPen(gradientPen);
-    //right_line->setPen(gradientPen);
-    //scene->addItem(left_line);
-    //scene->addItem(right_line);
-
 
     // text for minimum of gradient
-    QGraphicsTextItem* min_text = new QGraphicsTextItem("-90dBm\n50Mbps");
+    QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
     min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
     min_text->setDefaultTextColor(Qt::white);
     min_text->setScale(0.25);
     // text for maximum of gradient
-    QGraphicsTextItem* max_text = new QGraphicsTextItem("-40dBm\n40Gbps");
+    QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
     max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
     max_text->setDefaultTextColor(Qt::white);
     max_text->setScale(0.25);
@@ -815,6 +814,7 @@ void Simulation::addLegend(QGraphicsScene* scene)
     scene->addItem(min_text);
     scene->addItem(max_text);
 
+    // axes legends :
     QGraphicsLineItem* x_line = new QGraphicsLineItem(0,-5,15*10,-5);
     QGraphicsLineItem* y_line = new QGraphicsLineItem(-5,0,-5,8*10);
     x_line->setPen(legendPen);
