@@ -6,6 +6,8 @@
 #include <QPen>
 #include <QBrush>
 
+#include "parameters.h"
+
 class Transmitter : public QVector2D// : public QGraphicsEllipseItem // QGraphicsEllipseItem?
 {
 public:
@@ -42,10 +44,11 @@ public:
     }
     */
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
-    qreal power = 0.1; // ! in Watts
+    qreal power = 0.1; // ! in Watts, 20dBm = 0.1W
     qreal power_dBm = 20;
     // TODO:
-    qreal gain = 1.64; // calculé dans le rapport
+    //qreal gain = 1.64; // calculé dans le rapport
+    qreal gain = G_TX; // 1.64
     //qreal G_TX; // ?
     //qreal gain = G_TX;
 

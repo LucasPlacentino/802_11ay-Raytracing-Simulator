@@ -908,7 +908,7 @@ QGraphicsView* runTP4(){
         qreal coeffs = ray->getTotalCoeffs();
         qreal power = coeffs*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
         // power *1000 because it's in Watts and we need in mW :
-        qDebug() << "Ray" << ray->num_reflections << "reflections, power:" << power*1000 << "mW " << 10*std::log10(power*1000/(1e-3)) << "dBm.";
+        qDebug() << "Ray" << ray->num_reflections << "reflections, power:" << power*1000 << "mW " << 10*std::log10(power*1000) << "dBm.";
     }
 
     ////? In real app:

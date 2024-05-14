@@ -172,11 +172,11 @@ qreal Receiver::computeTotalPower(Transmitter* transmitter) // returns final tot
 {
     qreal res = 0;
     for (Ray* ray : this->all_rays) {
-        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term, returns |T|²|G|²|exp|²
+        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term, returns |G*G*T|^2 *|exp|^2
     }
     //qDebug() << "computeTotalPower res+=ray->getTotalCoeffs" << res;
     // multiply by the term before the sum:
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->gain*transmitter->power; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*transmitter->gain*transmitter->power;
 
     if (res != res) {
         qDebug() << "computeTotalPower: NaN !!!";

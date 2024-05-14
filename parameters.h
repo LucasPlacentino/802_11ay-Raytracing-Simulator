@@ -25,6 +25,6 @@ constexpr qreal min_y = -8;
 
 constexpr qreal beta_0 = 2*M_PI*freq/c; // beta
 
-constexpr qreal G_TX = 1.7; // TODO: je crois que c'est la bonne value!
+constexpr qreal G_TX = 1.64; // transmitter antenna gain, 1.64 (or 1.7 ?)
 
 #endif //PARAMETERS_H
