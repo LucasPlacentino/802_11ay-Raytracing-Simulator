@@ -841,6 +841,11 @@ void Simulation::addLegend(QGraphicsScene* scene)
         scene->addItem(small_line);
         scene->addItem(x_index);
     }
+    QGraphicsTextItem* x_unit = new QGraphicsTextItem("m");
+    x_unit->setPos(-3.6,-6-3.5);
+    x_unit->setScale(0.15);
+    x_unit->setDefaultTextColor(Qt::white);
+    scene->addItem(x_unit);
     for (int y=0; y<=8; y++) {
         QGraphicsLineItem* small_line = new QGraphicsLineItem(-5,0+(y*10),-6,0+(y*10));
         small_line->setPen(legendPen);
@@ -851,5 +856,10 @@ void Simulation::addLegend(QGraphicsScene* scene)
         scene->addItem(small_line);
         scene->addItem(y_index);
     }
+    QGraphicsTextItem* y_unit = new QGraphicsTextItem("m");
+    y_unit->setPos(-6-2.5,-4.4);
+    y_unit->setScale(0.15);
+    y_unit->setDefaultTextColor(Qt::white);
+    scene->addItem(y_unit);
 
 }
