@@ -619,11 +619,12 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             // CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
             RaySegmentTP4* test_segment = new RaySegmentTP4(_imageTX.x(),_imageTX.y(),_RX.x(),_RX.y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
-                // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
+                // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this one-reflection ray at this wall
                 qDebug() << "ignore";
                 delete ray_1_reflection;
                 delete test_segment;
-                continue; // break out of this forloop instance for this wall
+                ////continue; // break out of this forloop instance for this wall
+                goto second_reflection; // don't make a 1 reflection ray with this wall, proceed to two-reflections rays
             }
             delete test_segment;
 
@@ -644,11 +645,16 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
             ray_1_reflection->distance = QVector2D(_RX-_imageTX).length();
             qDebug() << "Ray's (1refl) total coeffs:" << ray_1_reflection->getTotalCoeffs();
             all_rays.append(ray_1_reflection);
+        }
 
+        second_reflection: // label for goto above
+        QVector2D _imageTX = computeImage(_TX, wall);
+        qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
             // 2nd reflection
             for (Wall* wall_2 : wall_list) {
                 // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
-                if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
+                //if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,_RX)) {
+                if (wall_2 != wall) {
                     qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX.toPointF() ;
                     RayTP4* ray_2_reflection = new RayTP4(_TX.toPointF(),_RX.toPointF());
 
@@ -666,7 +672,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) || !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
                         qDebug() << "ignore";
                         delete ray_2_reflection;
-                        // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
+                        // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this two-reflections ray at this wall
                         delete test_segment_1;
                         delete test_segment_2;
                         continue; // break out of this forloop instance for this wall
@@ -696,7 +702,7 @@ void computeReflections(const QVector2D& _RX, const QVector2D& _TX)
                     all_rays.append(ray_2_reflection);
                 }
             }
-        }
+
     }
 }
 

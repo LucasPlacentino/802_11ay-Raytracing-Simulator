@@ -198,11 +198,12 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             // CHECK IF REFLECTION IS ON THE WALL AND NOT ITS EXTENSION:
             RaySegment* test_segment = new RaySegment(_imageTX.x(),_imageTX.y(),_RX->x(),_RX->y());
             if (!checkRaySegmentIntersectsWall(wall, test_segment)) {
-                // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
+                // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this one-reflection ray at this wall
                 //qDebug() << "ignore";
                 delete ray_1_reflection;
                 delete test_segment;
-                continue; // break out of this forloop instance for this wall
+                ////continue; // break out of this forloop instance for this wall
+                goto second_reflection; // don't make a 1 reflection ray with this wall, proceed to two-reflections rays
             }
             delete test_segment;
 
@@ -224,58 +225,61 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             ray_1_reflection->distance = QVector2D(*_RX-_imageTX).length();
             //qDebug() << "Ray's (1refl) total coeffs:" << ray_1_reflection->getTotalCoeffs();
             _RX->all_rays.append(ray_1_reflection);
+        }
 
-            // 2nd reflection
-            for (Obstacle* wall_2 : this->obstacles) {
-                // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
-                if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,*_RX)) {
-                    //qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX->toPointF() ;
-                    Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX->toPointF());
+        second_reflection:
+        QVector2D _imageTX = computeImage(_TX, wall);
+        //qDebug() << "_image:" << _imageTX.x() << _imageTX.y();
+        // 2nd reflection
+        for (Obstacle* wall_2 : this->obstacles) {
+            // check that the second wall is not the same as the first wall and that imageTX and RX are at the same side of this second wall
+            if (wall_2 != wall && checkSameSideOfWall(wall_2->normal,_imageTX,*_RX)) {
+                //qDebug() << "Same side of wall imageTX and RX --- wall_2:" << wall_2->line.p1() << wall_2->line.p2() << ", imageTX:" << _imageTX.toPointF() << ", RX:" << _RX->toPointF() ;
+                Ray* ray_2_reflection = new Ray(_TX.toPointF(),_RX->toPointF());
 
-                    QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
-                    //qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
+                QVector2D _image_imageTX = computeImage(_imageTX,wall_2);
+                //qDebug() << "_image_image:" << _image_imageTX.x() << _image_imageTX.y();
 
-                    QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,*_RX,wall_2);
-                    QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
-                    if (_P_r_2_last.x()==_P_r_2_first.x() && _P_r_2_last.y()==_P_r_2_first.y()) {
-                        //qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
-                    }
+                QVector2D _P_r_2_last = calculateReflectionPoint(_image_imageTX,*_RX,wall_2);
+                QVector2D _P_r_2_first = calculateReflectionPoint(_imageTX,_P_r_2_last,wall);
+                if (_P_r_2_last.x()==_P_r_2_first.x() && _P_r_2_last.y()==_P_r_2_first.y()) {
+                    //qDebug() << "------> P_r_2_last = P_r_2_first !!!)";
+                }
 
-                    RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX->x(),_RX->y());
-                    RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
-                    if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) || !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
-                        //qDebug() << "ignore";
-                        // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this reflection at this wall
-                        delete ray_2_reflection;
-                        delete test_segment_1;
-                        delete test_segment_2;
-                        continue; // break out of this forloop instance for this wall
-                    }
+                RaySegment* test_segment_1 = new RaySegment(_image_imageTX.x(),_image_imageTX.y(),_RX->x(),_RX->y());
+                RaySegment* test_segment_2 = new RaySegment(_imageTX.x(),_imageTX.y(),_P_r_2_last.x(),_P_r_2_last.y());
+                if (!checkRaySegmentIntersectsWall(wall_2, test_segment_1) || !checkRaySegmentIntersectsWall(wall,test_segment_2)) {
+                    //qDebug() << "ignore";
+                    // RAY DOES NOT TRULY INTERSECT THE WALL (only the wall extension) ignore this two-reflections ray at this wall
+                    delete ray_2_reflection;
                     delete test_segment_1;
                     delete test_segment_2;
-
-                    //qDebug() << "P_r_2_first" << _P_r_2_first;
-                    //qDebug() << "P_r_2_last" << _P_r_2_last;
-                    //debug :
-                    //tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
-                    //reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
-                    //reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
-
-                    QList<RaySegment*> ray_segments_2;
-                    ray_segments_2.append(new RaySegment(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
-                    ray_segments_2.append(new RaySegment(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
-                    ray_segments_2.append(new RaySegment(_P_r_2_last.x(),_P_r_2_last.y(),_RX->x(),_RX->y()));
-
-                    ray_2_reflection->segments = ray_segments_2;
-                    addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
-                    addReflection(ray_2_reflection,_image_imageTX,*_RX,wall_2);
-                    checkTransmissions(ray_2_reflection,{wall,wall_2});
-
-                    //qDebug() << "ray_2_refl distance:" << QVector2D(*_RX - _image_imageTX).length();
-                    ray_2_reflection->distance = QVector2D(*_RX-_image_imageTX).length();
-                    //qDebug() << "Ray's (2refl) total coeffs:" << ray_2_reflection->getTotalCoeffs();
-                    _RX->all_rays.append(ray_2_reflection);
+                    continue; // break out of this forloop instance for this wall
                 }
+                delete test_segment_1;
+                delete test_segment_2;
+
+                //qDebug() << "P_r_2_first" << _P_r_2_first;
+                //qDebug() << "P_r_2_last" << _P_r_2_last;
+                //debug :
+                //tx_images.append(new QGraphicsEllipseItem(_image_imageTX.x()-2, -_image_imageTX.y()-2, 4, 4));
+                //reflection_points.append(new QGraphicsEllipseItem(_P_r_2_last.x()-1, -_P_r_2_last.y()-1, 2, 2));
+                //reflection_points.append(new QGraphicsEllipseItem(_P_r_2_first.x()-1, -_P_r_2_first.y()-1, 2, 2));
+
+                QList<RaySegment*> ray_segments_2;
+                ray_segments_2.append(new RaySegment(_TX.x(),_TX.y(),_P_r_2_first.x(),_P_r_2_first.y()));
+                ray_segments_2.append(new RaySegment(_P_r_2_first.x(),_P_r_2_first.y(),_P_r_2_last.x(),_P_r_2_last.y()));
+                ray_segments_2.append(new RaySegment(_P_r_2_last.x(),_P_r_2_last.y(),_RX->x(),_RX->y()));
+
+                ray_2_reflection->segments = ray_segments_2;
+                addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
+                addReflection(ray_2_reflection,_image_imageTX,*_RX,wall_2);
+                checkTransmissions(ray_2_reflection,{wall,wall_2});
+
+                //qDebug() << "ray_2_refl distance:" << QVector2D(*_RX - _image_imageTX).length();
+                ray_2_reflection->distance = QVector2D(*_RX-_image_imageTX).length();
+                //qDebug() << "Ray's (2refl) total coeffs:" << ray_2_reflection->getTotalCoeffs();
+                _RX->all_rays.append(ray_2_reflection);
             }
         }
     }
