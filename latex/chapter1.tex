@@ -81,17 +81,21 @@ traversant et en se r{\'e}fl{\'e}chissant sur des murs. Pour calculer les
 effets relatifs {\`a} ces interactions entre les murs et les ondes, on
 utiliseras leurs propri{\'e}t{\'e}s {\'e}lectriques. Ces propri{\'e}t{\'e}s
 sont donn{\'e}es par la constante de propagation dans un mat{\'e}riau
-\[ \gamma_m = \alpha_m + j \beta_m = \sqrt{j \omega \mu (\sigma + j \omega
-   \epsilon)} \]
-avec $\sigma$ la conductivit{\'e} et $\epsilon$ la permettivit{\'e} du
-mat{\'e}riau, repris dans ce tableau (o{\`u} $\epsilon = \epsilon_r
-\epsilon_0$), Table \ref{tab:materials}:
+%\[ \gamma_m = \alpha_m + j \beta_m = \sqrt{j \omega \mu (\sigma + j \omega
+%   \varepsilon)} \]
+\[ \gamma_m = \alpha_m + j \beta_m = j\omega \sqrt{\mu_0 \tilde{\varepsilon}} \]
+%avec $\sigma$ la conductivit{\'e} et $\varepsilon$ la permettivit{\'e} du
+avec $\tilde{\varepsilon}$ la permittivité complexe
+($\tilde{\varepsilon} = \varepsilon_r\varepsilon_0 - j\frac{\sigma}{\omega}$, où
+$\varepsilon_r$ est la permittivité relative)
+% $\varepsilon = \varepsilon_r\varepsilon_0$)
+du matériau, repris dans ce tableau [Table \ref{tab:materials}]:
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|}
   \hline
-  \textbf{Mat{\'e}riau} & \textbf{$\epsilon$} & \textbf{$\sigma$}\\
+  \textbf{Mat{\'e}riau} & \textbf{$\varepsilon_r$} & \textbf{$\sigma$}\\
   \hline
   brique & 3.95 & 0.073\\
   \hline
@@ -114,20 +118,20 @@ mat{\'e}riau, repris dans ce tableau (o{\`u} $\epsilon = \epsilon_r
 
 Pour calculer l'angle transmis $\theta_t$ {\`a} l'interface entre deux
 mat{\'e}riaux on utilise la loi de Snell Descartes qui s'exprime
-\[ \sin \theta_t = \sqrt{\frac{\epsilon_{r 1}}{\epsilon_{r 2}}} \sin \theta_i
+\[ \sin \theta_t = \sqrt{\frac{\varepsilon_{r 1}}{\varepsilon_{r 2}}} \sin \theta_i
 \]
-avec $\theta_i$ l'angle incident, et $\epsilon_r$ la permittivit{\'e}
+avec $\theta_i$ l'angle incident, et $\varepsilon_r$ la permittivit{\'e}
 relative. En pratique, nous assimilerons l'air au vide et prendrons donc
-$\epsilon_r = 1$ pour celui ci.
+$\varepsilon_r = 1$ pour celui ci.
 
 \subsubsection*{Imp{\'e}dance}
 
 Pour {\'e}valuer nos coefficients de transmission et de r{\'e}flexion, on
 d{\'e}finit l'imp{\'e}dance d'un mat{\'e}riau $Z_m$ comme suit
-\[ Z_m = \sqrt{\frac{\mu}{\tilde{\epsilon}}} = \sqrt{\frac{\mu_0}{\epsilon - j
-   \sigma / \omega}} \]
-avec $\mu_0$ la perm{\'e}abilit{\'e} du vide, $\epsilon$ la permittivit{\'e}
-du mat{\'e}riau, $\sigma$ sa conductivit{\'e} et $\omega$ la pulsation de
+\[ Z_m = \sqrt{\frac{\mu}{\tilde{\varepsilon}}} = \sqrt{\frac{\mu_0}{\varepsilon - j
+   \frac{\sigma}{\omega}}} \]
+avec $\mu_0$ la perm{\'e}abilit{\'e} du vide, $\varepsilon$ la permittivit{\'e}
+du mat{\'e}riau ($\varepsilon=\varepsilon_r\varepsilon_0$), $\sigma$ sa conductivit{\'e} et $\omega$ la pulsation de
 l'onde {\'e}lectromagn{\'e}tique.
 
 \subsubsection*{Coefficient de transmission}
