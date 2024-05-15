@@ -30,55 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     toggleCoverageParametersLayout(true);
     toggleCellParametersLayout(false);
 
-    // //SimulationGraphicsScene* simulation_scene = new SimulationGraphicsScene(this);
-    // //QGraphicsScene* simulation_scene = new QGraphicsScene(this);
-    // //simulation.scene = simulation_scene;
-    // //simulation.scene->setSceneRect(QRectF(0,0, 690, 450)); // if not set, QGraphicsScene will use the bounding area of all items, as returned by itemsBoundingRect(), as the scene rect.
-    // //qDebug() << "scene pointer (&simulation_scene): " << simulation_scene;
-    // //qDebug() << "scene pointer (simulation.scene): " << simulation.scene;
-    // // TESTING :
-    // //simulation_scene->addRect(20, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::green)); simulation_scene->addEllipse(120, 20, 60, 60, QPen(Qt::red, 3), QBrush(Qt::yellow)); simulation_scene->addPolygon(QPolygonF() << QPointF(220, 80) << QPointF(280, 80) << QPointF(250, 20), QPen(Qt::blue, 3), QBrush(Qt::magenta));
-    // //?????????????? :
-    // //simulation.scene->setBackgroundBrush(Qt::black);
-    // //simulation_scene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    // //simulation.scene->setForegroundBrush(Qt::white);
-    // //simulation.scene->addText("Hello World!");
-
-    // //simulation.scene->drawScene();
-
-    // //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate); // needed ?
-    // //ui->simulationGraphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); // needed ?
-
-    // //simulation.view = ui->simulationGraphicsView;
-    // //qDebug() << "view pointer (ui->simulationGraphicsView): " << &(ui->simulationGraphicsView);
-    // //qDebug() << "view pointer (simulation.view): " << &simulation.view;
-    // //ui->simulationGraphicsView->setScene(simulation.scene);
-    //ui->simulationGraphicsView->setScene(simulation_scene);
-    // //qDebug() << "scene (simulation.view->scene()): " << simulation.view->scene();
-    // //qDebug() << "scene (ui->simulationGraphicsView->scene()): " << ui->simulationGraphicsView->scene();
-
-    // //ui->simulationGraphicsView->scene()->setSceneRect(ui->simulationGraphicsView->frameRect());
-    //ui->simulationGraphicsView->fitInView(simulation_scene->itemsBoundingRect());
-
-    // //simulation.view->setBackgroundBrush(Qt::black);
-    // //simulation.view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    // //simulation.view->setForegroundBrush(Qt::white);
-    //ui->simulationGraphicsView->setBackgroundBrush(Qt::black);
-    //ui->simulationGraphicsView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    //ui->simulationGraphicsView->setForegroundBrush(Qt::white);
-    // //simulation.view->scene()->setBackgroundBrush(Qt::black);
-    // //simulation.view->scene()->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
-    // //simulation.view->scene()->setForegroundBrush(Qt::white);
-
-    //ui->simulationGraphicsView->setRenderHints(QPainter::Antialiasing); // ?
-
-    // //simulation.view->scene()->update();
-    //ui->simulationGraphicsView->scene()->update();
-    // ////simulation.view->viewport()->update();
-    // ////ui->simulationGraphicsView->viewport()->update();
-    // //simulation.view->show();
-    //ui->simulationGraphicsView->show();
-
     for (qreal resolution : resolutions) {
         ui->resolutionComboBox->addItem(QString("%1 m").arg(resolution));
     }
@@ -97,14 +48,6 @@ void MainWindow::on_runSimulationButton_clicked()
 {
     // User clicked on the "Run Simulation" button
 
-    /*
-    if (simulation.ran) {
-        ui->runSuccessOrFailText->setStyleSheet("color: darkorange;");
-        ui->runSuccessOrFailText->setText("Please reset: [Menu->Reset App], or (Ctrl+R)");
-        return;
-    }
-    */
-
     if (simulation.is_running) {
         return;
     }
@@ -121,21 +64,11 @@ void MainWindow::on_runSimulationButton_clicked()
     ui->runSuccessOrFailText->setStyleSheet(res ? "color: green;" : "color: red;");
     ui->runSuccessOrFailText->setText(res ? QString("Success, took %1ms").arg(simulation.getSimulationTime()): "Failed");
 
-    // -- TEST : ? --
-    //simulation.view->scene()->update();
-    //ui->simulationGraphicsView->scene()->update();
-    ////simulation.view->viewport()->update();
-    ////ui->simulationGraphicsView->viewport()->update();
-    //simulation.view->show();
-    //ui->simulationGraphicsView->show();
-
     simulation.is_running = false;
 }
 
 bool MainWindow::runSimulation(QProgressBar* progress_bar)
 {
-    //// debug :
-    ////simulation.test();
 
     // Run the simulation and returns true if no errors ocurred
     simulation.ran = true;
@@ -147,7 +80,6 @@ bool MainWindow::runSimulation(QProgressBar* progress_bar)
         return true;
     } catch (...) {
         qInfo("#!#!#!# Simulation failed #!#!#!#\n");
-        //qError(error);
         return false;
     }
 }
@@ -175,7 +107,6 @@ void MainWindow::on_spinBoxBaseStationPower_valueChanged(int value)
 void MainWindow::changeBaseStationCoordinates(QPointF point)
 {
     // Modify the current editing base station with the new user chosen coordinates
-    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
     Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
     base_station->changeCoordinates(point);
     showBaseStationCoordinates(point);
@@ -184,10 +115,8 @@ void MainWindow::changeBaseStationCoordinates(QPointF point)
 void MainWindow::on_baseStationXspinBox_valueChanged(double x)
 {
     // User changed the current editing base station X coordinate
-    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
     Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
     QPointF coordinates = base_station->toPointF();
-    //QPointF coordinates = base_station->getCoordinates();
     coordinates.setX(x);
     changeBaseStationCoordinates(coordinates);
 }
@@ -195,10 +124,8 @@ void MainWindow::on_baseStationXspinBox_valueChanged(double x)
 void MainWindow::on_baseStationYspinBox_valueChanged(double y)
 {
     // User changed the current editing base station Y coordinate
-    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
     Transmitter* base_station = simulation.baseStations.at(currentEditingBaseStation_index);
     QPointF coordinates = base_station->toPointF();
-    //QPointF coordinates = base_station->getCoordinates();
     coordinates.setY(y);
     changeBaseStationCoordinates(coordinates);
 }
@@ -215,9 +142,6 @@ void MainWindow::on_actionReset_triggered()
 {
     // User clicked on the menu's "Reset" button, or presse "CTRL+R"
     qInfo("Resetting app...");
-
-    // Reset all user input values to default/reset app
-    //simulation.resetAll(); // not necessary as we restart the whole program
 
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -238,7 +162,7 @@ void MainWindow::on_actionAbout_triggered()
                        tr("This <b>802.11ay Raytracing Simulator</b> was made as a "
                           "project for the course <b>ELEC-H304</b> Telecommunications Physics "
                           "at <b>École polytechnique de Bruxelles - ULB</b>."
-                          "<br>This simulator uses..."));
+                          "<br>By Lucas Placentino & Salman Houdaibi"));
 }
 
 void MainWindow::saveImage(QGraphicsView* view = simulation.view, bool isTP4 = false)
@@ -271,24 +195,6 @@ void MainWindow::on_actionSave_image_triggered()
         return;
     }
     saveImage(simulation.view);
-
-    //QSize size = simulation.scene->sceneRect().size().toSize()*10; // get the Scene size
-    ////QImage img(size, QImage::Format_ARGB32); // scene's size, Format_RGBA64 ?
-    //QImage img(size, QImage::Format_RGBA64);
-    //QPainter painter(&img);
-    //painter.setRenderHint(QPainter::Antialiasing);
-    //// renderscene() //&painter //? scene->render(&painter);
-    //simulation.view->render(&painter);
-
-    //QString img_filename= QFileDialog::getSaveFileName(
-    //    this,
-    //    tr("Save Image"),
-    //    QDir::currentPath(),
-    //    "PNG (*.png);;BMP Files (*.bmp);;JPEG (*.JPEG)"
-    //);
-    //bool success = img.save(img_filename);
-    //success? qInfo("Image saved") : qInfo("Cancelled");
-
 }
 
 
@@ -296,7 +202,6 @@ void MainWindow::initFirstBaseStation()
 {
     // Creates the first (non-deletable) Base Station
     simulation.baseStations.append(new Transmitter(9.4,7, 0, "Base Station 1"));
-    //simulation.createBaseStation(new Transmitter(9.4,7));//new Transmitter(0, "Base Station 1", 20, QPointF(1,-1)) // TODO: QPoint
 }
 
 void MainWindow::showFirstBaseStation()
@@ -345,10 +250,8 @@ void MainWindow::on_transmitterSelector_activated(int index)
     // set current editing transmitter to this one
     currentEditingBaseStation_index = index;
     showBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index)->getPower_dBm());
-    //changeBaseStationPower(simulation.getBaseStation(currentEditingBaseStation_index).getPower_dBm());
 
     showBaseStationCoordinates(simulation.baseStations.at(currentEditingBaseStation_index)->toPointF());
-    //showBaseStationCoordinates(simulation.getBaseStation(currentEditingBaseStation_index)->getCoordinates());
 }
 
 
@@ -359,14 +262,12 @@ void MainWindow::on_addTransmitterButton_clicked()
     {
         qDebug("Added base station");
 
-        //TODO: create a new transmitter object
         QString new_item_name = QString("Base Station %1").arg(ui->transmitterSelector->count()+1);
         ui->transmitterSelector->addItem(new_item_name);
 
         int new_item_index = ui->transmitterSelector->findText(new_item_name);
 
         simulation.baseStations.append(new Transmitter(5,5, new_item_index, new_item_name));
-        //simulation.createBaseStation(Transmitter(new_item_index, new_item, 20, QPointF(1,-1))); // TODO: QPoint
 
         on_transmitterSelector_activated(new_item_index);
         ui->transmitterSelector->setCurrentIndex(new_item_index);

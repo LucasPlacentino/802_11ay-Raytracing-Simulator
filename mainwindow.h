@@ -21,49 +21,27 @@ public:
 
 private slots:
     void on_runSimulationButton_clicked();
-
-
     void on_sliderBaseStationPower_valueChanged(int value);
-
     void on_actionExit_triggered();
-
     void on_actionReset_triggered();
-
     void on_actionSee_Github_triggered();
-
     void on_actionAbout_triggered();
-
     void on_actionSave_image_triggered();
-
     void on_spinBoxBaseStationPower_valueChanged(int value);
-
     void on_transmitterSelector_activated(int index);
-
     void on_addTransmitterButton_clicked();
-
     void on_deleteBaseStationPushButton_clicked();
-
-    void on_baseStationXspinBox_valueChanged(double arg1);
-
-    void on_baseStationYspinBox_valueChanged(double arg1);
-
+    void on_baseStationXspinBox_valueChanged(double x);
+    void on_baseStationYspinBox_valueChanged(double y);
     void on_singleCellRadioButton_clicked(bool checked);
-
     void on_coverageHeatmapRadioButton_clicked(bool checked);
-
     void on_liftOnFloorCheckBox_clicked(bool checked);
-
     void on_showCellOutlineCheckBox_toggled(bool checked);
-
     void on_resolutionComboBox_currentIndexChanged(int index);
-
     void on_actionRun_TP4_Simulation_triggered();
-
     void on_actionSave_TP4_image_triggered();
-
-    void on_cellXspinBox_valueChanged(double arg1);
-
-    void on_cellYspinBox_valueChanged(double arg1);
+    void on_cellXspinBox_valueChanged(double x);
+    void on_cellYspinBox_valueChanged(double y);
 
 private:
     Ui::MainWindow *ui;

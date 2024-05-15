@@ -3,40 +3,6 @@
 #include <QPen>
 #include "parameters.h"
 
-/*
-Ray::Ray(QPointF start_point, QPointF end_point)
-{
-    this->end_point = end_point;
-    this->points.push_back(start_point);
-}
-*/
-/*
-Ray::Ray(QPointF start_point, QSharedPointer<Receiver> target_cell)
-{
-    this->points.push_back(start_point);
-    this->target_cell = target_cell;
-    // TODO: ?
-}
-
-
-void Ray::addPoint(QPointF point)
-{
-    this->points.push_back(point);
-}
-
-void Ray::addInteractionPoint(InteractionPoint point)
-{
-    this->interaction_points.push_back(point);
-}
-
-QList<QPointF> Ray::getFinishedRayPoints() const
-{
-    QList<QPointF> finished_ray = this->points;
-    finished_ray.push_front(this->end_point); // adds end point (receiver point) to end of ray's list of points
-    return finished_ray;
-}
-*/
-
 Ray::Ray(QPointF start, QPointF end) {
     // Ray object constructor
     this->start=start;
@@ -60,6 +26,7 @@ qreal Ray::getTotalCoeffs() {
     //res *= pow(abs(exp(-j*beta_0*this->distance)/this->distance),2); // exp term
     ////qDebug() << "getTotalCoeffs ray:" << res;
     //return res;
+
     qreal distance_ray = getTotalDistance();
     //qDebug() << distance_ray;
     qreal res = 1;
@@ -120,6 +87,8 @@ qreal Ray::getTotalDistance() {
     //    d += segment->distance;
     //}
     //return d;
+
+    // ray's distance has already been changed
     //qDebug() << "Ray getTotalDisctance:" << this->distance;
     return this->distance;
 }

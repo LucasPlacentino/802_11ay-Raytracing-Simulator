@@ -443,7 +443,7 @@ void Simulation::createCellsMatrix()
 {
     int max_x_count = ceil(max_x/this->resolution); // -1 ?
     //qDebug() << "Max count of cells X:" << max_x_count;
-    int max_y_count = ceil(-min_y/this->resolution); // -1 ?
+    int max_y_count = ceil(max_y/this->resolution); // -1 ?
     //qDebug() << "Max count of cells Y:" << max_y_count;
 
     qInfo() << "Creating cells matrix" << max_x_count << "x" << max_y_count << "...";

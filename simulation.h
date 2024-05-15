@@ -19,19 +19,17 @@ public:
     qreal resolution = 0.5; // meters, default is 0.5m x 0.5m cells
 
     void run(QProgressBar* progress_bar);
-    void clear();
-    void resetAll(); // needed ?
     void createBaseStation(Transmitter* transmitter);
-    Transmitter* getBaseStation(int index); // needed ?
+    Transmitter* getBaseStation(int index);
     void deleteBaseStation(int index);
-    QList<Obstacle*>* getObstacles(); // needed ?
-    unsigned int getNumberOfObstacles(); // needed ?
-    unsigned int getNumberOfBaseStations(); // needed ?
+    QList<Obstacle*>* getObstacles();
+    unsigned int getNumberOfObstacles();
+    unsigned int getNumberOfBaseStations();
 
     qint64 getSimulationTime() const;
 
-    QGraphicsScene* scene = nullptr;//new QGraphicsScene();//this->createGraphicsScene(&this->baseStations);
-    QGraphicsView* view = nullptr;//new QGraphicsView(this->scene);
+    QGraphicsScene* scene = nullptr;
+    QGraphicsView* view = nullptr;
 
     bool lift_is_on_floor = false;
     bool show_cell_outline = false;
@@ -39,41 +37,21 @@ public:
     bool showRaySingleCell = false;
 
     // --- NEW : ---
-    QList<Transmitter*> baseStations;// = {new Transmitter(9.4,7)}; // TX list // TODO: first: y=7 or y=-7 ?
-    QList<QList<Receiver*>> cells; // RX matrix // TODO:
-    QList<Obstacle*> obstacles;
+    QList<Transmitter*> baseStations; // TX list
+    QList<QList<Receiver*>> cells; // RX matrix
+    QList<Obstacle*> obstacles; // walls list
 
     qreal singleCellX=2;
     qreal singleCellY=2;
     QList<QVector2D> singleCellSimReflectionPoints = {};
     // -------------
-
-
-    // test:
-    void test();
 private:
     QElapsedTimer timer;
     qint64 simulation_time;
 
-    //qreal max_x = 15;
-    //qreal min_x = 0;
-    //qreal max_y = 0;
-    //qreal min_y = -8;
+    void createCellsMatrix();
 
-    //QVector2D origin = QVector2D(0,0);
-    //QGraphicsScene* createGraphicsScene(std::vector<Transmitter>* TX_list);
-    //QList<QList<QSharedPointer<Receiver>>> cells_matrix;
-    //void computeCell(QSharedPointer<Receiver> cell);
-    //void traceRaysToCell(QPair<int,int> cell_index, int num_reflections);
-    //void traceRay(QSharedPointer<Ray> ray, int reflections);
-    //std::vector<Obstacle*> obstacles; // DONT USE A LIST ? => vector<Type> Use a QList (same as QVector)?
-    //std::vector<Transmitter> baseStations;
-    //QList<QSharedPointer<Ray>> rays_list;
-
-
-    void createCellsMatrix(); // TODO: check if all correct
-
-    //* --- new : ---
+    // --- new : ---
     void createWalls();
     QGraphicsScene* createGraphicsScene();
     void computeReflections(Receiver* _RX, const QVector2D& _TX);
@@ -88,10 +66,6 @@ private:
     bool checkRaySegmentIntersectsWall(const Obstacle* wall, RaySegment* ray_segment, QPointF* intersection_point=nullptr);
     QVector2D computeImage(const QVector2D& _point, Obstacle* wall);
     QVector2D calculateReflectionPoint(const QVector2D& _start, const QVector2D& _end, Obstacle* wall);
-
-#ifdef DRAW_RAYS
-    void drawAllRays(QGraphicsScene* scene, Receiver* _RX)
-#endif
 
     void showView();
     void addLegend(QGraphicsScene* scene);

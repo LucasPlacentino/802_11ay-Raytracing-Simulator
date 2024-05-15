@@ -1,16 +1,5 @@
 #include "transmitter.h"
 
-/*
-Transmitter::Transmitter(int selector_index, QString name, int power_dBm, QPointF coordinates)
-{
-    //setAcceptHoverEvents(true);
-    this->selector_index = selector_index;
-    this->name = name;
-    this->power_dBm = power_dBm;
-    this->coordinates = coordinates;
-}
-*/
-
 Transmitter::Transmitter(qreal x, qreal y, int selector_index, QString name){
     // Transmitter object constructor
     QBrush txBrush(Qt::white);
@@ -57,18 +46,9 @@ void Transmitter::setPower_dBm(int power_dBm)
     qDebug() << "setPower:" << this->power << "Watts";
 }
 
-/*
-QPointF Transmitter::getCoordinates() const
-{
-    return this->coordinates;
-}
-*/
-
 void Transmitter::changeCoordinates(QPointF new_coordinates)
 {
     this->setX(new_coordinates.x());
     this->setY(new_coordinates.y());
     this->setGraphicsRect(this->x(),this->y());
-    //this->coordinates = new_coordinates;
-    // TODO: update the GraphicsScene to show base station at new coordinates ?
 }
