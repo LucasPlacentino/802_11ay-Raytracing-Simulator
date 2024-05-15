@@ -121,5 +121,5 @@ qreal Ray::getTotalDistance() {
     //}
     //return d;
     qDebug() << "Ray getTotalDisctance:" << this->distance;
-    return this->distance*10;
+    return this->distance;
 }
