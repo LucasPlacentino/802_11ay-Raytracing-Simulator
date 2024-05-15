@@ -31,7 +31,7 @@ void Simulation::createWalls()
     // Add obstacles:
     QList<Obstacle*> concrete_walls;
     ObstacleType concrete = ConcreteWall; // change to test other materials
-    qreal thickness = 30; // 30
+    qreal thickness = 0.3; // 30cm
     concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(15,0), concrete, thickness));
     concrete_walls.append(new Obstacle(QVector2D(15,0), QVector2D(15,4), concrete, thickness));
     concrete_walls.append(new Obstacle(QVector2D(7,0), QVector2D(7,4), concrete, thickness));
@@ -44,7 +44,7 @@ void Simulation::createWalls()
 
     QList<Obstacle*> drywall_walls;
     ObstacleType drywall = DryWall; // change to test other materials
-    thickness=10; // 10
+    thickness=0.1; // 10cm
     drywall_walls.append(new Obstacle(QVector2D(4,0), QVector2D(4,4), drywall, thickness));
     drywall_walls.append(new Obstacle(QVector2D(4,4), QVector2D(5,4), drywall, thickness));
     drywall_walls.append(new Obstacle(QVector2D(6,4), QVector2D(9,4), drywall, thickness));
@@ -52,10 +52,10 @@ void Simulation::createWalls()
     drywall_walls.append(new Obstacle(QVector2D(11,0), QVector2D(11,4), drywall, thickness));
     drywall_walls.append(new Obstacle(QVector2D(0,5), QVector2D(4,5), drywall, thickness));
 
-    thickness=5; // 5
+    thickness=0.05; // 5cm
     Obstacle* glass_window = new Obstacle(QVector2D(12,8),QVector2D(15,4), Window, thickness); // this one is diagonal
 
-    thickness=5; // 5
+    thickness=0.05; // 5cm
     Obstacle* metal_lift_door = new Obstacle(QVector2D(6,6),QVector2D(6,8), MetalWall, thickness);
 
     // /!\ The lift is only added to the obstacles if enabled
@@ -68,6 +68,7 @@ void Simulation::createWalls()
     all_obstacles.append(metal_lift_door); // last one is the metal lift door
 
     this->obstacles = all_obstacles;
+    qDebug() << "Walls created";
 }
 
 void Simulation::run(QProgressBar* progress_bar)
@@ -76,12 +77,18 @@ void Simulation::run(QProgressBar* progress_bar)
     this->timer.start();
     qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
 
+    qDebug() << "P_TX:" << P_TX << "W," << P_TX_dBm << "dBm";
+    qDebug() << "G_TX:" << G_TX;
+    qDebug() << "beta:" << beta_0;
+    qDebug() << "lambda:" << lambda << "m";
+    qDebug() << "frequency:" << freq << "Hz";
+    qDebug() << "omega:" << omega << "rad/s";
+
     //this->cells_matrix.clear();
     for (QList<Receiver*> cells_line : this->cells) {
         qDeleteAll(cells_line);
     }
     this->cells.clear();
-    //this->rays_list.clear();
     qDeleteAll(this->obstacles);
     this->obstacles.clear();
 
@@ -92,10 +99,11 @@ void Simulation::run(QProgressBar* progress_bar)
         ////this->obstacles.last() = new Obstacle(QVector2D(),QVector2D(),MetalWall,10); // door+wall
         //// no, they have different legnths (2m for the metal door and 1.75m for the metal wall)
         QList<Obstacle*> lift_walls;
-        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(5.75,6.25), MetalWall, 5));
-        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(4.25,7.75), MetalWall, 5));
-        lift_walls.append(new Obstacle(QVector2D(5.75,6.25),QVector2D(5.75,7.75), MetalWall, 5));
-        lift_walls.append(new Obstacle(QVector2D(4.25,7.75),QVector2D(5.75,7.75), MetalWall, 5));
+        qreal thickness = 0.05; // 5cm
+        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(5.75,6.25), MetalWall, thickness));
+        lift_walls.append(new Obstacle(QVector2D(4.25,6.25),QVector2D(4.25,7.75), MetalWall, thickness));
+        lift_walls.append(new Obstacle(QVector2D(5.75,6.25),QVector2D(5.75,7.75), MetalWall, thickness));
+        lift_walls.append(new Obstacle(QVector2D(4.25,7.75),QVector2D(5.75,7.75), MetalWall, thickness));
 
         //this->obstacles.insert(this->obstacles.end(), lift_walls.begin(), lift_walls.end());
         this->obstacles.append(lift_walls);
@@ -305,10 +313,10 @@ void Simulation::addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D&
     // computes the final |Gamma| coeff for the ray_segment's reflection with this wall, and adds it to this ray's coeffs list
     QVector2D _d = _p2-_p1;
     qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
-    qreal _sin_theta_i = sqrt(1 - pow(_cos_theta_i,2));
+    qreal _sin_theta_i = sqrt(1.0 - pow(_cos_theta_i,2));
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->properties.relative_permittivity);
-    qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
-    complex<qreal> Gamma_coeff = computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall);
+    qreal _cos_theta_t = sqrt(1.0 - pow(_sin_theta_t,2));
+    complex<qreal> Gamma_coeff = computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t, wall);
     //qDebug() << "addReflection, Gamma_coeff:" << Gamma_coeff;
     if (Gamma_coeff.real() != Gamma_coeff.real() || Gamma_coeff.imag() != Gamma_coeff.imag()) {
         qDebug() << "Gamma_coeff = NaN";
@@ -322,12 +330,12 @@ void Simulation::addReflection(Ray* _ray, const QVector2D& _p1, const QVector2D&
 }
 
 complex<qreal> Simulation::makeTransmission(RaySegment* ray_segment, Obstacle* wall) {
-    // computes the final |T| coeff for the ray_segment's transmission with this wall
+    // computes the final T coeff for the ray_segment's transmission with this wall
     QVector2D _d = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
-    qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary));
-    qreal _sin_theta_i = sqrt(1 - pow(_cos_theta_i,2));
+    qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
+    qreal _sin_theta_i = sqrt(1.0 - pow(_cos_theta_i,2));
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->properties.relative_permittivity);
-    qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
+    qreal _cos_theta_t = sqrt(1.0 - pow(_sin_theta_t,2));
     //qreal s = wall->thickness/_cos_theta_t;
     complex<qreal> T_coeff = computeTransmissionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t,wall);
     if (T_coeff.real() != T_coeff.real() || T_coeff.imag() != T_coeff.imag()) {
@@ -409,7 +417,7 @@ complex<qreal> Simulation::computeReflectionCoeff(qreal _cos_theta_i, qreal _sin
     complex<qreal> Gamma_perpendicular = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
     complex<qreal> reflection_term = exp(-2.0 * wall->properties.gamma_m * s) * exp(j * 2.0 * beta_0 * s * _sin_theta_t * _sin_theta_i);
     //qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
-    complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
+    complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * (Gamma_perpendicular * reflection_term) / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
     //qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
 
     return Gamma_m;

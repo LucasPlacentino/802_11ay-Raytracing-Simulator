@@ -103,7 +103,7 @@ void Receiver::updateBitrateAndColor()
         qDebug() << "--- ! ERROR: Cell has NaN power ! ---";
     } else if (power_dBm > max_power_dBm) {
         bitrate = max_bitrate_Mbps; //in Mbps, 40 Gbps max from -40 dBm
-        this->cell_color = QColor(255,0,0);
+        this->cell_color = QColor::fromRgb(255,0,0); // red
     } else if (power_dBm < min_power_dBm) { // 50 Mbps at -90 dBm
         bitrate = 0; //in Mbps, no connection (0 Mbps)
         this->cell_color = Qt::black; // Qt::transparent or Qt::black or Qt::darkBlue ?
@@ -114,7 +114,10 @@ void Receiver::updateBitrateAndColor()
 
         //bitrate = min_bitrate_Mbps + (((this->power - min_power_mW/1000) / (max_power_mW/1000 - min_power_mW/1000)) * (max_bitrate_Mbps - min_bitrate_Mbps));
         // OR ?
-        bitrate = min_bitrate_Mbps + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_Mbps - min_bitrate_Mbps));
+        qreal max_bitrate_dB = 10*log10(max_bitrate_Mbps);
+        qreal min_bitrate_dB = 10*log10(min_bitrate_Mbps);
+        qreal bitrate_dB = min_bitrate_dB + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_dB - min_bitrate_dB));
+        bitrate = pow(10.0, bitrate_dB / 10.0);
         //qDebug() << "bitrate (Mbps):" << bitrate;
 
         //qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);

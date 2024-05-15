@@ -125,13 +125,13 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
         pen.setColor(Qt::white);
         pen.setWidthF(10*0.08);
         this->properties.relative_permittivity = 6.3919;
-        this->properties.conductivity = 0.0107;
+        this->properties.conductivity = 0.00107;
         break;
     case MetalWall:
         pen.setColor(Qt::gray);
         pen.setWidthF(10*0.1);
         this->properties.relative_permittivity = 1;
-        this->properties.conductivity = 10e7;
+        this->properties.conductivity = 1e7;
         break;
     case DryWall:
         pen.setColor(Qt::lightGray);
@@ -166,7 +166,7 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     this->properties.gamma_m = j * omega * sqrt(mu_0 * epsilon_tilde);
 
     //qDebug("Wall created.");
-    qDebug() << this->material; // 1: glass, 4: concrete, 2: metal, 3: drywall
+    qDebug() << this->material; // 1: glass, 4: concrete, 2: metal, 3: drywall, 0: brick
     qDebug() << "Z_m" << this->properties.Z_m.real() << "+j" << this->properties.Z_m.imag();
     qDebug() << "gamma_m" << this->properties.gamma_m.real() << "+j" << this->properties.gamma_m.imag();
 }

@@ -122,7 +122,11 @@ struct Wall {
     qreal sigma = 0.018; // wall's conductivity (S/m)
     qreal epsilon_r = 4.8; // wall's relative permittivity
     qreal epsilon = epsilon_0 * epsilon_r; // wall's permittivity
-    complex<qreal> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
+    //complex<qreal> gamma_m = sqrt(j * omega * mu_0 * (sigma + j * omega * epsilon)); // gamma_m = alpha_m + j*beta_m
+
+    complex<qreal> epsilon_tilde = epsilon - j *(sigma / omega);
+    complex<qreal> gamma_m = j * omega * sqrt(mu_0 * epsilon_tilde);
+
     complex<qreal> Z_m = sqrt(mu_0 / (epsilon - j * sigma / omega)); // wall's impedance
     qreal beta_m = omega*sqrt((mu_0*this->epsilon)/2)*pow(sqrt(1+pow((this->sigma/(omega*this->epsilon)),2))+1,1/2);
     qreal alpha_m = omega*sqrt((mu_0*this->epsilon)/2)*pow(sqrt(1+pow((this->sigma/(omega*this->epsilon)),2))-1,1/2);
@@ -231,7 +235,7 @@ public:
         //    d += segment->distance;
         //}
         //return d;
-        qDebug() << "Ray getTotalDisctance:" << this->distance;
+        //qDebug() << "Ray getTotalDisctance:" << this->distance;
 
         return this->distance;
     }
@@ -347,7 +351,7 @@ void addReflectionComponents(QGraphicsScene* scene, const QVector2D& RX, const Q
     qDebug() << "Gamma_perpendicular:" << QString::number(Gamma_perpendicular.real()) << "+ j" << QString::number(Gamma_perpendicular.imag());
     // TODO : valeur un petit peu différente de la valeur attendue, pourquoi ?
     complex<double> reflection_term = exp(-2.0 * wall->gamma_m * s) * exp(j * 2.0 * beta_0 * s * sin_theta_t * sin_theta_i);
-    qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
+    //qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
     complex<double> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
     qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
     // interface graphique, rien de fou, merci gpt pour la syntaxe ici
@@ -486,14 +490,21 @@ complex<qreal> computePerpendicularGamma(qreal _cos_theta_i, qreal _cos_theta_t,
     return Gamma_perp;
 }
 
+// FIXME:
 complex<qreal> computeReflectionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Wall* wall)
 {
     // returns the reflection coefficient Gamma_m
     qreal s = wall->thickness/_cos_theta_t;
+    qDebug() << "s=" << s;
+    qDebug() << "gamma_m=" << wall->gamma_m.real() << "+j" << wall->gamma_m.imag();
     complex<qreal> Gamma_perpendicular = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
-    complex<qreal> reflection_term = exp(-2.0 * wall->gamma_m * s) * exp(j * 2.0 * beta_0 * s * _sin_theta_t * _sin_theta_i);
+    complex<qreal> first_exp = exp(-2.0 * wall->gamma_m * s);
+    qDebug() << "first exp=" << first_exp.real() << "+j" << first_exp.imag();
+    complex<qreal> second_exp = exp(j * 2.0 * beta_0 * s * _sin_theta_t * _sin_theta_i);
+    qDebug() << "second exp=" << second_exp.real() << "+j" << second_exp.imag();
+    complex<qreal> reflection_term = first_exp * second_exp;
     qDebug() << "reflection_term:" << QString::number(reflection_term.real()) << "+ j" << QString::number(reflection_term.imag());
-    complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * Gamma_perpendicular * reflection_term / (1.0 - pow((Gamma_perpendicular), 2) * reflection_term);
+    complex<qreal> Gamma_m = Gamma_perpendicular - (1.0 - pow((Gamma_perpendicular), 2)) * ((Gamma_perpendicular * reflection_term) / ((1.0 - pow((Gamma_perpendicular), 2) * reflection_term)));
     qDebug() << "Gamma_m:" << QString::number(Gamma_m.real()) << "+ j" << QString::number(Gamma_m.imag());
 
     return Gamma_m;
@@ -502,7 +513,12 @@ complex<qreal> computeReflectionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qr
 complex<qreal> computeTransmissionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Wall* wall)
 {
     // returns the transmission coefficient T_m
+    qDebug() << "cos_theta_i=" << _cos_theta_i;
+    qDebug() << "sin_theta_i=" << _sin_theta_i;
+    qDebug() << "cos_theta_t=" << _cos_theta_t;
+    qDebug() << "sin_theta_t=" << _sin_theta_t;
     qreal s = wall->thickness/_cos_theta_t;
+    qDebug() << "s=" << s;
     complex<qreal> perpGamma = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
     complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->gamma_m)*s)*exp(j*beta_0*2.0*s*_sin_theta_t*_sin_theta_i)));
 
@@ -527,9 +543,11 @@ bool checkRaySegmentIntersectsWall(const Wall* wall, RaySegmentTP4* ray_segment,
 
 qreal makeTransmission(RaySegmentTP4* ray_segment, Wall* wall) {
     // computes the final |T| coeff for the ray_segment's transmission with this wall
-    QVector2D _eta = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
-    qreal _cos_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->unitary));
-    qreal _sin_theta_i = abs(QVector2D::dotProduct(_eta.normalized(),wall->normal));
+    qDebug() << "wall:" << wall->line.p1() << "-" << wall->line.p2();
+    QVector2D _d = QVector2D(ray_segment->p1())-QVector2D(ray_segment->p2());
+    qreal _cos_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->normal));
+    //qreal _sin_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary));
+    qreal _sin_theta_i = sqrt(1.0 - pow(_cos_theta_i,2));
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->epsilon_r);
     qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
     //qreal s = wall->thickness/_cos_theta_t;
@@ -568,7 +586,7 @@ void addReflection(RayTP4* _ray, const QVector2D& _p1, const QVector2D& _p2, Wal
     qreal _sin_theta_i = abs(QVector2D::dotProduct(_d.normalized(),wall->unitary)); // sqrt(1 - pow(_cos_theta_i,2))
     qreal _sin_theta_t = _sin_theta_i / sqrt(wall->epsilon_r);
     qreal _cos_theta_t = sqrt(1 - pow(_sin_theta_t,2));
-    qreal Gamma_coeff = abs(computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_i, wall));
+    qreal Gamma_coeff = abs(computeReflectionCoeff(_cos_theta_i,_sin_theta_i,_cos_theta_t,_sin_theta_t, wall)); // FIXME: utiliser ça dans le projet
     qDebug() << "addReflection, Gamma_coeff:" << Gamma_coeff;
     _ray->addCoeff(Gamma_coeff);
 }

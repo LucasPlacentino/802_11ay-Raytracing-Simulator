@@ -61,7 +61,7 @@ qreal Ray::getTotalCoeffs() {
     ////qDebug() << "getTotalCoeffs ray:" << res;
     //return res;
     qreal distance_ray = getTotalDistance();
-    qDebug() << distance_ray;
+    //qDebug() << distance_ray;
     qreal res = 1;
     complex<qreal> res_q = 1;
     for (complex<qreal> coeff : this->coeffsList) {
@@ -120,6 +120,6 @@ qreal Ray::getTotalDistance() {
     //    d += segment->distance;
     //}
     //return d;
-    qDebug() << "Ray getTotalDisctance:" << this->distance;
+    //qDebug() << "Ray getTotalDisctance:" << this->distance;
     return this->distance;
 }

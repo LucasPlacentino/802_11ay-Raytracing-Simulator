@@ -44,8 +44,8 @@ public:
     }
     */
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
-    qreal power = 0.1; // ! in Watts, 20dBm = 0.1W
-    qreal power_dBm = 20;
+    qreal power = P_TX; // ! in Watts, 20dBm = 0.1W
+    qreal power_dBm = P_TX_dBm; // 20dBm
     // TODO:
     //qreal gain = 1.64; // calculé dans le rapport
     qreal gain = G_TX; // 1.64

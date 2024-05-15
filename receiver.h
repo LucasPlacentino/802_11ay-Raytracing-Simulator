@@ -36,8 +36,9 @@ public:
     qreal computeTotalPower(Transmitter* transmitter); // returns final total power computation for this RX
 
     void updateBitrateAndColor(); // update this receiver's bitrate and cell color
-protected:
-    //void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+
+    QColor computeColor(qreal value_normalized);
+
 private:
     /*
     double power_dBm;
@@ -45,7 +46,7 @@ private:
     QColor cell_color;
     QPointF center_coordinates; // TODO: change to QVector2D ?
     */
-    QColor computeColor(qreal value_noramlized);
+
 };
 
 #endif // RECEIVER_H
