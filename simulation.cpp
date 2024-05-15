@@ -30,7 +30,7 @@ void Simulation::createWalls()
 
     // Add obstacles:
     QList<Obstacle*> concrete_walls;
-    ObstacleType concrete = MetalWall; // change to test other materials
+    ObstacleType concrete = ConcreteWall; // change to test other materials
     qreal thickness = 0.3; // 30cm
     concrete_walls.append(new Obstacle(QVector2D(0,0), QVector2D(15,0), concrete, thickness));
     concrete_walls.append(new Obstacle(QVector2D(15,0), QVector2D(15,4), concrete, thickness));
@@ -43,7 +43,7 @@ void Simulation::createWalls()
     concrete_walls.append(new Obstacle(QVector2D(9,8), QVector2D(12,8), concrete, thickness));
 
     QList<Obstacle*> drywall_walls;
-    ObstacleType drywall = MetalWall; // change to test other materials
+    ObstacleType drywall = DryWall; // change to test other materials
     thickness=0.1; // 10cm
     drywall_walls.append(new Obstacle(QVector2D(4,0), QVector2D(4,4), drywall, thickness));
     drywall_walls.append(new Obstacle(QVector2D(4,4), QVector2D(5,4), drywall, thickness));
@@ -113,7 +113,10 @@ void Simulation::run(QProgressBar* progress_bar)
         createCellsMatrix();
     } else {
         // single cell simulation
-        Receiver* rx = new Receiver(this->singleCellX,this->singleCellY,0.5);
+        Receiver* rx = new Receiver(this->singleCellX,this->singleCellY,0.5, true);
+        QPen singleCellPen = QPen(Qt::magenta);
+        singleCellPen.setWidthF(10*0.03);
+        rx->graphics->setPen(singleCellPen);
         this->cells = {{rx}};
     }
 
@@ -141,17 +144,6 @@ void Simulation::run(QProgressBar* progress_bar)
         //qDebug() << "Cells line " << l;
 
         for (Receiver* cell : cells_line) {
-        //for (int c = 0; c < matrix_size.second; c++) {
-            // loops over each column of each line
-            //qDebug() << "Cell column " << c;
-
-            // --- old ---
-            //for (int reflections = 0; reflections <= this->max_ray_reflections; reflections++) {
-            //    qDebug() << "Ray(s) with " << reflections << " reflections";
-            //    //traceRaysToCell(QPair<int,int>(l,c),reflections);
-            //}
-            //  add power of every ray to this cell.
-            // -----------
 
             // TODO : multiple transmitters ?
             computeDirect(cell, *base_station);
@@ -396,7 +388,12 @@ void Simulation::computeDirect(Receiver* _RX, const QVector2D& _TX)
 complex<qreal> Simulation::computePerpendicularGamma(qreal _cos_theta_i, qreal _cos_theta_t, Obstacle* wall)
 {
     // returns Gamma_perpendicular
-    complex<qreal> Gamma_perp = (wall->properties.Z_m*_cos_theta_i-Z_0*_cos_theta_t)/(wall->properties.Z_m*_cos_theta_i+Z_0*_cos_theta_t);
+    complex<qreal> left = wall->properties.Z_m * _cos_theta_i;
+    //qDebug() << "left perpGamma:" << left.real() << "+j" << left.imag();
+    complex<qreal> right = Z_0 * _cos_theta_t;
+    //qDebug() << "right perpGamma:" << right.real() << "+j" << right.imag();
+    //complex<qreal> Gamma_perp = (wall->properties.Z_m*_cos_theta_i-Z_0*_cos_theta_t)/(wall->properties.Z_m*_cos_theta_i+Z_0*_cos_theta_t);
+    complex<qreal> Gamma_perp = (left - right) / (left + right);
 
     //qDebug() << "Gamma_perp=" << QString::number(Gamma_perp.real()) << "+j" << QString::number(Gamma_perp.imag());
     return Gamma_perp;
@@ -418,10 +415,15 @@ complex<qreal> Simulation::computeReflectionCoeff(qreal _cos_theta_i, qreal _sin
 complex<qreal> Simulation::computeTransmissionCoeff(qreal _cos_theta_i, qreal _sin_theta_i, qreal _cos_theta_t, qreal _sin_theta_t, Obstacle* wall)
 {
     // returns the transmission coefficient T_m
+   //qDebug() << "_cos_theta_i" << _cos_theta_i;
+   //qDebug() << "_sin_theta_i" << _sin_theta_i;
+   //qDebug() << "_sin_theta_t" << _sin_theta_t;
+   //qDebug() << "_cos_theta_t" << _cos_theta_t;
     qreal s = wall->thickness/_cos_theta_t;
+    //qDebug() << "s" << s;
     complex<qreal> perpGamma = computePerpendicularGamma(_cos_theta_i, _cos_theta_t, wall);
+    //qDebug() << "perpGamma" << perpGamma.real() << "+j" << perpGamma.imag();
     complex<qreal> T_m = ((1.0-pow(perpGamma,2))*exp(-(wall->properties.gamma_m)*s))/(1.0-(pow(perpGamma,2)*exp(-2.0*(wall->properties.gamma_m)*s)*exp(j*beta_0*2.0*s*_sin_theta_t*_sin_theta_i)));
-
     //qDebug() << "TransmissionCoeff=" << QString::number(T_m.real()) << "+j" << QString::number(T_m.imag());
     return T_m;
 }
@@ -694,7 +696,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
             RX->updateBitrateAndColor();
             QBrush _rxBrush = RX->graphics->brush();
             if (this->showRaySingleCell) {
-                _rxBrush.setColor(Qt::blue);
+                _rxBrush.setColor(Qt::black);
             } else {
                 _rxBrush.setColor(RX->cell_color);
             }
@@ -748,11 +750,11 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     // TODO: multiple transmitters ?
     //for (Transmitter* TX : this->baseStations) {
     //    // Draw TX and add its tooltip
-    //    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain*TX->power)));
+    //    TX->graphics->setToolTip(QString("Transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain*TX->power)));
     //    scene->addItem(TX->graphics);
     //    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
-    TX->graphics->setToolTip(QString("Test transmitter\nx=%1 y=%2\nG_TX*P_TX=%3").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain*TX->power)));
+    TX->graphics->setToolTip(QString("Transmitter\nx=%1 y=%2\nGain=%3\nPower=%4W").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain),QString::number(TX->power)));
     //qDebug() << "TX.graphics:" << TX->graphics->rect();
     scene->addItem(TX->graphics);
     qDebug() << "Transmitter added to scene.";
@@ -760,13 +762,20 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     if (this->showRaySingleCell) {
         // Draw all rays (their segments) from the all_rays list
 
-        // TODO: draw rays to the single RX cell
         for (Ray* ray :this->cells[0][0]->all_rays) {
             qDebug() << "Drawing ray";
             for (QGraphicsLineItem* segment_graphics : ray->getSegmentsGraphics()) {
                 scene->addItem(segment_graphics);
             }
         }
+
+        //// --- TEST only direct ---
+        //for (QGraphicsLineItem* gra : this->cells[0][0]->all_rays.first()->getSegmentsGraphics()) {
+        //    scene->addItem(gra);
+        //}
+        //qDebug() << "number of coeffs:" << this->cells[0][0]->all_rays.first()->coeffsList.length();
+        //qDebug() << "T_m=" << this->cells[0][0]->all_rays.first()->coeffsList.first().real() << "+j" << this->cells[0][0]->all_rays.first()->coeffsList.first().imag();
+        //// ---
 
         qDebug() << "All rays added to scene.";
     }
@@ -807,46 +816,51 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
 void Simulation::addLegend(QGraphicsScene* scene)
 {
     qDebug() << "Adding legend to scene";
-    QLinearGradient gradient;
-    QRectF rect(6,85,138,10); // gradient rectangle scene coordinates
-    QGraphicsRectItem* gradient_graphics = new QGraphicsRectItem(rect);
-
-    gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
-    gradient.setColorAt(0.0, QColor::fromRgb(255,0,0)); // blue
-    gradient.setColorAt(0.25, QColor::fromRgb(255,255,0)); // cyan
-    gradient.setColorAt(0.5, QColor::fromRgb(0,255,0)); // green
-    gradient.setColorAt(0.75, QColor::fromRgb(0,255,255)); // yellow
-    gradient.setColorAt(1.0, QColor::fromRgb(0,0,255)); // red
-    gradient.setStart(1.0, 0.0); // start left
-    gradient.setFinalStop(0.0, 0.0); // end right
 
     QPen legendPen(Qt::white);
     legendPen.setWidthF(0.3);
-    QBrush gradientBrush(gradient);
 
-    gradient_graphics->setPen(legendPen);
-    gradient_graphics->setBrush(gradientBrush);
-    scene->addItem(gradient_graphics); // draw gradient rectangle
-    qreal rect_width = rect.width();
-    for (int i=0; i<5; i++) {
-        QGraphicsLineItem* small_line = new QGraphicsLineItem(rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y(),rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y()+2.0);
-        small_line->setPen(legendPen);
-        scene->addItem(small_line);
+    if (!this->showRaySingleCell) {
+
+        QLinearGradient gradient;
+        QRectF rect(6,85,138,10); // gradient rectangle scene coordinates
+        QGraphicsRectItem* gradient_graphics = new QGraphicsRectItem(rect);
+
+        gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+        gradient.setColorAt(0.0, QColor::fromRgb(255,0,0)); // blue
+        gradient.setColorAt(0.25, QColor::fromRgb(255,255,0)); // cyan
+        gradient.setColorAt(0.5, QColor::fromRgb(0,255,0)); // green
+        gradient.setColorAt(0.75, QColor::fromRgb(0,255,255)); // yellow
+        gradient.setColorAt(1.0, QColor::fromRgb(0,0,255)); // red
+        gradient.setStart(1.0, 0.0); // start left
+        gradient.setFinalStop(0.0, 0.0); // end right
+
+        QBrush gradientBrush(gradient);
+
+        gradient_graphics->setPen(legendPen);
+        gradient_graphics->setBrush(gradientBrush);
+        scene->addItem(gradient_graphics); // draw gradient rectangle
+        qreal rect_width = rect.width();
+        for (int i=0; i<5; i++) {
+            QGraphicsLineItem* small_line = new QGraphicsLineItem(rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y(),rect.bottomLeft().x()+0.25*i*rect_width,rect.bottomLeft().y()+2.0);
+            small_line->setPen(legendPen);
+            scene->addItem(small_line);
+        }
+
+        // text for minimum of gradient
+        QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
+        min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
+        min_text->setDefaultTextColor(Qt::white);
+        min_text->setScale(0.25);
+        // text for maximum of gradient
+        QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
+        max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
+        max_text->setDefaultTextColor(Qt::white);
+        max_text->setScale(0.25);
+
+        scene->addItem(min_text);
+        scene->addItem(max_text);
     }
-
-    // text for minimum of gradient
-    QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
-    min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
-    min_text->setDefaultTextColor(Qt::white);
-    min_text->setScale(0.25);
-    // text for maximum of gradient
-    QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
-    max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
-    max_text->setDefaultTextColor(Qt::white);
-    max_text->setScale(0.25);
-
-    scene->addItem(min_text);
-    scene->addItem(max_text);
 
     // axes legends :
     QGraphicsLineItem* x_line = new QGraphicsLineItem(0,-5,15*10,-5);
