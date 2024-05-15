@@ -6,8 +6,8 @@
 
 static constexpr qreal max_power_dBm = -40.0;
 static constexpr qreal min_power_dBm = -90.0;
-static constexpr qlonglong max_bitrate_Mbps = 40000;
-static constexpr qlonglong min_bitrate_Mbps = 50;
+static constexpr qreal max_bitrate_Mbps = 40000;
+static constexpr qreal min_bitrate_Mbps = 50;
 
 /*
 Receiver::Receiver(double power_dBm, const QPointF center_coordinates)
@@ -95,10 +95,10 @@ Receiver::Receiver(qreal x, qreal y, qreal resolution, bool showOutline) {
 }
 void Receiver::updateBitrateAndColor()
 {
-    qlonglong bitrate;
+    qreal bitrate;
     qreal power_dBm = 10*std::log10(this->power*1000);
     if (this->power != this->power) {
-        bitrate = 9999999999999999;
+        bitrate = 9999999999999999.9;
         this->cell_color = QColor::fromRgb(255,192,203); // pink
         qDebug() << "--- ! ERROR: Cell has NaN power ! ---";
     } else if (power_dBm > max_power_dBm) {
@@ -124,7 +124,9 @@ void Receiver::updateBitrateAndColor()
         // or
         //qreal value_normalized = (this->power*1000 - min_power_mW) / (max_power_mW - min_power_mW);
         // or
-        qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
+        //qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
+        // or
+        qreal value_normalized = (bitrate_dB - min_bitrate_dB) / (max_bitrate_dB - min_bitrate_dB);
         //qDebug() << "value_normalized:" << value_normalized;
 
         QColor color = computeColor(value_normalized);

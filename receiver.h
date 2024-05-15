@@ -23,7 +23,7 @@ public:
     QVector2D get2DVector() const;
     */
 
-    Receiver(qreal x, qreal y, qreal resolution, bool showOutline);
+    Receiver(qreal x, qreal y, qreal resolution, bool showOutline = false);
 
     QGraphicsRectItem* graphics = new QGraphicsRectItem(); // RX's QGraphicsItem
     qreal power; // ! in Watts

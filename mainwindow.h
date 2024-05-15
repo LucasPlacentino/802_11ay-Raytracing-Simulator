@@ -61,6 +61,10 @@ private slots:
 
     void on_actionSave_TP4_image_triggered();
 
+    void on_cellXspinBox_valueChanged(double arg1);
+
+    void on_cellYspinBox_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
     bool runSimulation(QProgressBar* progress_bar);

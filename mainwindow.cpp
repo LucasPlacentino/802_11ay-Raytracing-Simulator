@@ -443,3 +443,15 @@ void MainWindow::on_actionSave_TP4_image_triggered()
 {
     saveImage(TP4view);
 }
+
+void MainWindow::on_cellXspinBox_valueChanged(double x)
+{
+    simulation.singleCellX = x;
+}
+
+
+void MainWindow::on_cellYspinBox_valueChanged(double y)
+{
+    simulation.singleCellY = y;
+}
+

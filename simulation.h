@@ -43,6 +43,8 @@ public:
     QList<QList<Receiver*>> cells; // RX matrix // TODO:
     QList<Obstacle*> obstacles;
 
+    qreal singleCellX=2;
+    qreal singleCellY=2;
     // -------------
 
 
