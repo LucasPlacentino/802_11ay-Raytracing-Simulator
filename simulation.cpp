@@ -213,6 +213,10 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
             addReflection(ray_1_reflection,_imageTX,*_RX,wall);
             checkTransmissions(ray_1_reflection,{wall});
 
+            if (this->showRaySingleCell) {
+                this->singleCellSimReflectionPoints.append(_P_r);
+            }
+
             //qDebug() << "ray_1_refl distance:" << QVector2D(*_RX - _imageTX).length();
             ray_1_reflection->distance = QVector2D(*_RX-_imageTX).length();
             //qDebug() << "Ray's (1refl) total coeffs:" << ray_1_reflection->getTotalCoeffs();
@@ -267,6 +271,11 @@ void Simulation::computeReflections(Receiver* _RX, const QVector2D& _TX)
                 addReflection(ray_2_reflection,_imageTX,_P_r_2_last,wall);
                 addReflection(ray_2_reflection,_image_imageTX,*_RX,wall_2);
                 checkTransmissions(ray_2_reflection,{wall,wall_2});
+
+                if (this->showRaySingleCell) {
+                    this->singleCellSimReflectionPoints.append(_P_r_2_first);
+                    this->singleCellSimReflectionPoints.append(_P_r_2_last);
+                }
 
                 //qDebug() << "ray_2_refl distance:" << QVector2D(*_RX - _image_imageTX).length();
                 ray_2_reflection->distance = QVector2D(*_RX-_image_imageTX).length();
@@ -754,7 +763,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     //    scene->addItem(TX->graphics);
     //    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
-    TX->graphics->setToolTip(QString("Transmitter\nx=%1 y=%2\nGain=%3\nPower=%4W").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain),QString::number(TX->power)));
+    TX->graphics->setToolTip(QString("Transmitter:\nx=%1 y=%2\nGain: %3\nPower: %4W").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain),QString::number(TX->power)));
     //qDebug() << "TX.graphics:" << TX->graphics->rect();
     scene->addItem(TX->graphics);
     qDebug() << "Transmitter added to scene.";
@@ -778,6 +787,17 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
         //// ---
 
         qDebug() << "All rays added to scene.";
+
+        for (QVector2D point : this->singleCellSimReflectionPoints) {
+            qreal width = 0.04;
+            QGraphicsEllipseItem* reflection_graphics = new QGraphicsEllipseItem(10*(point.x()-width),10*(point.y()-width),2*width*10,2*width*10);
+            reflection_graphics->setPen(QPen(Qt::green));
+            reflection_graphics->setBrush(QBrush(Qt::green));
+            reflection_graphics->setToolTip("Reflection point");
+            scene->addItem(reflection_graphics);
+        }
+
+        qDebug() << "All reflection points added to scene.";
     }
 
 #ifdef DRAW_IMAGES
@@ -860,6 +880,12 @@ void Simulation::addLegend(QGraphicsScene* scene)
 
         scene->addItem(min_text);
         scene->addItem(max_text);
+    } else {
+        QGraphicsTextItem* ray_colors = new QGraphicsTextItem("Green line: Direct ray\nRed line: One-reflection ray\nYellow line: Two-reflections ray");
+        ray_colors->setPos(50,85);
+        ray_colors->setScale(0.2);
+        ray_colors->setDefaultTextColor(Qt::white);
+        scene->addItem(ray_colors);
     }
 
     // axes legends :

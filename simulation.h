@@ -45,6 +45,7 @@ public:
 
     qreal singleCellX=2;
     qreal singleCellY=2;
+    QList<QVector2D> singleCellSimReflectionPoints = {};
     // -------------
 
 
