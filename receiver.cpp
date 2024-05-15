@@ -106,15 +106,15 @@ void Receiver::updateBitrateAndColor()
         this->cell_color = QColor(255,0,0);
     } else if (power_dBm < min_power_dBm) { // 50 Mbps at -90 dBm
         bitrate = 0; //in Mbps, no connection (0 Mbps)
-        this->cell_color = Qt::darkBlue; // Qt::transparent or Qt::black ?
+        this->cell_color = Qt::black; // Qt::transparent or Qt::black or Qt::darkBlue ?
     } else {
         // Conversion to bitrate (beware log scale)
         qreal max_power_mW = std::pow(10.0, max_power_dBm / 10.0);
         qreal min_power_mW = std::pow(10.0, min_power_dBm / 10.0);
 
-        bitrate = min_bitrate_Mbps + (((this->power - min_power_mW/1000) / (max_power_mW/1000 - min_power_mW/1000)) * (max_bitrate_Mbps - min_bitrate_Mbps));
+        //bitrate = min_bitrate_Mbps + (((this->power - min_power_mW/1000) / (max_power_mW/1000 - min_power_mW/1000)) * (max_bitrate_Mbps - min_bitrate_Mbps));
         // OR ?
-        //bitrate = min_bitrate_Mbps + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_Mbps - min_bitrate_Mbps));
+        bitrate = min_bitrate_Mbps + (((power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm)) * (max_bitrate_Mbps - min_bitrate_Mbps));
         //qDebug() << "bitrate (Mbps):" << bitrate;
 
         //qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);
@@ -131,6 +131,9 @@ void Receiver::updateBitrateAndColor()
 
         this->cell_color = color;
     }
+    //// DEBUG:
+    ////this->cell_color = Qt::black; // set ALL cells to black
+
     this->bitrate_Mbps = bitrate;
 }
 

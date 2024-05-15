@@ -155,14 +155,20 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     this->graphics->setPen(pen);
 
     this->properties.epsilon = epsilon_0 * this->properties.relative_permittivity;
-    this->properties.Z_m = sqrt(mu_0 / (this->properties.epsilon - j * this->properties.conductivity / omega));
-    //this->properties.gamma_m = 0.0;
-    this->properties.alpha_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) - 1.0);
-    this->properties.beta_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) + 1.0);
-    //this->properties.beta_m = 1;
-    this->properties.gamma_m = this->properties.alpha_m +j*this->properties.beta_m;
+    complex<qreal> epsilon_tilde = this->properties.epsilon - j *(this->properties.conductivity / omega);
+    //this->properties.Z_m = sqrt(mu_0 / (this->properties.epsilon - j * (this->properties.conductivity / omega)));
+    this->properties.Z_m = sqrt(mu_0 / epsilon_tilde);
+
+    //this->properties.alpha_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) - 1.0);
+    //this->properties.beta_m = omega * sqrt(mu_0 * epsilon_0 / 2) * sqrt(sqrt(1 + pow(this->properties.conductivity / (omega * epsilon_0), 2)) + 1.0);
+    //this->properties.gamma_m = this->properties.alpha_m +j*this->properties.beta_m;
+
+    this->properties.gamma_m = j * omega * sqrt(mu_0 * epsilon_tilde);
 
     //qDebug("Wall created.");
+    qDebug() << this->material; // 1: glass, 4: concrete, 2: metal, 3: drywall
+    qDebug() << "Z_m" << this->properties.Z_m.real() << "+j" << this->properties.Z_m.imag();
+    qDebug() << "gamma_m" << this->properties.gamma_m.real() << "+j" << this->properties.gamma_m.imag();
 }
 
 ObstacleType Obstacle::getMaterial()
