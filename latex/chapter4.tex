@@ -1,70 +1,72 @@
 \chapter{Analyse performance}
 \label{chaper-4}
 
-Résultats du calcul de la puissance reçue et du débit binaire dans l'appart
+%Résultats du calcul de la puissance reçue et du débit binaire dans l'appart
 
-Suggestions placement
+%Suggestions placement
 
 
 \section{Résultats}
 
+Les résultats ont été réalisés avec la simulation à sa plus haute résolution (soit des cellules de $0,0625\mathrm{m}\times0,0625\mathrm{m}$).
+
 \subsection{Emplacement par défaut (salon)}
-La station de base se trouve en (9,4 ; 7).
+La station de base se trouve en (9,4 ; 7)m.
 
 \subsubsection{Sans ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-without-lift.png}
     \caption{Couverture station de base salon, sans ascenseur}
     \label{fig:simu-emplacement-defaut-sansasc}
 \end{figure}
 \subsubsection{Avec ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-with-lift.png}
     \caption{Couverture station de base salon, avec ascenseur}
     \label{fig:simu-emplacement-defaut-avecasc}
 \end{figure}
 
 \subsection{Emplacement couloir}
-La station de base se trouve en (X ; Y).
+La station de base se trouve en (7 ; 5)m.
 
 \subsubsection{Sans ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-couloir-without-lift.png}
     \caption{Couverture station de base couloir, sans ascenseur}
     \label{fig:simu-emplacement-couloir-sansasc}
 \end{figure}
 \subsubsection{Avec ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-couloir-with-lift.png}
     \caption{Couverture station de base couloir, avec ascenseur}
     \label{fig:simu-emplacement-couloir-avecasc}
 \end{figure}
 
 
 \subsection{Emplacement chambre 1}
-La station de base se trouve en (X ; Y).
+La station de base se trouve en (0,5 ; 4)m.
 
 \subsubsection{Sans ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-chambre1-without-lift.png}
     \caption{Couverture station de base chambre 1, sans ascenseur}
     \label{fig:simu-emplacement-chambre1-sansasc}
 \end{figure}
 \subsubsection{Avec ascenseur}
-...
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{}
+    \includegraphics[width=0.8\textwidth]{latex/images/highres-chambre1-with-lift.png}
     \caption{Couverture station de base chambre 1, avec ascenseur}
     \label{fig:simu-emplacement-chambre1-avecasc}
 \end{figure}
@@ -74,12 +76,16 @@ La station de base se trouve en (X ; Y).
 
 ...\\
 
-Un emplacement dans le couloir au milieu de l'appartement offre une large couverture, dû à son placement central.\\
+Un emplacement dans le couloir au milieu de l'appartement offre une large couverture, dû à son placement central et à sa plus grande distance à tous les murs en béton.\\
 
-Un emplacement au milieu d'une pièce est évidemment non favorable car loin de prises de courant et réseau, et nécessite aussi de placer la station de base au plafond ce qui engendre un travail supplémentaire lors de l'installation et un aspect esthétique moindre. Nous privilégions alors un emplacement proche d'un mur par soucis pratique.\\
+Un emplacement au milieu d'une pièce est évidemment non favorable car loin de prises de courant et réseau, et nécessite aussi de placer la station de base au plafond ce qui engendre un travail supplémentaire lors de l'installation et un aspect esthétique moindre. Nous privilégions alors un emplacement proche d'un mur, sans doute sur un meuble, par soucis pratique.\\
 
-L'emplacement par défaut du projet (9.4, 7)m est un emplacement réaliste et efficace car la station de base se trouve dans le salon de l'appartement, un lieu où est souvent le raccordement internet, et là où sont majoritairement utilisés les appareils sans-fil lors de besoins élevés en débit binaire (téléchargements, vidéos, etc).\\
+L'emplacement par défaut du projet (9.4, 7)m est un emplacement réaliste et efficace car la station de base se trouve dans le salon de l'appartement, un lieu où est souvent le raccordement internet, et là où sont majoritairement utilisés les appareils sans-fil lors de besoins élevés en débit binaire (téléchargements, vidéos, etc). De plus, la cuisine et la salle à manger sont bien couvertes (deux autres pièces qui sont plus enclines à une utilisation du réseau Wi-Fi par les habitants, contrairement aux chambres et salle de bain).\\
 
 \textbf{Pratiquement}, l'emplacement par défaut dans le salon semble être le meilleur choix.
 
 \textbf{Théoriquement}, l'emplacement couloir semble offrir la meilleure couverture dans l'appartement.\\
+
+\section{Critique de la simulation}
+% TODO ?
+% parler du fait que les murs sont rarement direct en béton (en général du placo par dessus), présence de meubles, absence de la diffraction, pas de beam-forming, etc...
