@@ -43,6 +43,10 @@ En haut de la fenêtre se trouve trois menus:
 
 \section{Affichage}
 Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple vide est visible Figure [\ref{fig:blank-map}]. Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs représentant leurs débits binaires selon le dégradé affiché dans la légende.
+
+L'échelle de couleur a été choisie pour représenter le débit binaire, ce \textit{bitrate} étant la donnée qui nous intéresse dans la simulation pour ce projet. Elle a donc été limitée à un minimum de 50Mb/s (quand un récepteur a une puissance de -90dBm) et à un maximum de 40Gb/s (un récepteur a une puissance de -40dBm).
+
+Il est possible d'afficher davantage d'informations dans une info-bulle sur l'émetteur ou sur une cellule réceptrice lors de leur survol avec la souris (voir Figure [\ref{fig:tooltips}]).
 % TODO:
 
 \begin{figure}[H]
@@ -50,6 +54,19 @@ Après l'exécution d'une simulation, l'application affiche à l'utilisateur une
     \includegraphics[width=\textwidth]{latex/images/blank_map.png}
     \caption{Carte vide de la simulation}
     \label{fig:blank-map}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\textwidth}
+    \includegraphics[width=\textwidth]{latex/images/tooltip.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+    \includegraphics[width=\textwidth]{latex/images/tooltip2.png}
+  \end{minipage}
+  \caption{Exemple d'info-bulle au survol (curseur souris caché)}
+  \label{fig:tooltips}
 \end{figure}
 
 Pour une mode de simulation \textit{Rays to Single Cell}, la cellule réceptrice est représentée comme un carré magenta, les points de réflexions sont en vert, et les rayons sont coloriés en fonction de leur nombre de réflexions. Le programme affiche alors ceci [Figure \ref{fig:simu-single-cell}] :
@@ -72,7 +89,7 @@ Les ajouts et améliorations futurs possibles sont:
 
 \section{Performances}
 % temps d'exécution, RAM etc
-Le temps d'exécution pour une simulation exemple, de résolution de cellule de $0.125\mathrm{m}\times0.125\mathrm{m}$ est aux alentours des 500ms [Figure \ref{fig:time-0.125m}], avec une utilisation de 2,8GB de RAM, soit des performances tout à fait acceptables.
+Le temps d'exécution pour une simulation exemple, de résolution de cellule de $0.125\mathrm{m}\times0.125\mathrm{m}$ est aux alentours des 500ms [Figure \ref{fig:time-0.125m}], avec une utilisation de 2,8GB de RAM, soit des performances tout à fait acceptables.\footnote{Exécution sur un laptop doté d'un CPU AMD Ryzen 7 5800U avec 16GB de RAM.}
 
 Le temps d'exécution a été calculé grâce à un objet \mintinline{cpp}{QTimer}, lancé après une pression du bouton \textit{Run simulation} et stoppé juste avant l'affichage graphique.
 \begin{figure}[H]
