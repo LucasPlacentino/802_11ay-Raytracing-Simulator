@@ -671,12 +671,14 @@ void Simulation::addLegend(QGraphicsScene* scene)
         }
 
         // text for minimum of gradient
-        QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
+        //QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
+        QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps");
         min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
         min_text->setDefaultTextColor(Qt::white);
         min_text->setScale(0.25);
         // text for maximum of gradient
-        QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
+        //QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
+        QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps");
         max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
         max_text->setDefaultTextColor(Qt::white);
         max_text->setScale(0.25);
@@ -718,8 +720,8 @@ void Simulation::addLegend(QGraphicsScene* scene)
         scene->addItem(small_line);
         scene->addItem(x_index);
     }
-    QGraphicsTextItem* x_unit = new QGraphicsTextItem("m");
-    x_unit->setPos(-3.6,-6-3.5);
+    QGraphicsTextItem* x_unit = new QGraphicsTextItem("[m]");
+    x_unit->setPos(-4.8,-6-3.7);
     x_unit->setScale(0.15);
     x_unit->setDefaultTextColor(Qt::white);
     scene->addItem(x_unit);
@@ -733,8 +735,8 @@ void Simulation::addLegend(QGraphicsScene* scene)
         scene->addItem(small_line);
         scene->addItem(y_index);
     }
-    QGraphicsTextItem* y_unit = new QGraphicsTextItem("m");
-    y_unit->setPos(-6-2.5,-4.4);
+    QGraphicsTextItem* y_unit = new QGraphicsTextItem("[m]");
+    y_unit->setPos(-6-3.4,-4.4);
     y_unit->setScale(0.15);
     y_unit->setDefaultTextColor(Qt::white);
     scene->addItem(y_unit);

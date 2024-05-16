@@ -15,10 +15,11 @@ Receiver::Receiver(qreal x, qreal y, qreal resolution, bool showOutline) {
     QPen rxPen;
     if (showOutline){
         rxPen.setColor(Qt::black);
+        rxPen.setWidthF(10*0.01);
     } else {
         rxPen.setColor(Qt::transparent);
+        rxPen.setWidth(0);
     }
-    rxPen.setWidthF(10*0.01);
 
     this->setX(x);
     this->setY(y);
