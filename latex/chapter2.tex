@@ -1,9 +1,9 @@
 \chapter{Implémentation}
 \label{chaper-2}
 
-Description fonctionnalités programme
+%Description fonctionnalités programme
 
-Explications implémentation de l'algorithme de ray-tracing, et de la structure du code
+%Explications implémentation de l'algorithme de ray-tracing, et de la structure du code
 
 
 \section{Interface utilisateur}
@@ -43,6 +43,7 @@ En haut de la fenêtre se trouve trois menus:
 
 \section{Affichage}
 Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple vide est visible Figure [\ref{fig:blank-map}]. Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs représentant leurs débits binaires selon le dégradé affiché dans la légende.
+% TODO:
 
 \begin{figure}[H]
     \centering
@@ -53,12 +54,12 @@ Après l'exécution d'une simulation, l'application affiche à l'utilisateur une
 
 \section{Ajouts futurs possibles}
 % décrire les futures ameliorations qui peuvent être ajoutées
-Les ajouts futurs possibles sont:
+Les ajouts et améliorations futurs possibles sont:
 \begin{itemize}
     \item Simulation contenant plusieurs stations de base (comme visible grisé dans l'interface [Figure \ref{fig:interface}])
-    \item Sélection du nombre maximal de réflexions des rayons (nécessitant un algorithme récursif)
+    \item Sélection du nombre maximal de réflexions des rayons (nécessitant un algorithme de ray-tracing récursif)
     \item Importation de différentes cartes d'appartement
-    \item Mode d'optimisation de placement de station de base (par la méthode de Monte-Carlo ou algorithme génétique)
+    \item Mode d'optimisation de placement de station de base (par méthode de Monte-Carlo ou algorithme génétique)
 \end{itemize}
 
 \section{Performances}
