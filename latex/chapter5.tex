@@ -1,30 +1,38 @@
 \chapter{Optimisations code}
 \label{chaper-5}
 
-Discussion des optimisations du code (\textbf{à faire APRÈS que tout fonctionne})\\
+%Discussion des optimisations du code (\textbf{à faire APRÈS que tout fonctionne})\\
 
-Utiliser un autre format pour les chiffres (moins de décimales?), autres techniques/algorithmes de résolutions d'équations, faire des calculs en parallèle, utiliser le GPU, faire en CUDA, etc ?\\
+%Utiliser un autre format pour les chiffres (moins de décimales?), autres techniques/algorithmes de résolutions d'équations, faire des calculs en parallèle, utiliser le GPU, faire en CUDA, etc ?\\
+
+
+
+L'utilisation de C++ pour notre projet nous donne un grand avantage au niveau performance de notre programme, c'est en effet un langage qui, compilé, est connu pour être très optimisé pour la rapidité grâce à son faible niveau d'abstraction. Ceci nous a permis d'avoir un temps d'exécution déjà très faible sans avoir implémenté d'optimisation. Cet avantage couplé au manque de temps que nous avions à consacrer pour ce projet nous a finalement entrainés à ne pas mettre en place les optimisations possibles.
+
+Cependant, il reste intéressant de savoir quelles sont les techniques d'optimisation pouvant être implémentées. Nous avons recueilli différentes idées d'optimisations du code dans le tableau ci-dessous (Table [\ref{tab:optimisation-table}]) :
 
 % TODO: ajouter plus dans le tableau ?
 \begin{table}[h]
     \centering
-    \begin{tabular}{|c|c|c|c|}
+    \begin{tabular}{|l|c|c|}
         \hline
-         & Optimisation du & Difficulté de mise & blabla\\
-         & temps de calcul & en place & \\
+         & Optimisation du & Difficulté de mise \\
+         & temps de calcul & en place \\
          \hline
-         1. Parallélisation (CPU) & grande & moyenne & ef\\
-         2. GPU & très grande & grande & he\\
-         3. Cache & faible & faible & ri\\
+         1. Parallélisation (CPU) & grande & moyenne \\
+         2. GPU & très grande & grande \\
+         3. Mise en cache & faible & faible \\
+         4. Abandon anticipé & incertaine & moyenne \\
          \hline
     \end{tabular}
     \caption{Comparaison méthodes d'optimisations}
     \label{tab:optimisation-table}
 \end{table}
 
-Explications de chaque méthode d'optimisation (voir Table [\ref{tab:optimisation-table}]) :
+Explications de chaque méthode d'optimisation Table [\ref{tab:optimisation-table}] :
 \begin{enumerate}
-    \item Parallélisation (CPU): ...
-    \item GPU: ...
-    \item Cache: ...
+    \item Parallélisation (CPU): ...un thread par cell...
+    \item GPU: ...parallélisation massive, sans ou avec CUDA...
+    \item Mise en cache: ...caching des valeurs récurrentes de sin, $\Gamma_\perp$ etc...
+    \item  Abandon anticipé: ...calculer la puissance après chaque réflection et transmission et voir si puissance trop faible alors ça sert à rien de continuer et on peut abandonner ce rayon...
 \end{enumerate}
