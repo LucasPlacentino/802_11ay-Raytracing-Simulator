@@ -82,8 +82,8 @@ Obstacle::Obstacle(QVector2D start, QVector2D end, ObstacleType material, qreal 
     default:
         pen.setColor(Qt::white);
         pen.setWidthF(10*0.12);
-        this->properties.relative_permittivity = 0;
-        this->properties.conductivity = 0;
+        this->properties.relative_permittivity = 1e-10;
+        this->properties.conductivity = 1e-10;
         break;
     }
     this->graphics->setPen(pen);

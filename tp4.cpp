@@ -30,7 +30,7 @@ constexpr qreal mu_0 = 4 * M_PI * 1e-7;
 constexpr qreal freq = 868.3e6; // 868.3 MHz
 constexpr qreal c = 299792458;
 
-constexpr qreal G_TXP_TX = 1.64e-3; // TODO : régler la problématique de sa valeur?
+constexpr qreal G_TXP_TX = 1.64e-3; // given 1.64mW ~= 2.15dBm
 constexpr qreal beta_0 =  2*M_PI*freq/c; // beta
 
 // il n'est pas défini en constexpr car cela provoque une erreur, sans doute parce qu'il utilise une fonction sqrt()
@@ -263,7 +263,7 @@ public:
     }
     */
     QGraphicsEllipseItem* graphics = new QGraphicsEllipseItem(); // TX's QGraphicsItem
-    qreal power; // ! in Watts
+    //qreal power; // ! in Watts
 };
 class ReceiverTP4 : public QVector2D { // RX class
 public:
@@ -295,12 +295,18 @@ QGraphicsEllipseItem* tx_image_image_graphics = new QGraphicsEllipseItem(); // u
 
 qreal computeTotalPower() // returns final total power computation for this RX
 {
-    qreal res = 0;
+    qreal res;
+    complex<qreal> sum = 0;
     for (RayTP4* ray : all_rays) {
-        res+=ray->getTotalCoeffs(); // sum of all the rays' total coefficients and exp term
+        complex<qreal> ray_coeffs = 1;
+        for (complex<qreal> coeff : ray->coeffsList) {
+            ray_coeffs*=coeff;
+        }
+        ray_coeffs*=exp(-j*beta_0*ray->distance)/ray->distance;
+        sum+=ray_coeffs; // sum of all the rays' total coefficients and exp term
     }
     // multiply by the term before the sum:
-    res *= (60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
+    res = pow(abs(sum),2)*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX; // TODO: *transmitter->gain*transmitter->power plutot que *G_TXP_TX
 
     qDebug() << "computeTotalPower:" << res;
     return res;
@@ -929,8 +935,19 @@ QGraphicsView* runTP4(){
 
     // prints RX power values only for each ray
     for (RayTP4* ray : all_rays) {
-        qreal coeffs = ray->getTotalCoeffs();
-        qreal power = coeffs*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
+        complex<qreal> coeffs_product = 1;
+        for (complex<qreal> coeff : ray->coeffsList) {
+            qDebug() << "ray coeff:" << coeff.real() << "+j" << coeff.imag();
+            coeffs_product*=coeff;
+        }
+        complex<qreal> elec_field = coeffs_product*sqrt(60*G_TXP_TX)*(exp(-j*beta_0*ray->distance)/ray->distance);
+        qDebug() << "E=" << elec_field.real() << "+j" << elec_field.imag() << "V/m";
+        qreal elec_field_modulus = abs(elec_field);
+        qDebug() << "|E|=" << elec_field_modulus << "V/m";
+
+        //qreal coeffs = ray->getTotalCoeffs();
+        //qreal power = coeffs*(60*pow(lambda,2))/(8*pow(M_PI,2)*Ra)*G_TXP_TX;
+        qreal power = ((60.0*pow(lambda,2))/(8*pow(M_PI,2)*Ra))*G_TXP_TX*pow(abs(coeffs_product*(exp(-j*beta_0*ray->distance)/ray->distance)),2);
         // power *1000 because it's in Watts and we need in mW :
         qDebug() << "Ray" << ray->num_reflections << "reflections, power:" << power*1000 << "mW " << 10*std::log10(power*1000) << "dBm.";
     }
