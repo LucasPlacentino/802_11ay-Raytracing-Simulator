@@ -7,33 +7,57 @@
 
 
 
-L'utilisation de \textbf{C++} pour notre projet nous donne un grand avantage au niveau performance de notre programme, c'est en effet un langage qui, compilé, est connu pour être très optimisé pour la rapidité grâce à son faible niveau d'abstraction, et absence de \textit{garbage collector}. Ceci nous a permis d'avoir un temps d'exécution déjà très faible sans avoir implémenté d'optimisation. Cet avantage couplé au manque de temps que nous avions à consacrer pour ce projet nous a finalement entrainés à ne pas mettre en place les optimisations possibles.
+L'utilisation du \textbf{C++} pour notre projet nous donne un grand avantage
+au niveau performance de notre programme, c'est en effet un langage qui,
+compil{\'e}, est connu pour {\^e}tre tr{\`e}s optimis{\'e} pour la
+rapidit{\'e} gr{\^a}ce {\`a} son faible niveau d'abstraction et son absence de
+\textit{garbage collector}\footnote{Le \textit{garbage collector} est un
+m{\'e}canisme de gestion automatique de la m{\'e}moire qui r{\'e}cup{\`e}re et
+lib{\`e}re les espaces m{\'e}moire non utilis{\'e}s pour {\'e}viter les fuites
+de m{\'e}moire et optimiser l'utilisation des ressources. Un \textit{garbage collector} est généralement assez lourd en performance, comparé à une gestion manuelle de la mémoire.}. Ceci nous a permis
+d'avoir un temps d'ex{\'e}cution d{\'e}j{\`a} tr{\`e}s faible sans avoir
+impl{\'e}ment{\'e} d'optimisation sp{\'e}cifique. Cet avantage coupl{\'e} au
+manque de temps que nous avions {\`a} consacrer pour ce projet nous a
+finalement conduit {\`a} ne pas mettre en place une des optimisations
+possibles.
 
-Cependant, il reste intéressant de savoir quelles sont les techniques d'optimisation pouvant être implémentées. Nous avons recueilli différentes idées d'optimisations du code dans le tableau ci-dessous (Table [\ref{tab:optimisation-table}]) :
+Cependant, il reste int{\'e}ressant de mentionner la discussion faite en
+d{\'e}but de projet pour comparer les diff{\'e}rentes optimisations, qui est
+r{\'e}sum{\'e}e dans le tableau ci-dessous (Table
+[\ref{tab:optimisation-table}]) :
 
-% TODO: ajouter plus dans le tableau ?
 \begin{table}[h]
-    \centering
+  \begin{center}
     \begin{tabular}{|l|c|c|}
-        \hline
-         & Optimisation du & Difficulté de mise \\
-         & temps de calcul & en place \\
-         \hline
-         1. Parallélisation (CPU) & grande & moyenne \\
-         2. GPU & très grande & grande \\
-         3. Mise en cache & faible & faible \\
-         4. Abandon anticipé & incertaine & moyenne \\
-         \hline
+      \hline
+      & Optimisation du & Difficult{\'e} de mise\\
+      & temps de calcul & en place\\
+      \hline
+      1. Parall{\'e}lisation (CPU) & grande & moyenne\\
+      2. GPU & tr{\`e}s grande & grande\\
+      3. Mise en cache & faible & faible\\
+      4. Abandon anticip{\'e} & incertaine & moyenne\\
+      \hline
     \end{tabular}
-    \caption{Comparaison méthodes d'optimisations}
-    \label{tab:optimisation-table}
+  \end{center}
+  \caption{Comparaison m{\'e}thodes d'optimisations}
+  \label{tab:optimisation-table}
 \end{table}
 
-Ce tableau est subjectif, basé sur nos expériences personnelles.\\
-Explications de chaque méthode d'optimisation Table [\ref{tab:optimisation-table}] :
+Explications de chaque m{\'e}thode d'optimisation Table
+[\ref{tab:optimisation-table}] :
 \begin{enumerate}
-    \item Parallélisation (CPU): ...un thread par cell...
-    \item GPU: ...parallélisation massive, par exemple avec l'API NVidia CUDA...
-    \item Mise en cache: ...caching des valeurs récurrentes de sin, $\Gamma_\perp$ etc...
-    \item  Abandon anticipé: ...calculer la puissance après chaque réflection et transmission et voir si puissance trop faible alors ça sert à rien de continuer et on peut abandonner ce rayon...
+  \item Parall{\'e}lisation (CPU) : diviser le calcul entre plusieurs threads
+  pour traiter les cellules simultan{\'e}ment.
+  
+  \item GPU : utiliser le processeur graphique pour une parall{\'e}lisation
+  massive, par exemple avec l'API Nvidia CUDA.
+  
+  \item Mise en cache : stocker les valeurs calcul{\'e}es fr{\'e}quemment,
+  comme les $\mathrm{sin}(\theta_i)$ et les coefficients de r{\'e}flexion $\Gamma_m$ pour un même angle d'incidence sur un même matériau, pour {\'e}viter de les
+  recalculer.
+  
+  \item Abandon anticip{\'e} : arr{\^e}ter le calcul des rayons lorsque la
+  puissance devient trop faible pour contribuer significativement {\`a} la
+  couverture.
 \end{enumerate}

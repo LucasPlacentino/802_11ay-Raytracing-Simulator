@@ -19,7 +19,7 @@ Le mode \textit{Coverage Heatmap} permet d'avoir le rendu de la couverture de l'
 
 Quant au mode \textit{Rays to Single Cell}, il permet de visualiser tous les rayons simulés vers une unique cellule (de largeur 0,5m), où l'utilisateur peut choisir les coordonnées de cette cellule.\\
 
-Des boutons grisés sont présents dans la partie \textit{Base Station Settings} de l'interface, ceux-ci représentent des fonctionnalités futures qui n'ont pas été encore implémentées par manque de temps pour ce projet.\\
+Le groupe de boutons du dessous contrôle les paramètres de la ou des stations de base. L'utilisateur peut rajouter et enlever des émetteurs (avec un minimum d'une station de base), et modifier leurs coordonnées et puissances.\\
 
 Le haut de l'interface contient un large bouton \textit{Run simulation} qui permet de lancer la simulation avec les paramètres rentrés. Au-dessus de ce bouton se trouve un cadre qui affichera si la simulation s'est finie avec succès, ainsi que son temps d'exécution en millisecondes. En dessous du bouton se trouve une barre de progression de la simulation. Ceci est visible Figure [\ref{fig:time-0.125m}].\\
 
@@ -32,29 +32,27 @@ En haut de la fenêtre se trouve trois menus:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{latex/images/interface.png}
+    \includegraphics[width=0.44\textwidth]{latex/images/interface.png}
     \caption{Interface utilisateur du programme}
     \label{fig:interface}
 \end{figure}
 
 \section{Algorithme}
-% TODO: explication algo
-...
+L'algorithme est simplement une itération sur une matrice de cellules (cellule = récepteur) qui calcule la puissance reçue par chacune. Pour chaque récepteur, un rayon direct est tracé depuis l'émetteur vers celui-ci, les coefficients d'éventuelles transmissions à travers des obstacles rencontrés sont calculés. Ensuite, les rayons à plusieurs réflexions sont pris en compte, en vérifiant si l'émetteur (ou ses images) et le récepteur sont du même côté de l'obstacle. Si c'est le cas, l'image de l'émetteur (ou de son image) par rapport à l'obstacle est déterminée, et le point de réflexion est calculé. Les segments de rayon entre le transmetteur, les points de réflexion et le récepteur sont créés, et les coefficients de réflexion sont calculés en fonction de l'angle d'incidence et des propriétés du matériau de l'obstacle. La puissance totale reçue par chaque récepteur est ensuite calculée en additionnant les contributions de tous les rayons (direct et réfléchis), tel que décrit l'équation [\ref{eq:puissance-locale}].
 
 \section{Affichage}
-Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple vide est visible Figure [\ref{fig:blank-map}]. Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs représentant leurs débits binaires selon le dégradé affiché dans la légende.
+Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple est visible Figure [\ref{fig:simu-single-cell}] (pour un mode \textit{Rays to Single Cell}). Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs représentant leurs débits binaires selon le dégradé affiché dans la légende.
 
-L'échelle de couleur a été choisie pour représenter le débit binaire, ce \textit{bitrate} étant la donnée qui nous intéresse dans la simulation pour ce projet. Elle a donc été limitée à un minimum de 50Mb/s (quand un récepteur a une puissance de -90dBm) et à un maximum de 40Gb/s (un récepteur a une puissance de -40dBm).
+L'échelle de couleur (un dégradé à 5 points\footnote{0\%: bleu, 25\%: cyan, 50\%: vert, 75\%: jaune, 100\%: rouge}, utilisé communément dans les \textit{heatmaps}) a été choisie pour représenter le logarithme du débit binaire, ou la puissance en dBm. Elle a donc été limitée à un minimum de 50Mb/s (ou -90dBm) et à un maximum de 40Gb/s (ou -40dBm).
 
 Il est possible d'afficher davantage d'informations dans une info-bulle sur l'émetteur ou sur une cellule réceptrice lors de leur survol avec la souris (voir Figure [\ref{fig:tooltips}]).
-% TODO:
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{latex/images/blank_map.png}
-    \caption{Carte vide de la simulation}
-    \label{fig:blank-map}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=\textwidth]{latex/images/blank_map.png}
+%    \caption{Carte vide de la simulation}
+%    \label{fig:blank-map}
+%\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -73,23 +71,24 @@ Pour une mode de simulation \textit{Rays to Single Cell}, la cellule réceptrice
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{latex/images/single-cell.png}
-    \caption{Simulation \textit{Rays to Single Cell} pour une cellule en (2 ; 2)}
+    \caption{Simulation \textit{Rays to Single Cell} pour une cellule en (2, 2)m et un émetteur en (9.4, 7)m}
     \label{fig:simu-single-cell}
 \end{figure}
 
+%\todo{y a des choses à retirer ici}
 \section{Ajouts futurs possibles}
 % décrire les futures ameliorations qui peuvent être ajoutées
 Les ajouts et améliorations futurs possibles sont:
 \begin{itemize}
-    \item Simulation contenant plusieurs stations de base (comme visible grisé dans l'interface [Figure \ref{fig:interface}])
+    %\item Simulation contenant plusieurs stations de base (comme visible grisé dans l'interface [Figure \ref{fig:interface}])
     \item Sélection du nombre maximal de réflexions des rayons (nécessitant un algorithme de ray-tracing récursif)
     \item Importation de différentes cartes d'appartement
-    \item Mode d'optimisation de placement de station de base (par méthode de Monte-Carlo ou algorithme génétique)
+    \item Diffraction des ondes
 \end{itemize}
 
 \section{Performances}
 % temps d'exécution, RAM etc
-Le temps d'exécution pour une simulation exemple, de résolution de cellule de $0.125\mathrm{m}\times0.125\mathrm{m}$ est aux alentours des 500ms [Figure \ref{fig:time-0.125m}], avec une utilisation de 2,8GB de RAM, soit des performances tout à fait acceptables.\footnote{Exécution sur un laptop doté d'un CPU AMD Ryzen 7 5800U avec 16GB de RAM.}
+Le temps d'exécution pour une simulation exemple, de résolution de cellule de $0.125\mathrm{m}\times0.125\mathrm{m}$ est aux alentours des 500ms [Figure \ref{fig:time-0.125m}], avec une utilisation de 2,8GB de RAM, soit des performances tout à fait acceptables. Une simulation à la plus basse résolution (de base) de $0.5\mathrm{m}\times0.5\mathrm{m}$ prend une trentaine de millisecondes.\footnote{Exécution sur un laptop doté d'un CPU AMD Ryzen 7 5800U avec 16GB de RAM, en mode \textit{économie d'énergie}.}
 
 Le temps d'exécution a été calculé grâce à un objet \mintinline{cpp}{QTimer}, lancé après une pression du bouton \textit{Run simulation} et stoppé juste avant l'affichage graphique.
 \begin{figure}[H]
