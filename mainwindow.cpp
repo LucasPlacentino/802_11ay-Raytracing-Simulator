@@ -87,8 +87,13 @@ bool MainWindow::runSimulation(QProgressBar* progress_bar)
 void MainWindow::changeBaseStationPower(int value)
 {
     // Modify the current editing base station with the new user chosen power
-    Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
-    base_station->setPower_dBm(value);
+    qDebug() << "dBm value:" << value;
+    //Transmitter* base_station = simulation.getBaseStation(currentEditingBaseStation_index);
+    Transmitter* base_station = simulation.baseStations[currentEditingBaseStation_index];
+    qreal power = pow(10.0, value / 10.0);
+    base_station->power=power;
+    simulation.baseStations[currentEditingBaseStation_index]->power_dBm=value;
+    //base_station->setPower_dBm(value);
     showBaseStationPower(value);
 }
 
