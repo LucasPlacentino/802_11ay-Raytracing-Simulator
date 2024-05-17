@@ -16,7 +16,7 @@ Remarque: lors de la simulation de la situation de l'exercice 1 du TP4, nous ne 
 
 Le calcul du champ électrique utilise l'équation (\ref{eq:elec-field}).\\
 
-L'exercice 1 du TP4 utilise un $P_{TX}G_{TX}=1,64$, une fréquence à $868,3 \mathrm{MHz}$, une résistance d'antenne $R_a=73 \Omega$, ainsi que des murs ayant comme permittivité relative $\varepsilon_r=4.8$ et comme conductivité $\sigma=0.018 \mathrm{S/m}$.
+L'exercice 1 du TP4 utilise un $P_{TX}G_{TX}=1.64$, une fréquence à $868.3 \mathrm{MHz}$, une résistance d'antenne $R_a=73 \Omega$, ainsi que des murs ayant comme permittivité relative $\varepsilon_r=4.8$ et comme conductivité $\sigma=0.018 \mathrm{S/m}$.
 
 \section{Calculs pour rayon à deux réflexions, cas A}
 La m{\'e}thode pour obtenir les valeurs du cas {\`a} deux r{\'e}flexions est
@@ -38,7 +38,7 @@ Avec cela, on peut d{\'e}terminer $P_{r 2}$, dont on conna{\^i}t la
 coordonn{\'e}e $y = 80$ et dont on veut d{\'e}terminer la coordonn{\'e}e $x$.
 \[ P_{r 2} = I_2 + \frac{\overrightarrow{I_2 R X}}{\| \overrightarrow{I_2 R X}
    \|} t \rightarrow t = 95.56 \rightarrow x = 33.06 \rightarrow P_{r 2} =
-   (33.05, 80) \]
+   (33.06, 80) \]
 Et on peut d{\'e}terminer de la m{\^e}me mani{\`e}re, la coordonn{\'e}e de
 $P_{r 1}$, connaissant celle de $P_{r 2}$, le vecteur est donc
 $\overrightarrow{I_1 P_{r 2}}$. Nous obtenons
@@ -54,14 +54,14 @@ et on cherche $y$.
 Il nous reste finalement {\`a} d{\'e}terminer $P_t$ le point d'intersection
 entre $\overrightarrow{P_{r 1} \mathrm{TX}}$ et le mur vertical passant par $A =
 (0, 20)$.
-\[ \overrightarrow{P_{r 1} \mathrm{TX}} = (- 32 ; 34.43) \rightarrow \|
+\[ \overrightarrow{P_{r 1} \mathrm{TX}} = (- 32, 34.43) \rightarrow \|
    \overrightarrow{P_{r 1} \mathrm{TX}} \| = 47 \rightarrow
    \frac{\overrightarrow{P_{r 1} \mathrm{TX}}}{\| \overrightarrow{P_{r 1}
    \mathrm{TX}} \|} = (- 0.68, 0.73) \]
 On conna{\^i}t la coordonn{\'e}e $y = 20$,
 \[ P_t = \mathrm{TX} + \frac{\overrightarrow{P_{r 1} \mathrm{TX}}}{\|
    \overrightarrow{P_{r 1} \mathrm{TX}} \|} t \rightarrow t = 13.65 \rightarrow
-   x = 22.71 \rightarrow P_{r 1} = (22, 71, 20) \]
+   x = 22.71 \rightarrow P_{r 1} = (22.71, 20) \]
 
 \subsection{Coefficients}
 
@@ -73,8 +73,8 @@ $(0, - 1)$ nous avons
    \overrightarrow{I_2 R X} \|}, (0, - 1) \rangle = 0.73 \rightarrow \sin
    \theta_i = \sqrt{1 - \cos^2 \theta_i} = 0.68 \]
 L'obtention des composantes transmises dans le mur se font via la loi de
-Snell, avec $\epsilon_r = 4.8$
-\[ \sin \theta_t = \frac{1}{\sqrt{\epsilon_r}} \sin \theta_i = 0.31
+Snell, avec $\varepsilon_r = 4.8$
+\[ \sin \theta_t = \frac{1}{\sqrt{\varepsilon_r}} \sin \theta_i = 0.31
    \rightarrow \cos \theta_t = 0.95 \]
 La distance parcourue par le rayon dans le mur $s$, est par cons{\'e}quent
 \[ s = \frac{l}{\cos \theta_t} = 0.16 \]
@@ -162,8 +162,7 @@ La Figure [\ref{fig:simu-tp4}] présente le tracé des rayons simulés. Le réce
 \end{itemize}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{latex/images/tp4.png}
+    \centering    \includegraphics[width=\textwidth]{latex/images/tp4.png}
     \caption{Simulation Ray-Tracing de l'exercice 1, TP4}
     \label{fig:simu-tp4}
 \end{figure}

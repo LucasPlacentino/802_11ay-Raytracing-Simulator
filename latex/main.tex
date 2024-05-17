@@ -7,7 +7,16 @@
 \usepackage{multirow}
 \usepackage{tikz}
 \usepackage{geometry}
+\usepackage{titlesec}
 \geometry{margin=3cm}
+
+\titleformat{\chapter}[display]
+  {\normalfont\Huge\bfseries}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt} % Left margin, before space, after space
+
+
+% Left margin, before space, after space
 
 %\makeatletter
 %\renewcommand{\@chapapp}{Step}

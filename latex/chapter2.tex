@@ -7,7 +7,7 @@
 
 
 \section{Interface utilisateur}
-Une interface graphique (visible Figure [\ref{fig:interface}]) a été créée afin de faciliter l'exécution de la simulation pour un utilisateur selon ses paramètres choisis, sans devoir recompiler le programme, ni entrer ces paramètres via une ligne de commande.\\
+Une interface graphique (visible sur la Figure [\ref{fig:interface}]) a été créée afin de faciliter l'exécution de la simulation pour un utilisateur selon ses paramètres choisis, sans devoir recompiler le programme, ni entrer ses paramètres via une ligne de commande.\\
 
 L'utilisateur peut choisir les coordonnées de la station de base ainsi que le mode de simulation:
 \begin{itemize}
@@ -19,7 +19,7 @@ Le mode \textit{Coverage Heatmap} permet d'avoir le rendu de la couverture de l'
 
 Quant au mode \textit{Rays to Single Cell}, il permet de visualiser tous les rayons simulés vers une unique cellule (de largeur 0,5m), où l'utilisateur peut choisir les coordonnées de cette cellule.\\
 
-Le groupe de boutons du dessous contrôle les paramètres de la ou des stations de base. L'utilisateur peut rajouter et enlever des émetteurs (avec un minimum d'une station de base), et modifier leurs coordonnées et puissances.\\
+Le groupe de boutons du dessous contrôle les paramètres de la/des stations de base. L'utilisateur peut rajouter et enlever des émetteurs (en gardant un émetteur au minimum), et modifier leurs coordonnées et leurs puissances.\\
 
 Le haut de l'interface contient un large bouton \textit{Run simulation} qui permet de lancer la simulation avec les paramètres rentrés. Au-dessus de ce bouton se trouve un cadre qui affichera si la simulation s'est finie avec succès, ainsi que son temps d'exécution en millisecondes. En dessous du bouton se trouve une barre de progression de la simulation. Ceci est visible Figure [\ref{fig:time-0.125m}].\\
 
@@ -32,16 +32,16 @@ En haut de la fenêtre se trouve trois menus:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.44\textwidth]{latex/images/interface.png}
+    \includegraphics[width=0.4\textwidth]{latex/images/interface.png}
     \caption{Interface utilisateur du programme}
     \label{fig:interface}
 \end{figure}
 
 \section{Algorithme}
-L'algorithme est simplement une itération sur une matrice de cellules (cellule = récepteur) qui calcule la puissance reçue par chacune. Pour chaque récepteur, un rayon direct est tracé depuis l'émetteur vers celui-ci, les coefficients d'éventuelles transmissions à travers des obstacles rencontrés sont calculés. Ensuite, les rayons à plusieurs réflexions sont pris en compte, en vérifiant si l'émetteur (ou ses images) et le récepteur sont du même côté de l'obstacle. Si c'est le cas, l'image de l'émetteur (ou de son image) par rapport à l'obstacle est déterminée, et le point de réflexion est calculé. Les segments de rayon entre le transmetteur, les points de réflexion et le récepteur sont créés, et les coefficients de réflexion sont calculés en fonction de l'angle d'incidence et des propriétés du matériau de l'obstacle. La puissance totale reçue par chaque récepteur est ensuite calculée en additionnant les contributions de tous les rayons (direct et réfléchis), tel que décrit l'équation [\ref{eq:puissance-locale}].
+L'algorithme est simplement une itération sur une matrice de cellules (cellule = récepteur) qui calcule la puissance reçue par chacune. Pour chaque récepteur, un rayon direct est tracé depuis l'émetteur vers celui-ci, les coefficients d'éventuelles transmissions à travers des obstacles rencontrés sont calculés. Ensuite, les rayons à plusieurs réflexions sont pris en compte, en vérifiant si l'émetteur (ou ses images) et le récepteur sont du même côté de l'obstacle. Si c'est le cas, l'image de l'émetteur (ou de son image) par rapport à l'obstacle est déterminée, et le point de réflexion est calculé. Les segments de rayon entre le transmetteur, les points de réflexion et le récepteur sont créés, et les coefficients de réflexion sont calculés en fonction de l'angle d'incidence et des propriétés du matériau de l'obstacle. D'éventuelles transmissions après réflexion sont aussi vérifiées et calculées. La puissance totale reçue par chaque récepteur est ensuite calculée en additionnant les contributions de tous les rayons (direct et réfléchis), tel que décrit l'équation [\ref{eq:puissance-locale}].
 
 \section{Affichage}
-Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple est visible Figure [\ref{fig:simu-single-cell}] (pour un mode \textit{Rays to Single Cell}). Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs représentant leurs débits binaires selon le dégradé affiché dans la légende.
+Après l'exécution d'une simulation, l'application affiche à l'utilisateur une visualisation graphique de cette simulation. Un exemple est visible Figure [\ref{fig:simu-single-cell}] (pour un mode \textit{Rays to Single Cell}). Elle présente une carte de l'appartement, les axes, ainsi qu'une légende. Les murs/parois sont représentés par des traits de couleurs et épaisseurs différentes représentant leurs matériaux. L'émetteur est représenté par un point blanc. Les cellules réceptrices seront représentées par des carrés de couleurs indiquant leurs débits binaires selon le dégradé affiché dans la légende.
 
 L'échelle de couleur (un dégradé à 5 points\footnote{0\%: bleu, 25\%: cyan, 50\%: vert, 75\%: jaune, 100\%: rouge}, utilisé communément dans les \textit{heatmaps}) a été choisie pour représenter le logarithme du débit binaire, ou la puissance en dBm. Elle a donc été limitée à un minimum de 50Mb/s (ou -90dBm) et à un maximum de 40Gb/s (ou -40dBm).
 
@@ -70,8 +70,8 @@ Il est possible d'afficher davantage d'informations dans une info-bulle sur l'é
 Pour une mode de simulation \textit{Rays to Single Cell}, la cellule réceptrice est représentée comme un carré magenta, les points de réflexions sont en vert, et les rayons sont coloriés en fonction de leur nombre de réflexions. Le programme affiche alors ceci [Figure \ref{fig:simu-single-cell}] :
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{latex/images/single-cell.png}
-    \caption{Simulation \textit{Rays to Single Cell} pour une cellule en (2, 2)m et un émetteur en (9.4, 7)m}
+    \includegraphics[width=0.94\textwidth]{latex/images/single-cell.png}
+    \caption{Simulation \textit{Rays to Single Cell} pour une cellule en (2,2)m et un émetteur en (9.4,7)m}
     \label{fig:simu-single-cell}
 \end{figure}
 

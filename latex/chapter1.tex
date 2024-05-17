@@ -7,7 +7,7 @@
 Pour simplifier la r{\'e}alisation du code, plusieurs simplifications
 g{\'e}om{\'e}triques et physiques ont {\'e}t{\'e} prises en compte.
 
-\subsubsection{Sp{\'e}cificit{\'e}s du r{\'e}seau}
+\subsubsection*{Sp{\'e}cificit{\'e}s du r{\'e}seau}
 
 Notre couverture de base est assur{\'e}e par une antenne dip{\^o}le $\lambda /
 2$, celle-ci sera consid{\'e}r{\'e}e sans perte. Elle {\'e}mettra avec une
@@ -16,20 +16,20 @@ puissance de 20 dBm. Pour la r{\'e}ception, nous consid{\'e}rons un seuil
 minimal de -90 dBm et un seuil maximal de -40 dBm. Les d{\'e}bits binaires
 correspondants valent respectivement 50 Mb/s et 40 Gb/s.
 
-\subsubsection{G{\'e}om{\'e}trie du probl{\`e}me}
+\subsubsection*{G{\'e}om{\'e}trie du probl{\`e}me}
 
 Nous ne prendrons en compte que deux dimensions de l'espace, c'est {\`a} dire
 que nous consid{\'e}rons que les antennes sont plac{\'e}es {\`a} une m{\^e}me
 hauteur sur l'axe $z$ et n'{\'e}mettent et ne recoivent que dans la dimension
 transverse {\`a} celui-ci. Nous ne consid{\'e}rons donc
-que les dimensions en $(x, y)$ de nos murs.
+que les dimensions $(x, y)$ de nos murs.
 
-\subsubsection{Simulation de la couverture de base}
+\subsubsection*{Simulation de la couverture de base}
 
 L'{\'e}tude de la couverture de base de la borne Wi-Fi se fait via la
 m{\'e}thode des images (d{\'e}taill{\'e}e plus loin) qui nous permettra de
 tracer le trajet des rayons entre l'antenne {\'e}mettrice et l'antenne
-r{\'e}ceptrice. On consid{\'e}reras les rayons transmis {\`a} travers les
+r{\'e}ceptrice. On consid{\'e}rera les rayons transmis {\`a} travers les
 murs, et les ondes r{\'e}fl{\'e}chies avec un maximum de deux r{\'e}flexions.
 On ne prendra pas en compte la diffraction des ondes.
 
@@ -76,8 +76,8 @@ diffraction.
 
 \subsection{Propri{\'e}t{\'e}s des murs}
 
-Les champs se propageront soit dans l'air (assimil{\'e} au vide), soit en
-traversant et en se r{\'e}fl{\'e}chissant sur des murs. Pour calculer les
+Les champs se propageront soit dans l'air (assimil{\'e} au vide) soit en
+traversant et/ou en se r{\'e}fl{\'e}chissant sur des murs. Pour calculer les
 effets relatifs {\`a} ces interactions entre les murs et les ondes, on
 utilisera leurs propri{\'e}t{\'e}s {\'e}lectriques. Ces propri{\'e}t{\'e}s
 sont donn{\'e}es par la constante de propagation dans un mat{\'e}riau
@@ -87,15 +87,15 @@ sont donn{\'e}es par la constante de propagation dans un mat{\'e}riau
 %avec $\sigma$ la conductivit{\'e} et $\varepsilon$ la permettivit{\'e} du
 avec $\tilde{\varepsilon}$ la permittivité complexe
 ($\tilde{\varepsilon} = \varepsilon_r\varepsilon_0 - j\frac{\sigma}{\omega}$, où
-$\varepsilon_r$ est la permittivité relative)
+$\varepsilon_r$ est la permittivité relative, et $\sigma$ la conductivité)
 % $\varepsilon = \varepsilon_r\varepsilon_0$)
-du matériau, repris dans ce tableau [Table \ref{tab:materials}]:
+du matériau, $\omega$ la pulsation de l'onde, et $\mu_0$ la perméabilité du vide, repris dans ce tableau [Table \ref{tab:materials}]:
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|}
   \hline
-  \textbf{Mat{\'e}riau} & \textbf{$\varepsilon_r$} & \textbf{$\sigma$ [S/m]}\\
+  \textbf{Mat{\'e}riau} & \textbf{$\varepsilon_r$} & $\sigma$ [S/m]\\
   \hline
   brique & 3.95 & 0.073\\
   \hline
@@ -117,7 +117,7 @@ du matériau, repris dans ce tableau [Table \ref{tab:materials}]:
 \subsubsection*{Angle transmis}
 
 Pour calculer l'angle transmis $\theta_t$ {\`a} l'interface entre deux
-mat{\'e}riaux on utilise la loi de Snell-Descartes qui s'exprime
+mat{\'e}riaux on utilise la loi de Snell-Descartes qui s'exprime via 
 \[ \sin \theta_t = \sqrt{\frac{\varepsilon_{r 1}}{\varepsilon_{r 2}}} \sin \theta_i
 \]
 avec $\theta_i$ l'angle incident, et $\varepsilon_r$ la permittivit{\'e}
@@ -161,11 +161,11 @@ coefficient de transmission.
 
 \subsection{Directivit{\'e} et gain}
 
-Les antennes n'{\'e}mettent pas de mani{\`e}re isotrope par construction. Leur
+Les antennes n'{\'e}mettent pas de mani{\`e}re isotrope. Leur
 efficacit{\'e} d{\'e}pend de la direction dans laquelle elles
 {\'e}mettent/re{\c c}oivent l'onde. Pour quantifier cela, on fait appel {\`a}
 un coefficient appel{\'e} le gain d'antenne $G (\theta, \phi)$, qui défini
-{\`a} partir de l'efficacité d'antenne $\eta$ et de sa directivit{\'e} $D (\theta, \varphi)$ (quotient de son intensit{\'e} rayonn{\'e}e
+{\`a} partir de l'efficacité d'antenne $\eta$ et de sa directivit{\'e} $D (\theta, \varphi)$ (définie comme le quotient de son intensit{\'e} rayonn{\'e}e
 dans une direction $U$ et de son intensit{\'e} rayonn{\'e}e moyenne $P / 4
 \pi$). Mis sous forme d'{\'e}quation nous avons
 \[ G (\theta, \varphi) = \eta D (\theta, \varphi) = \eta \frac{U (\theta,
@@ -175,8 +175,8 @@ maximal $\eta = 1$. Nous avons une antenne $\lambda / 2$, et comme toutes nos
 antennes {\'e}mettent et re{\c c}oivent dans le plan horizontal, nous savons
 {\'e}valuer la directivit{\'e} dans cette direction (qui est la direction
 maximale pour ce genre d'antennes), qui vaut donc:
-\[ D (\theta = 90\degree) = \frac{16}{3 \pi} \approx 1.7 = G
-   (\theta = 90\degree )\]
+\[ D (\theta = \frac{\pi}{2}) = \frac{16}{3 \pi} \approx 1.7 = G
+   (\theta =  \frac{\pi}{2})\]
    
 \subsection{Champ {\'e}lectrique et puissance }
 
@@ -208,7 +208,7 @@ Avec tous les termes d{\'e}finis dans les sections pr{\'e}c{\'e}dentes. Qui, une
 (\ref{eq:puissance-locale})
 \begin{equation}
 \label{eq:puissance-locale}
-    <P_{\mathrm{RX}}>\ = \frac{60 \lambda^2}{8 \pi^2 R_a}P_{\mathrm{TX}}G_{\mathrm{TX}}\sum_{n=1}^N \left| \Gamma_1 \Gamma_2 \Gamma_3 \dotsc T_1 T_2 T_3 \frac{e^{-j \beta d_n}}{d_n} \right|^2
+    <P_{\mathrm{RX}}>\ = \frac{60 \lambda^2}{8 \pi^2 R_a}P_{\mathrm{TX}}G_{\mathrm{TX}}\sum_{n=1}^N \left| \Gamma_1 \Gamma_2 \dotsc T_1 T_2 \dotsc \frac{e^{-j \beta d_n}}{d_n} \right|^2
 \end{equation}
 \section{M{\'e}thode des images}
 
@@ -230,9 +230,7 @@ sym{\'e}triquement par rapport {\`a} cette surface.
 
 Consid{\'e}rons une antenne {\'e}mettrice $TX$, plac{\'e}e en un point du
 c{\^o}t{\'e} droit d'un mur. La position du point de réflexion peut être calculée comme suit :
-\[ P_r \equiv \vec{x}_0 + t \vec{u} \]
-o{\`u}
-\[ t = \frac{d_y  (r_{ix} - x_0) - d_x  (r_{iy} - y_0)}{u_x d_y - u_y d_x} \]
+\[ P_r \equiv \vec{x}_0 + t \vec{u} \text{  avec  } t = \frac{d_y  (r_{ix} - x_0) - d_x  (r_{iy} - y_0)}{u_x d_y - u_y d_x} \]
 avec donc, $\vec{x}_0$ la position origine du mur, $\vec{u}$ le vecteur directionnel
 du mur, $r_{ix}$ et $r_{iy}$ les coordonn{\'e}es de l'antenne
 r{\'e}ceptrice, et $d_x$, $d_y$, $u_x$, et $u_y$ les composants des
@@ -241,7 +239,7 @@ vecteurs directionnels.
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[scale=1.2]
+    \begin{tikzpicture}[scale=0.5]
         \draw[thick] (1, -1) -- (1, 4);
         \filldraw[black] (4, 1) circle (3pt) node[anchor=north] {$TX$};
         \filldraw[black] (3, 3) circle (3pt) node[anchor=south] {$RX$};
@@ -260,13 +258,14 @@ vecteurs directionnels.
     \label{fig:antenne_image}
 \end{figure}
 \subsection{Cas à deux réflexions}
-Pour le cas à deux réflexions, il suffit de prendre d'abord en compte l'image du premier mur sur lequel on se reflète ($I_1$ sur le schéma), et puis à partir de ce point image, on détermine son point image par rapport au second mur sur lequel on se reflète ($I_2$). 
-\\ On considère alors que le point de réflexion sur le second mur ($Pr_2$) est l'intersection entre ledit mur et le récepteur, et pour le premier point de réflexion ($Pr_{1}$), il s'agit de l'intersection entre la première image et $Pr_{2}$. 
+Pour le cas à deux réflexions, il suffit de prendre d'abord en compte l'image du premier mur sur lequel on se reflète ($I_1$ sur le schéma), et puis à partir de ce point image, on détermine son propre point image par rapport au second mur sur lequel on se reflète ($I_2$). 
+
+On considère alors que le point de réflexion sur le second mur ($Pr_2$) est l'intersection entre ledit mur et le récepteur, et pour le premier point de réflexion ($Pr_{1}$), il s'agit de l'intersection entre la première image et $Pr_{2}$. 
 Ceci est illustré sur la figure  \ref{fig:reflexion_double}. Il est pertinent de noter que la distance totale du rayon (composé des trois traits verts) est égale à la distance entre le récepteur ($RX$) et le dernier point image ($I_2$).
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[scale=1]
+    \begin{tikzpicture}[scale=.6]
     \draw[thick] (0, 0) -- (0, 5);
     \draw[thick] (0, 5) -- (6, 5);
 
@@ -288,5 +287,3 @@ Ceci est illustré sur la figure  \ref{fig:reflexion_double}. Il est pertinent d
     \caption{Méthode des images pour deux réflexions entre $TX$ et $RX$}
     \label{fig:reflexion_double}
 \end{figure}
-\ 
-\ 

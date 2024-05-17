@@ -8,33 +8,31 @@
 
 \section{Résultats}
 
-Les résultats ont été réalisés avec la simulation à sa plus haute résolution (soit des cellules de $0,0625\mathrm{m}\times0,0625\mathrm{m}$).
+Les résultats ont été réalisés avec la simulation à sa plus haute résolution (soit des cellules de $0,0625\mathrm{m}\times0,0625\mathrm{m}$). L'emplacement par défaut est à (9.4,7)m.
 
 % ---- salon ----
 \subsection{Emplacement par défaut (salon)}
-La station de base se trouve en (9.4, 7)m.
-
-\subsubsection{Sans ascenseur}
+\subsubsection*{Sans ascenseur}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.68\textwidth]{latex/images/highres-without-lift.png}
+    \includegraphics[width=0.55\textwidth]{latex/images/highres-without-lift.png}
     \caption{Couverture débit binaire station de base salon, sans ascenseur}
     \label{fig:simu-emplacement-defaut-sansasc}
 \end{figure}
 
-\subsubsection{Avec ascenseur}
+\subsubsection*{Avec ascenseur}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{latex/images/highres-with-lift.png}
+    \includegraphics[width=0.55\textwidth]{latex/images/highres-with-lift.png}
     \caption{Couverture débit binaire station de base salon, avec ascenseur}
     \label{fig:simu-emplacement-defaut-avecasc}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{latex/images/highres-with-lift-power.png}
+    \includegraphics[width=0.55\textwidth]{latex/images/highres-with-lift-power.png}
     \caption{Couverture puissance station de base salon, avec ascenseur}
     \label{fig:simu-emplacement-defaut-avecasc-puissance}
 \end{figure}
@@ -74,7 +72,7 @@ car l'échelle est définie comme le logarithme du débit binaire, ou la puissan
 
 \section{Suggestions placement station de base}
 
-Afin de trouver un emplacement optimal pour la station de base, il est intéressant de réaliser un algorithme trouvant cette position. Nous profitons de la vitesse d'exécution de notre simulation en déterminant l'emplacement ayant la plus haute moyenne des puissances des cellules via une méthode d'optimisation en \textit{brute-forcing}, c'est-à-dire nous itérons à travers toutes nos positions de station de base, et gardons seulement la meilleure. Notre algorithme d'optimisation nous indique qu'un emplacement optimal est (6.5, 4.5)m, la résolution basse a été utilisée, soit des cellules de $0,5\mathrm{m}\times0,5\mathrm{m}$.
+Afin de trouver un emplacement optimal pour la station de base, il est intéressant de réaliser un algorithme trouvant cette position. Nous profitons de la vitesse d'exécution de notre simulation, en déterminant l'emplacement ayant la plus haute moyenne des puissances des cellules, via une méthode d'optimisation en \textit{brute-forcing}, c'est-à-dire nous itérons à travers toutes nos positions de station de base, et gardons seulement la meilleure. Notre algorithme d'optimisation nous indique qu'un emplacement optimal est (6.5, 4.5)m, la résolution basse a été utilisée, soit des cellules de $0,5\mathrm{m}\times0,5\mathrm{m}$.
 
 Cet emplacement optimal \textbf{théorique} au milieu de l'appartement offre une large couverture, dû à son placement central et à sa plus grande distance à tous les murs en béton.
 
@@ -91,7 +89,7 @@ Cet emplacement optimal \textbf{théorique} au milieu de l'appartement offre une
 %\subsubsection{Avec ascenseur}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{latex/images/opti-with-lift.png}
+    \includegraphics[width=0.55\textwidth]{latex/images/opti-with-lift.png}
     \caption{Couverture débit binaire station de base optimale, avec ascenseur}
     \label{fig:simu-emplacement-couloir-avecasc}
 \end{figure}
@@ -100,12 +98,15 @@ Cet emplacement optimal \textbf{théorique} au milieu de l'appartement offre une
 Un emplacement au milieu d'une pièce est évidemment non favorable en pratique, car loin de prises de courant et réseau, et nécessite aussi sans doute de placer la station de base au plafond ce qui engendre un travail supplémentaire lors de l'installation et un aspect esthétique moindre. Nous privilégions alors un emplacement proche d'un mur, sans doute sur un meuble, par soucis pratique.
 
 
-L'emplacement proche de celui du projet par défaut par exemple à (9.4, 6.4)m semble être un emplacement réaliste et efficace et donc meilleur à utiliser en \textbf{pratique}. La station de base se trouve dans le salon de l'appartement, un lieu où est souvent situé le raccordement internet, et là où sont majoritairement utilisés les appareils sans-fil lors de besoins élevés en débit binaire (téléchargements, vidéos, etc). De plus, la cuisine et la salle à manger sont bien couvertes (deux autres pièces qui sont plus enclines à une utilisation du réseau Wi-Fi par les habitants, contrairement aux chambres et salle de bain). Voir Figures [\ref{fig:simu-emplacement-defaut-sansasc}] et [\ref{fig:simu-emplacement-defaut-avecasc}] pour sa couverture de débit binaire.\\
+L'emplacement proche de celui du projet par défaut par exemple à (9.4, 6.4)m semble être un emplacement réaliste et efficace et donc meilleur à utiliser en \textbf{pratique}. La station de base se trouve dans le salon de l'appartement, un lieu où est souvent situé le raccordement internet, et là où sont majoritairement utilisés les appareils sans-fil lors de besoins élevés en débit binaire (téléchargements, vidéos, etc). De plus, la cuisine et la salle à manger sont bien couvertes (deux autres pièces qui sont plus enclines à une utilisation du réseau Wi-Fi par les habitants, contrairement aux chambres et salle de bain). Voir Figures [\ref{fig:simu-emplacement-defaut-sansasc}] et [\ref{fig:simu-emplacement-defaut-avecasc}] pour une couverture depuis un emplacement similaire.\\
 
 
 \section{Suggestion nombre de stations de base}
-...
-Nous pouvons ré...
+Utilisons l'emplacement réaliste situé à (9.4, 6.4)m pour la première station de base, tel que détaillé au point précédent.\\
+
+Pour optimiser davantage la couverture, il est proposé d'ajouter une deuxième antenne près de (2, 4.75)m. Cette disposition permettra de minimiser les zones de faible signal, en assurant une meilleure couverture dans les autres parties de la maison, notamment les chambres et les zones éloignées de la station de base principale. Tout en gardant les avantages pratiques réalistes que nous obtenions avec la position du premier émetteur.
+En envisageant l'utilisation d'un système mesh (c'est-à-dire plusieurs émetteurs pour un même réseau), nous pouvons améliorer la couverture et réduire l'effet des obstacles. Un système mesh permet en effet de distribuer plusieurs stations de base dans tout l'appartement, garantissant une meilleure couverture. Cela assure une distribution plus homogène du signal Wi-Fi, optimisant ainsi les performances du réseau pour tous les habitants sur l'ensemble de la surface.
+
 % système mesh
 
 \begin{figure}[H]
@@ -121,9 +122,9 @@ Cependant, comme notre modèle ne prend pas en compte d'éventuelles interféren
 % TODO ?
 % parler du fait que les murs sont rarement direct en béton (en général du placo par dessus), présence de meubles, absence de la diffraction, pas de beam-forming, etc...
 
-Tout d'abord, on peut observer qu'un débit binaire non-nul est présent à côté de l'ascenseur, ainsi que dans sa cage ou dans lui-même. Ce résultat ne devrait pas se produire dû à la présence d'épais murs en béton ainsi que de la ou des parois métalliques constituant l'ascenseur. Cette erreur a malheureusement une origine inconnue, il se peut qu'elle survienne à cause d'un \textbf{bug} des coins des murs, où des ondes passeraient. Bien des essais et des réecritures ont été tentées, mais sans succès. Essayer de résoudre ce problème fut une des choses qui prit le plus de temps durant la réalisation du projet, plus de détails sur les différents essais de résolution sont présents dans l'\textbf{Annexe [\ref{discussion-debit-critique}]}.
+Tout d'abord, on peut observer qu'un débit binaire non-nul est présent à l'intérieur de l'ascenseur, juste à côté ainsi que dans la cage. Ce résultat ne devrait pas se produire à cause de la présence d'épais murs en béton ainsi que de la/des parois métalliques constituant l'ascenseur. Cette erreur a malheureusement une origine inconnue, il se peut qu'elle survienne à cause d'un \textbf{bug} des coins des murs, où des ondes passeraient. Bien des essais et des réécritures ont été tentées, mais sans succès. Essayer de résoudre ce problème fut une des choses qui prit le plus de temps durant la réalisation du projet, plus de détails sur les différents essais de résolution sont présents dans l'\textbf{Annexe [\ref{discussion-debit-critique}]}.
 
-Ensuite, cette simulation repose sur de nombreuses simplifications et approximations. En effet, l'appartement ne présente pas d'obstacle de type meubles, ne possède aucune autre fenêtre (en plus de la baie vitrée oblique), des murs en béton sont normalement recouverts d'une couche de plâtre (affectant alors la réflexion différemment du béton). 
+Ensuite, cette simulation repose sur de nombreuses simplifications et approximations. En effet, l'appartement ne présente pas d'obstacle de type meubles, ne possède aucune autre fenêtre (en plus de la baie vitrée oblique) et les murs en béton sont normalement recouverts d'une couche de plâtre (affectant alors la réflexion différemment du béton). 
 
 De plus, la simulation considère une antenne parfaitement omnidirectionnelle dans le plan étudié. 
 

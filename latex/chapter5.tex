@@ -9,7 +9,7 @@
 
 L'utilisation du \textbf{C++} pour notre projet nous donne un grand avantage
 au niveau performance de notre programme, c'est en effet un langage qui,
-compil{\'e}, est connu pour {\^e}tre tr{\`e}s optimis{\'e} pour la
+après compilation, est connu pour {\^e}tre tr{\`e}s optimis{\'e} pour la
 rapidit{\'e} gr{\^a}ce {\`a} son faible niveau d'abstraction et son absence de
 \textit{garbage collector}\footnote{Le \textit{garbage collector} est un
 m{\'e}canisme de gestion automatique de la m{\'e}moire qui r{\'e}cup{\`e}re et
@@ -17,11 +17,11 @@ lib{\`e}re les espaces m{\'e}moire non utilis{\'e}s pour {\'e}viter les fuites
 de m{\'e}moire et optimiser l'utilisation des ressources. Un \textit{garbage collector} est généralement assez lourd en performance, comparé à une gestion manuelle de la mémoire.}. Ceci nous a permis
 d'avoir un temps d'ex{\'e}cution d{\'e}j{\`a} tr{\`e}s faible sans avoir
 impl{\'e}ment{\'e} d'optimisation sp{\'e}cifique. Cet avantage coupl{\'e} au
-manque de temps que nous avions {\`a} consacrer pour ce projet nous a
+manque de temps nous ont
 finalement conduit {\`a} ne pas mettre en place une des optimisations
 possibles.
 
-Cependant, il reste int{\'e}ressant de mentionner la discussion faite en
+Cependant, il reste int{\'e}ressant de mentionner la discussion au sein du groupe faite en
 d{\'e}but de projet pour comparer les diff{\'e}rentes optimisations, qui est
 r{\'e}sum{\'e}e dans le tableau ci-dessous (Table
 [\ref{tab:optimisation-table}]) :
@@ -47,17 +47,17 @@ r{\'e}sum{\'e}e dans le tableau ci-dessous (Table
 Explications de chaque m{\'e}thode d'optimisation Table
 [\ref{tab:optimisation-table}] :
 \begin{enumerate}
-  \item Parall{\'e}lisation (CPU) : diviser le calcul entre plusieurs threads
+  \item Parall{\'e}lisation (CPU): diviser le calcul entre plusieurs threads
   pour traiter les cellules simultan{\'e}ment.
   
-  \item GPU : utiliser le processeur graphique pour une parall{\'e}lisation
+  \item GPU: utiliser le processeur graphique pour une parall{\'e}lisation
   massive, par exemple avec l'API Nvidia CUDA.
   
-  \item Mise en cache : stocker les valeurs calcul{\'e}es fr{\'e}quemment,
+  \item Mise en cache: stocker les valeurs calcul{\'e}es fr{\'e}quemment,
   comme les $\mathrm{sin}(\theta_i)$ et les coefficients de r{\'e}flexion $\Gamma_m$ pour un même angle d'incidence sur un même matériau, pour {\'e}viter de les
   recalculer.
   
-  \item Abandon anticip{\'e} : arr{\^e}ter le calcul des rayons lorsque la
+  \item Abandon anticip{\'e}: arr{\^e}ter le calcul des rayons lorsque la
   puissance devient trop faible pour contribuer significativement {\`a} la
   couverture.
 \end{enumerate}
