@@ -10,6 +10,18 @@
 #include "receiver.h"
 #include "transmitter.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QProgressBar>
+#include <QVector2D>
+#include <complex>
+#include "parameters.h"
+#include "transmitter.h"
+#include "receiver.h"
+#include "obstacle.h"
+#include "ray.h"
+
+
 class Simulation
 {
 public:
@@ -45,7 +57,7 @@ public:
     qreal singleCellY=2;
     QList<QVector2D> singleCellSimReflectionPoints = {};
     // -------------
-private:
+public:
     QElapsedTimer timer;
     qint64 simulation_time;
 

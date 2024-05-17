@@ -4,6 +4,8 @@
 #include <QtMath>
 
 #include "parameters.h"
+#include "genetic_algorithm.h"
+
 
 Simulation::Simulation() {
     // class constructor
@@ -67,6 +69,11 @@ void Simulation::createWalls()
 
 void Simulation::run(QProgressBar* progress_bar)
 {
+    int populationSize = 100;
+    int generations = 200;
+    double mutationRate = 0.01;
+    double crossoverRate = 0.7;
+
     // TODO: compute everything
     this->timer.start();
     qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
@@ -441,28 +448,28 @@ void Simulation::showView()
 
 void Simulation::createCellsMatrix()
 {
-    int max_x_count = ceil(max_x/this->resolution); // -1 ?
-    //qDebug() << "Max count of cells X:" << max_x_count;
-    int max_y_count = ceil(max_y/this->resolution); // -1 ?
-    //qDebug() << "Max count of cells Y:" << max_y_count;
+    int max_x_count = ceil(max_x / this->resolution); // -1 ?
+    int max_y_count = ceil(max_y / this->resolution); // -1 ?
 
     qInfo() << "Creating cells matrix" << max_x_count << "x" << max_y_count << "...";
-    //qDebug() << "cells matrix initial size:" << this->cells.size();
-    for (int x_count=0; x_count < max_x_count; x_count++) {
-        //qDebug() << "Creating new line of cells_matrix...";
-        qreal x = this->resolution/2+(this->resolution*x_count);
+
+    this->cells.clear(); // Assurez-vous de commencer avec une liste de cellules vide
+
+    for (int x_count = 0; x_count < max_x_count; x_count++) {
+        qreal x = this->resolution / 2 + (this->resolution * x_count);
         QList<Receiver*> temp_list;
-        for (int y_count=0; y_count < max_y_count; y_count++) {
-            qreal y = this->resolution/2+(this->resolution*y_count);
-            temp_list.append(new Receiver(x,y,this->resolution, this->show_cell_outline));
-            //qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
+        for (int y_count = 0; y_count < max_y_count; y_count++) {
+            qreal y = this->resolution / 2 + (this->resolution * y_count);
+            temp_list.append(new Receiver(x, y, this->resolution, this->show_cell_outline));
         }
         this->cells.append(temp_list);
-        //qDebug() << "cells_matrix size:" << this->cells.size();
     }
-    qDebug() << "cells_matrix created";
+    qDebug() << "cells_matrix created with size:" << this->cells.size();
 }
-
+void Simulation::createBaseStation(Transmitter* transmitter) {
+    this->baseStations.append(transmitter);
+    qDebug() << "Base station created at (" << transmitter->x() << ", " << transmitter->y() << ")";
+}
 Transmitter* Simulation::getBaseStation(int index)
 {
     if (index < 0 || index >= this->baseStations.length()) {
@@ -471,11 +478,6 @@ Transmitter* Simulation::getBaseStation(int index)
     }
     //return &this->baseStations.at(index);
     return this->baseStations.at(index);
-}
-
-void Simulation::createBaseStation(Transmitter* transmitter)
-{
-    this->baseStations.append(transmitter);
 }
 
 void Simulation::deleteBaseStation(int index)
