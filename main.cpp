@@ -33,7 +33,10 @@ int main(int argc, char *argv[])
     //Algorithme algo(simulation, resolution);
     //algo.runOptimization();
     Simulation* bestSim = runAlgo(sim_list,resolution);
+    qDebug() << "best sim p*:" << bestSim;
     qDeleteAll(sim_list);
+
+    qDebug() << "End program.";
 
     return 0;
 }

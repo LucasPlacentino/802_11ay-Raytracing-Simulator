@@ -70,10 +70,10 @@ void Simulation::createWalls()
 
 void Simulation::run(QProgressBar* progress_bar)
 {
-    int populationSize = 100;
-    int generations = 200;
-    double mutationRate = 0.01;
-    double crossoverRate = 0.7;
+    //int populationSize = 100;
+    //int generations = 200;
+    //double mutationRate = 0.01;
+    //double crossoverRate = 0.7;
 
     // TODO: compute everything
     this->timer.start();
@@ -133,7 +133,7 @@ void Simulation::run(QProgressBar* progress_bar)
         for (Receiver* cell : cells_line) {
             computeDirect(cell, *base_station);
             computeReflections(cell, *base_station);
-            progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
+            //progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
             i++;
         }
     }
