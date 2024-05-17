@@ -113,7 +113,7 @@ void Simulation::run(QProgressBar* progress_bar)
         this->cells = {{rx}};
     }
 
-    Transmitter* base_station = this->baseStations[0]; // TODO: feature : multiple transmitters?
+    //Transmitter* base_station = this->baseStations[0]; // TODO: feature : multiple transmitters?
 
     //if (this->cells_matrix.isEmpty()) {
     if (this->cells.isEmpty()) {
@@ -121,17 +121,19 @@ void Simulation::run(QProgressBar* progress_bar)
         throw std::exception();
     }
 
-    int i=0;
-    for (QList<Receiver*> cells_line : this->cells){
-        // loops over each line
-        for (Receiver* cell : cells_line) {
-            computeDirect(cell, *base_station);
-            computeReflections(cell, *base_station);
-            progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
-            i++;
+    for (Transmitter* tx : this->baseStations) {
+        int i=0;
+        for (QList<Receiver*> cells_line : this->cells){
+            // loops over each line
+            for (Receiver* cell : cells_line) {
+                computeDirect(cell, *tx);
+                computeReflections(cell, *tx);
+                progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
+                i++;
+            }
         }
     }
-    qDebug() << this->cells.length()*this->cells[0].length() << "cells," << i << "computed";
+    qDebug() << this->cells.length()*this->cells[0].length() << "cells,";// << i << "computed";
 
     //end of simulation
     this->simulation_time = this->timer.elapsed();
@@ -518,12 +520,20 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
 
     QGraphicsScene* scene = new QGraphicsScene();
 
-    Transmitter* TX = this->baseStations[0];
+    //Transmitter* TX = this->baseStations[0];
 
     for (QList<Receiver*> cells_line : this->cells) {
         for (Receiver* RX : cells_line) {
             // compute total power and set it in RX
-            qreal _rx_power = RX->computeTotalPower(TX);
+            qreal _rx_power = 0.0;
+            for (Transmitter* tx : this->baseStations) {
+                qreal _pwr = RX->computeTotalPower(tx);
+                if (_pwr > _rx_power) {
+                    // cell has more power with this transmitter
+                    _rx_power = _pwr;
+                }
+            }
+
             RX->power = _rx_power;
 
             RX->updateBitrateAndColor();
@@ -587,10 +597,13 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
     //    scene->addItem(TX->graphics);
     //    //qDebug() << "TX.graphics:" << TX->graphics->rect();
     //}
-    TX->graphics->setToolTip(QString("Transmitter:\nx=%1 y=%2\nGain: %3\nPower: %4W").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain),QString::number(TX->power)));
-    //qDebug() << "TX.graphics:" << TX->graphics->rect();
-    scene->addItem(TX->graphics);
-    qDebug() << "Transmitter added to scene.";
+
+    for (Transmitter* TX : this->baseStations) {
+        TX->graphics->setToolTip(QString("Transmitter:\nx=%1 y=%2\nGain: %3\nPower: %4W").arg(QString::number(TX->x()),QString::number(TX->y()),QString::number(TX->gain),QString::number(TX->power)));
+        //qDebug() << "TX.graphics:" << TX->graphics->rect();
+        scene->addItem(TX->graphics);
+        qDebug() << "Transmitter added to scene.";
+    }
 
     if (this->showRaySingleCell) {
         // Draw all rays (their segments) from the all_rays list

@@ -46,7 +46,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     bool runSimulation(QProgressBar* progress_bar);
-    void changeBaseStationPower(int value);
+    void changeBaseStationPower(qreal value);
     void changeBaseStationCoordinates(QPointF point);
     void initFirstBaseStation();
     void showFirstBaseStation();
