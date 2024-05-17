@@ -84,7 +84,7 @@ bool MainWindow::runSimulation(QProgressBar* progress_bar)
     }
 }
 
-void MainWindow::changeBaseStationPower(int value)
+void MainWindow::changeBaseStationPower(qreal value)
 {
     // Modify the current editing base station with the new user chosen power
     qDebug() << "dBm value:" << value;
