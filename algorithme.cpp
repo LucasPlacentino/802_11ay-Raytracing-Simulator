@@ -3,54 +3,14 @@
 #include <limits>
 #include <cmath>
 
-/*
-Algorithme::Algorithme(Simulation* simulation, qreal resolution)
-    : simulation(simulation), resolution(resolution) {}
-
-void Algorithme::runBruteForceOptimization() {
-    if (simulation->baseStations.isEmpty()) {
-        qDebug() << "No base stations available.";
-        return;
-    } else {
-        qDebug() << "Base station found at (" << simulation->baseStations[0]->x() << ", " << simulation->baseStations[0]->y() << ")";
-    }
-
-    qreal total_power = computeTotalPowerAtPosition(simulation->baseStations[0], simulation->baseStations[0]->x(), simulation->baseStations[0]->y());
-    qDebug() << "power total :" << total_power;
-}
-
-void Algorithme::setTransmitterPosition(Transmitter* transmitter, qreal x, qreal y) {
-    transmitter->changeCoordinates(QPointF(x, y));
-}
-
-qreal Algorithme::computeTotalPowerAtPosition(Transmitter* transmitter, qreal x, qreal y) {
-    setTransmitterPosition(transmitter, x, y);
-
-    qreal totalPower = 0;
-    if (simulation->cells.isEmpty()) {
-        qDebug() << "No cells available.";
-        return totalPower;
-    }
-
-    for (const auto& row : simulation->cells) {
-        for (Receiver* cell : row) {
-            totalPower += cell->power;
-        }
-    }
-    return totalPower;
-}
-*/
-
 void runAlgo() {
 
-    qreal resolution = 0.5; // default is 0.5, or any resolution you need
+    qreal resolution = 0.5; // default is 0.5, or any resolution wanted
 
     int number_of_tx_x = 15-1;
     int number_of_tx_y = 8-1;
 
-    //Simulation bestSimAveragePower;
     QPointF bestSimAveragePowerTX;
-    //Simulation bestSimLessDisconnectedCells;
     QPointF bestSimLessDisconnectedCellsTX;
 
     qreal best_average_pow_dbm = -99999;
@@ -63,17 +23,12 @@ void runAlgo() {
             Simulation sim = Simulation(false);
             sim.resolution = resolution;
             // Créez et ajoutez une base station à la simulation
-            //Transmitter* baseStation = new Transmitter(7.5, 4.0, 0, "Base Station 1");
             Transmitter* baseStation = new Transmitter(0.5+qreal(x), 0.5+qreal(y),0,"opti_BS");
 
-            //simulation.addBaseStation(baseStation);
             sim.baseStations = {};
             sim.baseStations.append(baseStation);
 
             sim.run(nullptr); // run sim
-
-            //int min_num_of_disconnected_cells = (sim->cells[0].length()) * (sim->cells.length());
-            //qDebug() <<
 
             bool better = false;
             g++;
@@ -104,31 +59,13 @@ void runAlgo() {
             if (average_pow_dbm > best_average_pow_dbm) {
                 // this sim is a better sim
 
-                //if (bestSimAveragePower.cells.isEmpty()) {
-                //    for (QList<Receiver*> list : bestSimAveragePower.cells) {
-                //        qDeleteAll(list);
-                //    }
-                //    qDeleteAll(bestSimAveragePower.obstacles);
-                //    qDeleteAll(bestSimAveragePower.baseStations);
-                //}
-
                 best_average_pow_dbm = average_pow_dbm;
-                //bestSimAveragePower = *sim;
                 bestSimAveragePowerTX = sim.baseStations[0]->getCoordinates();
                 better = true;
             }
             if (num_of_disconnected_cells < min_num_of_disconnected_cells) {
 
-                //if (bestSimLessDisconnectedCells.cells.isEmpty()) {
-                //    for (QList<Receiver*> list : bestSimLessDisconnectedCells.cells) {
-                //        qDeleteAll(list);
-                //    }
-                //    qDeleteAll(bestSimLessDisconnectedCells.obstacles);
-                //    qDeleteAll(bestSimLessDisconnectedCells.baseStations);
-                //}
-
                 min_num_of_disconnected_cells = num_of_disconnected_cells;
-                //bestSimLessDisconnectedCells = *sim;
                 bestSimLessDisconnectedCellsTX = sim.baseStations[0]->getCoordinates();
                 better = true;
             }
