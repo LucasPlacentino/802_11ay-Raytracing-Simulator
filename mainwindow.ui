@@ -445,7 +445,7 @@
         <item>
          <widget class="QPushButton" name="addTransmitterButton">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="maximumSize">
            <size>
@@ -461,7 +461,7 @@
         <item>
          <widget class="QComboBox" name="transmitterSelector">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="maximumSize">
            <size>
