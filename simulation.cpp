@@ -4,11 +4,12 @@
 #include <QtMath>
 
 #include "parameters.h"
-#include "genetic_algorithm.h"
+//#include "genetic_algorithm.h"
 
 
-Simulation::Simulation() {
+Simulation::Simulation(bool show) {
     // class constructor
+    this->show = show;
 
     createWalls();
 }
@@ -142,7 +143,9 @@ void Simulation::run(QProgressBar* progress_bar)
     this->simulation_time = this->timer.elapsed();
     qDebug() << "Simulation time:" << this->simulation_time << "ms";
 
-    showView();
+    if (this->show) {
+        showView();
+    }
 
 }
 

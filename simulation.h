@@ -25,7 +25,7 @@
 class Simulation
 {
 public:
-    Simulation(); // constructor
+    Simulation(bool show = true); // constructor
     bool ran = false;
     bool is_running = false;
     qreal resolution = 0.5; // meters, default is 0.5m x 0.5m cells
@@ -58,6 +58,7 @@ public:
     QList<QVector2D> singleCellSimReflectionPoints = {};
     // -------------
 public:
+    bool show = true;
     QElapsedTimer timer;
     qint64 simulation_time;
 

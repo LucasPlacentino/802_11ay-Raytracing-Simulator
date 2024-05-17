@@ -52,3 +52,7 @@ void Transmitter::changeCoordinates(QPointF new_coordinates)
     this->setY(new_coordinates.y());
     this->setGraphicsRect(this->x(),this->y());
 }
+
+QPointF Transmitter::getCoordinates() const {
+    return this->toPointF();
+}

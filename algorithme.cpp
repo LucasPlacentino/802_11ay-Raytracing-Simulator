@@ -3,6 +3,7 @@
 #include <limits>
 #include <cmath>
 
+/*
 Algorithme::Algorithme(Simulation* simulation, qreal resolution)
     : simulation(simulation), resolution(resolution) {}
 
@@ -37,4 +38,28 @@ qreal Algorithme::computeTotalPowerAtPosition(Transmitter* transmitter, qreal x,
         }
     }
     return totalPower;
+}
+*/
+
+Simulation* runAlgo(QList<Simulation*> sim_list, qreal resolution) {
+    Simulation* bestSim = nullptr;
+    qreal best_average_pow = 0;
+    for (Simulation* sim : sim_list) {
+        qreal total_pow = 0;
+        for (QList<Receiver*> cell_line : sim->cells) {
+            for (Receiver* cell : cell_line) {
+                total_pow += cell->power;
+            }
+        }
+        qreal average_pow = total_pow/sim->cells.length();
+        qDebug() << "Sim average power:" << average_pow << "W";
+        if (average_pow > best_average_pow) {
+            // this sim is a better sim
+            best_average_pow = average_pow;
+            bestSim = sim;
+        }
+    }
+    qDebug() << "Best sim: transmitter at" << bestSim->baseStations[0]->getCoordinates();
+    qDebug() << "Best average power:" << best_average_pow << "W";
+    return bestSim;
 }
