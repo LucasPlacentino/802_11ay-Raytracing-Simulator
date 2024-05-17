@@ -671,13 +671,13 @@ void Simulation::addLegend(QGraphicsScene* scene)
         }
 
         // text for minimum of gradient
-        //QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
+        //QGraphicsTextItem* min_text = new QGraphicsTextItem("-90dBm");
         QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps");
         min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
         min_text->setDefaultTextColor(Qt::white);
         min_text->setScale(0.25);
         // text for maximum of gradient
-        //QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
+        //QGraphicsTextItem* max_text = new QGraphicsTextItem("-40dBm");
         QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps");
         max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
         max_text->setDefaultTextColor(Qt::white);

@@ -59,7 +59,7 @@ void Receiver::updateBitrateAndColor()
 
         //qreal value_normalized = (power_dBm - min_power_dBm) / (max_power_dBm - min_power_dBm);
         // or
-        //qreal value_normalized = (this->power*1000 - min_power_mW) / (max_power_mW - min_power_mW);
+        ////qreal value_normalized = (this->power*1000 - min_power_mW) / (max_power_mW - min_power_mW);
         // or
         //qreal value_normalized = (qreal(bitrate) - qreal(min_bitrate_Mbps)) / (qreal(max_bitrate_Mbps) - qreal(min_bitrate_Mbps));
         // or
