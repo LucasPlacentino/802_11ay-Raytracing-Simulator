@@ -17,6 +17,6 @@ private:
     qreal resolution;
 };
 
-Simulation* runAlgo(QList<Simulation*> sim_list, qreal resolution);
+void runAlgo();
 
 #endif // ALGORITHME_H
