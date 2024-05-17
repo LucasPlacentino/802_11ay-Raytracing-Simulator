@@ -1,21 +1,22 @@
+#include "mainwindow.h"
+
 #include <QApplication>
-#include <QCoreApplication>
-#include <QMainWindow>
-#include <QWindow>
-#include "simulation.h"
-#include "algorithme.h"
-#include "transmitter.h"
+//#include "algorithme.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv); // QCoreApplication ?
+    //Q_INIT_RESOURCE(application);
 
-    //Algorithme algo(simulation, resolution);
-    //algo.runOptimization();
-    runAlgo();
+    QApplication app(argc, argv);
+    QCoreApplication::setOrganizationName("Lucas Placentino and Salman Houdaibi");
+    QCoreApplication::setApplicationName("802.11ay Raytracing Simulator");
+    QCoreApplication::setApplicationVersion(QT_VERSION_STR);
 
-    qDebug() << "End program.";
+    MainWindow mainWin;
+    mainWin.show();
+
+    //runAlgo();
 
     return app.exec();
-    //return 0;
 }
+

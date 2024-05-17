@@ -4,7 +4,6 @@
 #include <QtMath>
 
 #include "parameters.h"
-//#include "genetic_algorithm.h"
 
 
 Simulation::Simulation(bool show) {
@@ -70,11 +69,6 @@ void Simulation::createWalls()
 
 void Simulation::run(QProgressBar* progress_bar)
 {
-    //int populationSize = 100;
-    //int generations = 200;
-    //double mutationRate = 0.01;
-    //double crossoverRate = 0.7;
-
     // TODO: compute everything
     this->timer.start();
     qDebug() << "Simulation::run() - single cell simulation: " << (this->showRaySingleCell); // still TODO: single cell simulation
@@ -133,7 +127,7 @@ void Simulation::run(QProgressBar* progress_bar)
         for (Receiver* cell : cells_line) {
             computeDirect(cell, *base_station);
             computeReflections(cell, *base_station);
-            //progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
+            progress_bar->setValue(i/(cells_line.length()*this->cells.length()));
             i++;
         }
     }
@@ -451,28 +445,28 @@ void Simulation::showView()
 
 void Simulation::createCellsMatrix()
 {
-    int max_x_count = ceil(max_x / this->resolution); // -1 ?
-    int max_y_count = ceil(max_y / this->resolution); // -1 ?
+    int max_x_count = ceil(max_x/this->resolution); // -1 ?
+    //qDebug() << "Max count of cells X:" << max_x_count;
+    int max_y_count = ceil(max_y/this->resolution); // -1 ?
+    //qDebug() << "Max count of cells Y:" << max_y_count;
 
     qInfo() << "Creating cells matrix" << max_x_count << "x" << max_y_count << "...";
-
-    this->cells.clear(); // Assurez-vous de commencer avec une liste de cellules vide
-
-    for (int x_count = 0; x_count < max_x_count; x_count++) {
-        qreal x = this->resolution / 2 + (this->resolution * x_count);
+    //qDebug() << "cells matrix initial size:" << this->cells.size();
+    for (int x_count=0; x_count < max_x_count; x_count++) {
+        //qDebug() << "Creating new line of cells_matrix...";
+        qreal x = this->resolution/2+(this->resolution*x_count);
         QList<Receiver*> temp_list;
-        for (int y_count = 0; y_count < max_y_count; y_count++) {
-            qreal y = this->resolution / 2 + (this->resolution * y_count);
-            temp_list.append(new Receiver(x, y, this->resolution, this->show_cell_outline));
+        for (int y_count=0; y_count < max_y_count; y_count++) {
+            qreal y = this->resolution/2+(this->resolution*y_count);
+            temp_list.append(new Receiver(x,y,this->resolution, this->show_cell_outline));
+            //qDebug() << "cells_matrix line"<< x_count << "size:" << temp_list.size();
         }
         this->cells.append(temp_list);
+        //qDebug() << "cells_matrix size:" << this->cells.size();
     }
-    qDebug() << "cells_matrix created with size:" << this->cells.size();
+    qDebug() << "cells_matrix created";
 }
-void Simulation::createBaseStation(Transmitter* transmitter) {
-    this->baseStations.append(transmitter);
-    qDebug() << "Base station created at (" << transmitter->x() << ", " << transmitter->y() << ")";
-}
+
 Transmitter* Simulation::getBaseStation(int index)
 {
     if (index < 0 || index >= this->baseStations.length()) {
@@ -559,7 +553,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
                         QString::number(bitrate_Gbps,'f',2)
                         ////QString::number(RX->all_rays.first()->coeffsList.length()),
                         ////QString::number(RX->all_rays.first()->segments.length())
-                    ));
+                        ));
             } else {
                 RX->graphics->setToolTip(
                     //QString("Receiver cell:\nx=%1 y=%2\nPower: %3 mW | %4 dBm\nBitrate: %5 Mbps\nDirect ray (%7 segments) coeffs list length: %6").arg(
@@ -571,7 +565,7 @@ QGraphicsScene *Simulation::createGraphicsScene()//std::vector<Transmitter>* TX)
                         QString::number(bitrate_Mbps)
                         //QString::number(RX->all_rays.first()->coeffsList.length()),
                         //QString::number(RX->all_rays.first()->segments.length())
-                    ));
+                        ));
             }
             scene->addItem(RX->graphics);
             //qDebug() << "RX.graphics:" << RX->graphics->rect();
@@ -676,13 +670,13 @@ void Simulation::addLegend(QGraphicsScene* scene)
         }
 
         // text for minimum of gradient
-        //QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps\nat -90dBm");
+        //QGraphicsTextItem* min_text = new QGraphicsTextItem("-90dBm");
         QGraphicsTextItem* min_text = new QGraphicsTextItem("50Mbps");
         min_text->setPos(rect.bottomLeft().x()-6,rect.bottomLeft().y()+1);
         min_text->setDefaultTextColor(Qt::white);
         min_text->setScale(0.25);
         // text for maximum of gradient
-        //QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps\nat -40dBm");
+        //QGraphicsTextItem* max_text = new QGraphicsTextItem("-40dBm");
         QGraphicsTextItem* max_text = new QGraphicsTextItem("40Gbps");
         max_text->setPos(rect.bottomRight().x()-6,rect.bottomRight().y()+1);
         max_text->setDefaultTextColor(Qt::white);

@@ -32,7 +32,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         parameters.h
         raysegment.h raysegment.cpp
         resources.qrc
-        algorithme.h algorithme.cpp
+        #algorithme.h algorithme.cpp
 
 
 

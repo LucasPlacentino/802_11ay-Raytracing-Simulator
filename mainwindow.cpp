@@ -355,4 +355,3 @@ void MainWindow::on_cellYspinBox_valueChanged(double y)
 {
     simulation.singleCellY = y;
 }
-
