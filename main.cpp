@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QMainWindow>
 #include "simulation.h"
 #include "algorithme.h"
 #include "transmitter.h"
@@ -6,6 +7,8 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    QMainWindow window;
 
     qreal resolution = 0.5; // default is 0.5, or any resolution you need
 
@@ -25,7 +28,7 @@ int main(int argc, char *argv[])
             simulation->baseStations = {};
             simulation->baseStations.append(baseStation);
 
-            simulation->run(nullptr); // run sim
+            //simulation->run(nullptr); // run sim
             sim_list.append(simulation);
         }
     }
@@ -38,5 +41,6 @@ int main(int argc, char *argv[])
 
     qDebug() << "End program.";
 
-    return 0;
+    return app.exec();
+    //return 0;
 }
